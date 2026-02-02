@@ -439,6 +439,7 @@ export default function FilesIndex({ files = [], types = [] }) {
                         </tbody>
                     </table>
                 </div>
+            </div>
             )}
 
             {/* Empty State */}
