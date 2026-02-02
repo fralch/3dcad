@@ -1,18 +1,18 @@
-// Estructura de categorías del sistema
-export const categoriesData = {
-    categories: [
+// Estructura de datos del sistema
+// Tipos > Categorías > Subcategorías
+
+export const typesData = {
+    types: [
         {
             id: 1,
             name: '3D',
             slug: '3d',
-            icon: 'cube',
-            subcategories: [
+            categories: [
                 {
                     id: 1,
-                    name: 'MECÁNICA',
+                    name: 'Mecánica',
                     slug: 'mecanica',
-                    parent: '3d',
-                    elements: [
+                    subcategories: [
                         { id: 1, name: 'ELEMENTOS DE MÁQUINAS', slug: 'elementos-de-maquinas', count: 44 },
                         { id: 2, name: 'ESTRUCTURAS METÁLICAS', slug: 'estructuras-metalicas', count: 15 },
                         { id: 3, name: 'INSTALACIONES MEP', slug: 'instalaciones-mep', count: 12 },
@@ -21,10 +21,9 @@ export const categoriesData = {
                 },
                 {
                     id: 2,
-                    name: 'ARQUITECTURA',
+                    name: 'Arquitectura',
                     slug: 'arquitectura',
-                    parent: '3d',
-                    elements: [
+                    subcategories: [
                         { id: 5, name: 'VIVIENDA', slug: 'vivienda', count: 124 },
                         { id: 6, name: 'MOBILIARIO', slug: 'mobiliario', count: 51 },
                         { id: 7, name: 'PAISAJISMO', slug: 'paisajismo', count: 221 },
@@ -34,26 +33,23 @@ export const categoriesData = {
         },
         {
             id: 2,
-            name: 'PLANOS',
+            name: 'Planos',
             slug: 'planos',
-            icon: 'document',
-            subcategories: [
+            categories: [
                 {
                     id: 3,
-                    name: 'MECÁNICA',
+                    name: 'Mecánica',
                     slug: 'mecanica',
-                    parent: 'planos',
-                    elements: [
-                        { id: 8, name: 'GENERAL', slug: 'general', count: 10 },
+                    subcategories: [
+                        { id: 8, name: 'General', slug: 'general', count: 10 },
                     ],
                 },
                 {
                     id: 4,
-                    name: 'ARQUITECTURA',
+                    name: 'Arquitectura',
                     slug: 'arquitectura',
-                    parent: 'planos',
-                    elements: [
-                        { id: 9, name: 'GENERAL', slug: 'general', count: 35 },
+                    subcategories: [
+                        { id: 9, name: 'General', slug: 'general', count: 35 },
                     ],
                 },
             ],
@@ -64,48 +60,64 @@ export const categoriesData = {
 // Helper functions
 export const getTotalFiles = () => {
     let total = 0;
-    categoriesData.categories.forEach(cat => {
-        cat.subcategories.forEach(sub => {
-            sub.elements.forEach(el => {
-                total += el.count;
+    typesData.types.forEach(type => {
+        type.categories.forEach(cat => {
+            cat.subcategories.forEach(sub => {
+                total += sub.count;
             });
         });
     });
     return total;
 };
 
-export const getCategoryBySlug = (slug) => {
-    return categoriesData.categories.find(cat => cat.slug === slug);
+export const getTypeBySlug = (slug) => {
+    return typesData.types.find(type => type.slug === slug);
 };
 
-export const getSubcategoryBySlug = (categorySlug, subcategorySlug) => {
-    const category = getCategoryBySlug(categorySlug);
+export const getCategoryBySlug = (typeSlug, categorySlug) => {
+    const type = getTypeBySlug(typeSlug);
+    if (!type) return null;
+    return type.categories.find(cat => cat.slug === categorySlug);
+};
+
+export const getSubcategoryBySlug = (typeSlug, categorySlug, subcategorySlug) => {
+    const category = getCategoryBySlug(typeSlug, categorySlug);
     if (!category) return null;
     return category.subcategories.find(sub => sub.slug === subcategorySlug);
 };
 
-export const getAllElements = () => {
-    const elements = [];
-    categoriesData.categories.forEach(cat => {
-        cat.subcategories.forEach(sub => {
-            sub.elements.forEach(el => {
-                elements.push({
-                    ...el,
+export const getAllSubcategories = () => {
+    const subcategories = [];
+    typesData.types.forEach(type => {
+        type.categories.forEach(cat => {
+            cat.subcategories.forEach(sub => {
+                subcategories.push({
+                    ...sub,
+                    type: type.name,
+                    typeSlug: type.slug,
                     category: cat.name,
                     categorySlug: cat.slug,
-                    subcategory: sub.name,
-                    subcategorySlug: sub.slug,
                 });
             });
         });
     });
-    return elements;
+    return subcategories;
 };
 
-export const getPopularElements = (limit = 5) => {
-    return getAllElements()
+export const getPopularSubcategories = (limit = 5) => {
+    return getAllSubcategories()
         .sort((a, b) => b.count - a.count)
         .slice(0, limit);
 };
 
-export default categoriesData;
+export const getTotalSubcategories = () => {
+    let total = 0;
+    typesData.types.forEach(type => {
+        type.categories.forEach(cat => {
+            total += cat.subcategories.length;
+        });
+    });
+    return total;
+};
+
+export default typesData;

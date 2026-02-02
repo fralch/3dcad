@@ -1,11 +1,9 @@
 import { Link } from '@inertiajs/react';
-import { getTotalFiles, categoriesData } from '@/data/categories';
+import { getTotalFiles, getTotalSubcategories, typesData } from '@/data/categories';
 
-export default function HeroSection({ totalFiles }) {
-    const total = totalFiles || getTotalFiles();
-    const totalCategories = categoriesData.categories.reduce((acc, cat) =>
-        acc + cat.subcategories.reduce((a, sub) => a + sub.elements.length, 0), 0
-    );
+export default function HeroSection() {
+    const totalFiles = getTotalFiles();
+    const totalSubcategories = getTotalSubcategories();
 
     return (
         <section className="bg-zinc-900 text-white py-16 md:py-24">
@@ -19,8 +17,7 @@ export default function HeroSection({ totalFiles }) {
                         </h1>
                         <p className="text-lg text-gray-300 mb-8 leading-relaxed max-w-2xl">
                             La plataforma más completa para compartir modelos 3D y planos técnicos.
-                            Encuentra archivos de mecánica, arquitectura, instalaciones MEP y más
-                            para tus proyectos de ingeniería y diseño.
+                            Encuentra archivos de mecánica, arquitectura, instalaciones MEP y más.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
                             <Link
@@ -46,21 +43,21 @@ export default function HeroSection({ totalFiles }) {
                         {/* Stats */}
                         <div className="flex flex-wrap justify-center md:justify-start gap-8 mt-12">
                             <div className="text-center">
-                                <div className="text-3xl font-bold text-yellow-400">{total}</div>
+                                <div className="text-3xl font-bold text-yellow-400">{totalFiles}</div>
                                 <div className="text-sm text-gray-400">Archivos</div>
                             </div>
                             <div className="text-center">
-                                <div className="text-3xl font-bold text-yellow-400">{totalCategories}</div>
-                                <div className="text-sm text-gray-400">Categorías</div>
+                                <div className="text-3xl font-bold text-yellow-400">{totalSubcategories}</div>
+                                <div className="text-sm text-gray-400">Subcategorías</div>
                             </div>
                             <div className="text-center">
-                                <div className="text-3xl font-bold text-yellow-400">2</div>
-                                <div className="text-sm text-gray-400">Tipos (3D / Planos)</div>
+                                <div className="text-3xl font-bold text-yellow-400">{typesData.types.length}</div>
+                                <div className="text-sm text-gray-400">Tipos</div>
                             </div>
                         </div>
                     </div>
 
-                    {/* Image/3D Preview */}
+                    {/* Visual */}
                     <div className="flex-1 relative">
                         <div className="relative w-full aspect-square max-w-lg mx-auto">
                             <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/20 to-blue-500/10 rounded-3xl"></div>
@@ -72,7 +69,6 @@ export default function HeroSection({ totalFiles }) {
                                     <p className="text-gray-400 text-sm">Modelos 3D de alta calidad</p>
                                 </div>
                             </div>
-                            {/* Floating elements */}
                             <div className="absolute -top-4 -right-4 w-20 h-20 bg-yellow-400 rounded-xl shadow-lg flex items-center justify-center">
                                 <span className="text-zinc-900 font-bold text-lg">3D</span>
                             </div>

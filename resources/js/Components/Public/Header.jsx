@@ -1,6 +1,6 @@
 import { Link } from '@inertiajs/react';
 import { useState } from 'react';
-import { categoriesData } from '@/data/categories';
+import { typesData } from '@/data/categories';
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -29,38 +29,41 @@ export default function Header() {
                             Inicio
                         </Link>
 
-                        {/* Categories Dropdowns */}
-                        {categoriesData.categories.map((category) => (
+                        {/* Types Dropdowns */}
+                        {typesData.types.map((type) => (
                             <div
-                                key={category.id}
+                                key={type.id}
                                 className="relative"
-                                onMouseEnter={() => setActiveDropdown(category.slug)}
+                                onMouseEnter={() => setActiveDropdown(type.slug)}
                                 onMouseLeave={() => setActiveDropdown(null)}
                             >
                                 <button className="flex items-center gap-1 px-4 py-2 text-gray-300 hover:text-yellow-400 transition-colors font-medium">
-                                    {category.name}
+                                    {type.name}
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                     </svg>
                                 </button>
 
                                 {/* Dropdown Menu */}
-                                {activeDropdown === category.slug && (
-                                    <div className="absolute top-full left-0 w-72 bg-zinc-800 rounded-lg shadow-xl py-2 mt-1 border border-zinc-700">
-                                        {category.subcategories.map((subcategory) => (
-                                            <div key={subcategory.id} className="px-2">
-                                                <div className="px-3 py-2 text-xs font-semibold text-yellow-400 uppercase tracking-wider">
-                                                    {subcategory.name}
-                                                </div>
-                                                {subcategory.elements.map((element) => (
+                                {activeDropdown === type.slug && (
+                                    <div className="absolute top-full left-0 w-80 bg-zinc-800 rounded-lg shadow-xl py-2 mt-1 border border-zinc-700">
+                                        {type.categories.map((category) => (
+                                            <div key={category.id} className="px-2">
+                                                <Link
+                                                    href={`/${type.slug}/${category.slug}`}
+                                                    className="block px-3 py-2 text-xs font-semibold text-yellow-400 uppercase tracking-wider hover:bg-zinc-700 rounded"
+                                                >
+                                                    {category.name}
+                                                </Link>
+                                                {category.subcategories.map((subcategory) => (
                                                     <Link
-                                                        key={element.id}
-                                                        href={`/${category.slug}/${subcategory.slug}/${element.slug}`}
-                                                        className="flex items-center justify-between px-3 py-2 text-gray-300 hover:bg-zinc-700 hover:text-white rounded transition-colors"
+                                                        key={subcategory.id}
+                                                        href={`/${type.slug}/${category.slug}/${subcategory.slug}`}
+                                                        className="flex items-center justify-between px-3 py-2 text-gray-300 hover:bg-zinc-700 hover:text-white rounded transition-colors ml-2"
                                                     >
-                                                        <span>{element.name}</span>
+                                                        <span>{subcategory.name}</span>
                                                         <span className="text-xs bg-zinc-700 text-gray-400 px-2 py-0.5 rounded-full">
-                                                            {element.count}
+                                                            {subcategory.count}
                                                         </span>
                                                     </Link>
                                                 ))}
@@ -68,10 +71,10 @@ export default function Header() {
                                         ))}
                                         <div className="border-t border-zinc-700 mt-2 pt-2 px-2">
                                             <Link
-                                                href={`/${category.slug}`}
+                                                href={`/${type.slug}`}
                                                 className="flex items-center justify-center gap-2 px-3 py-2 text-yellow-400 hover:bg-zinc-700 rounded transition-colors font-medium"
                                             >
-                                                Ver todo {category.name}
+                                                Ver todo {type.name}
                                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                                                 </svg>
@@ -142,7 +145,7 @@ export default function Header() {
                         <div className="relative">
                             <input
                                 type="text"
-                                placeholder="Buscar archivos 3D, planos, categorias..."
+                                placeholder="Buscar archivos 3D, planos..."
                                 className="w-full bg-zinc-800 border border-zinc-700 rounded-lg py-3 px-4 pl-12 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
                             />
                             <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -154,30 +157,36 @@ export default function Header() {
 
                 {/* Mobile Menu */}
                 {isMenuOpen && (
-                    <nav className="lg:hidden py-4 border-t border-zinc-700">
+                    <nav className="lg:hidden py-4 border-t border-zinc-700 max-h-[70vh] overflow-y-auto">
                         <div className="flex flex-col gap-1">
                             <Link href="/" className="px-4 py-2 text-gray-300 hover:text-yellow-400 hover:bg-zinc-800 rounded-lg transition-colors">
                                 Inicio
                             </Link>
 
-                            {categoriesData.categories.map((category) => (
-                                <div key={category.id}>
-                                    <div className="px-4 py-2 text-yellow-400 font-semibold text-sm uppercase tracking-wider mt-2">
-                                        {category.name}
-                                    </div>
-                                    {category.subcategories.map((subcategory) => (
-                                        <div key={subcategory.id}>
-                                            <div className="px-4 py-1 text-gray-500 text-xs uppercase">
-                                                {subcategory.name}
-                                            </div>
-                                            {subcategory.elements.map((element) => (
+                            {typesData.types.map((type) => (
+                                <div key={type.id}>
+                                    <Link
+                                        href={`/${type.slug}`}
+                                        className="px-4 py-2 text-yellow-400 font-semibold text-sm uppercase tracking-wider mt-2 block hover:bg-zinc-800 rounded-lg"
+                                    >
+                                        {type.name}
+                                    </Link>
+                                    {type.categories.map((category) => (
+                                        <div key={category.id}>
+                                            <Link
+                                                href={`/${type.slug}/${category.slug}`}
+                                                className="px-4 py-1 text-gray-400 text-xs uppercase block hover:text-yellow-400"
+                                            >
+                                                {category.name}
+                                            </Link>
+                                            {category.subcategories.map((subcategory) => (
                                                 <Link
-                                                    key={element.id}
-                                                    href={`/${category.slug}/${subcategory.slug}/${element.slug}`}
+                                                    key={subcategory.id}
+                                                    href={`/${type.slug}/${category.slug}/${subcategory.slug}`}
                                                     className="flex items-center justify-between px-6 py-2 text-gray-300 hover:text-yellow-400 hover:bg-zinc-800 rounded-lg transition-colors"
                                                 >
-                                                    <span>{element.name}</span>
-                                                    <span className="text-xs text-gray-500">{element.count}</span>
+                                                    <span>{subcategory.name}</span>
+                                                    <span className="text-xs text-gray-500">{subcategory.count}</span>
                                                 </Link>
                                             ))}
                                         </div>

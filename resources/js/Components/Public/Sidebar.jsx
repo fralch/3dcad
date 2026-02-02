@@ -1,16 +1,16 @@
 import { Link } from '@inertiajs/react';
-import { categoriesData, getPopularElements } from '@/data/categories';
+import { typesData, getPopularSubcategories } from '@/data/categories';
 
-export default function Sidebar({ popularFiles = [] }) {
-    const popularElements = getPopularElements(5);
+export default function Sidebar() {
+    const popularSubcategories = getPopularSubcategories(5);
 
     return (
         <aside className="space-y-6">
-            {/* Categories */}
-            {categoriesData.categories.map((category) => (
-                <div key={category.id} className="bg-white rounded-xl shadow-sm p-6">
+            {/* Types & Categories */}
+            {typesData.types.map((type) => (
+                <div key={type.id} className="bg-white rounded-xl shadow-sm p-6">
                     <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                        {category.slug === '3d' ? (
+                        {type.slug === '3d' ? (
                             <svg className="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                             </svg>
@@ -19,26 +19,29 @@ export default function Sidebar({ popularFiles = [] }) {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
                         )}
-                        {category.name}
+                        {type.name}
                     </h3>
                     <div className="space-y-4">
-                        {category.subcategories.map((subcategory) => (
-                            <div key={subcategory.id}>
-                                <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-                                    {subcategory.name}
-                                </div>
+                        {type.categories.map((category) => (
+                            <div key={category.id}>
+                                <Link
+                                    href={`/${type.slug}/${category.slug}`}
+                                    className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 block hover:text-yellow-600"
+                                >
+                                    {category.name}
+                                </Link>
                                 <ul className="space-y-1">
-                                    {subcategory.elements.map((element) => (
-                                        <li key={element.id}>
+                                    {category.subcategories.map((sub) => (
+                                        <li key={sub.id}>
                                             <Link
-                                                href={`/${category.slug}/${subcategory.slug}/${element.slug}`}
+                                                href={`/${type.slug}/${category.slug}/${sub.slug}`}
                                                 className="flex items-center justify-between py-1.5 text-gray-600 hover:text-yellow-600 transition-colors group"
                                             >
                                                 <span className="group-hover:translate-x-1 transition-transform text-sm">
-                                                    {element.name}
+                                                    {sub.name}
                                                 </span>
                                                 <span className="text-xs bg-gray-100 group-hover:bg-yellow-100 text-gray-500 group-hover:text-yellow-700 px-2 py-0.5 rounded-full transition-colors">
-                                                    {element.count}
+                                                    {sub.count}
                                                 </span>
                                             </Link>
                                         </li>
@@ -48,24 +51,24 @@ export default function Sidebar({ popularFiles = [] }) {
                         ))}
                     </div>
                     <Link
-                        href={`/${category.slug}`}
+                        href={`/${type.slug}`}
                         className={`block mt-4 pt-4 border-t border-gray-100 text-sm font-medium ${
-                            category.slug === '3d' ? 'text-yellow-600 hover:text-yellow-700' : 'text-blue-600 hover:text-blue-700'
+                            type.slug === '3d' ? 'text-yellow-600 hover:text-yellow-700' : 'text-blue-600 hover:text-blue-700'
                         }`}
                     >
-                        Ver todo {category.name}
+                        Ver todo {type.name}
                     </Link>
                 </div>
             ))}
 
-            {/* Popular Elements */}
+            {/* Popular Subcategories */}
             <div className="bg-white rounded-xl shadow-sm p-6">
                 <h3 className="font-bold text-gray-900 mb-4">Más Populares</h3>
                 <ul className="space-y-3">
-                    {popularElements.map((element, index) => (
-                        <li key={element.id}>
+                    {popularSubcategories.map((sub, index) => (
+                        <li key={sub.id}>
                             <Link
-                                href={`/${element.categorySlug}/${element.subcategorySlug}/${element.slug}`}
+                                href={`/${sub.typeSlug}/${sub.categorySlug}/${sub.slug}`}
                                 className="flex items-start gap-3 group"
                             >
                                 <span className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm ${
@@ -78,13 +81,13 @@ export default function Sidebar({ popularFiles = [] }) {
                                 </span>
                                 <div className="flex-1 min-w-0">
                                     <p className="text-sm font-medium text-gray-700 group-hover:text-yellow-600 truncate transition-colors">
-                                        {element.name}
+                                        {sub.name}
                                     </p>
                                     <p className="text-xs text-gray-400 mt-0.5">
-                                        {element.category} / {element.subcategory}
+                                        {sub.type} / {sub.category}
                                     </p>
                                     <p className="text-xs text-gray-500 mt-1">
-                                        {element.count} archivos
+                                        {sub.count} archivos
                                     </p>
                                 </div>
                             </Link>
@@ -97,7 +100,7 @@ export default function Sidebar({ popularFiles = [] }) {
             <div className="bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl p-6 text-center">
                 <h3 className="font-bold text-zinc-900 mb-2">Comparte tus modelos</h3>
                 <p className="text-sm text-yellow-900 mb-4">
-                    Sube tus archivos 3D y planos para ayudar a la comunidad
+                    Sube tus archivos 3D y planos
                 </p>
                 <Link
                     href="/upload"
