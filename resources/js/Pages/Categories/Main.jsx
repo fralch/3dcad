@@ -1,9 +1,9 @@
 import { Head, Link } from '@inertiajs/react';
 import MainLayout from '@/Layouts/MainLayout';
-import { categoriesData, getCategoryBySlug } from '@/data/categories';
+import { typesData, getCategoryBySlug } from '@/data/categories';
 
-export default function CategoriesMain({ categorySlug }) {
-    const category = getCategoryBySlug(categorySlug);
+export default function CategoriesMain({ typeSlug, categorySlug }) {
+    const category = getCategoryBySlug(typeSlug, categorySlug);
 
     if (!category) {
         return (
@@ -17,10 +17,10 @@ export default function CategoriesMain({ categorySlug }) {
     }
 
     const totalFiles = category.subcategories.reduce((acc, sub) =>
-        acc + sub.elements.reduce((a, el) => a + el.count, 0), 0
+        acc + sub.count, 0
     );
 
-    const is3D = categorySlug === '3d';
+    const is3D = typeSlug === '3d';
 
     return (
         <MainLayout>
@@ -70,7 +70,7 @@ export default function CategoriesMain({ categorySlug }) {
                         </div>
                         <div>
                             <div className={`text-3xl font-bold ${is3D ? 'text-yellow-400' : 'text-blue-300'}`}>
-                                {category.subcategories.reduce((acc, sub) => acc + sub.elements.length, 0)}
+                                {category.subcategories.length}
                             </div>
                             <div className="text-sm text-gray-400">Secciones</div>
                         </div>
@@ -87,12 +87,11 @@ export default function CategoriesMain({ categorySlug }) {
                                 <div>
                                     <h2 className="text-2xl font-bold text-gray-900">{subcategory.name}</h2>
                                     <p className="text-gray-500 mt-1">
-                                        {subcategory.elements.reduce((a, el) => a + el.count, 0)} archivos en{' '}
-                                        {subcategory.elements.length} secciones
+                                        {subcategory.count} archivos
                                     </p>
                                 </div>
                                 <Link
-                                    href={`/${categorySlug}/${subcategory.slug}`}
+                                    href={`/${typeSlug}/${subcategory.slug}`}
                                     className={`text-sm font-semibold ${
                                         is3D ? 'text-yellow-600 hover:text-yellow-700' : 'text-blue-600 hover:text-blue-700'
                                     }`}
@@ -101,28 +100,11 @@ export default function CategoriesMain({ categorySlug }) {
                                 </Link>
                             </div>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                                {subcategory.elements.map((element) => (
-                                    <Link
-                                        key={element.id}
-                                        href={`/${categorySlug}/${subcategory.slug}/${element.slug}`}
-                                        className="bg-white rounded-xl p-6 shadow-sm hover:shadow-lg transition-all group"
-                                    >
-                                        <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-4 ${
-                                            is3D ? 'bg-yellow-100' : 'bg-blue-100'
-                                        }`}>
-                                            <svg className={`w-6 h-6 ${is3D ? 'text-yellow-600' : 'text-blue-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-                                            </svg>
-                                        </div>
-                                        <h3 className={`font-semibold text-gray-900 group-hover:${is3D ? 'text-yellow-600' : 'text-blue-600'} transition-colors`}>
-                                            {element.name}
-                                        </h3>
-                                        <p className="text-sm text-gray-500 mt-1">
-                                            {element.count} archivos
-                                        </p>
-                                    </Link>
-                                ))}
+                            {/* Elements grid removed as they don't exist in current data structure */}
+                            <div className="bg-gray-50 rounded-xl p-6 text-center">
+                                <p className="text-gray-600">
+                                    {subcategory.count} archivos disponibles en esta subcategoría
+                                </p>
                             </div>
                         </div>
                     ))}

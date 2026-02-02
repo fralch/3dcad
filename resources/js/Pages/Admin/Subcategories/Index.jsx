@@ -1,10 +1,16 @@
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link, router, useForm } from '@inertiajs/react';
 import { useState } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
+import CreateModal from '@/Components/Admin/CreateModal';
 
 export default function SubcategoriesIndex({ subcategories = [], types = [] }) {
     const [filterType, setFilterType] = useState('');
     const [filterCategory, setFilterCategory] = useState('');
+    const [showCreateModal, setShowCreateModal] = useState(false);
+    const [processing, setProcessing] = useState(false);
+    const [selectedTypeId, setSelectedTypeId] = useState('');
+
+    const { post, errors } = useForm();
 
     // Mock data for visual
     const mockTypes = types.length > 0 ? types : [
@@ -62,6 +68,84 @@ export default function SubcategoriesIndex({ subcategories = [], types = [] }) {
         setFilterCategory('');
     };
 
+    const handleCreateSubcategory = (data) => {
+        setProcessing(true);
+        post('/admin/subcategories', {
+            ...data,
+            onSuccess: () => {
+                setShowCreateModal(false);
+                setProcessing(false);
+            },
+            onError: () => {
+                setProcessing(false);
+            },
+            onFinish: () => {
+                setProcessing(false);
+            }
+        });
+    };
+
+    // Function to get fields dynamically based on selected type
+    const getSubcategoryFields = () => {
+        const selectedType = mockTypes.find(t => t.id === parseInt(selectedTypeId));
+        const availableCategories = selectedType?.categories || [];
+        
+        return [
+            {
+                name: 'type_id',
+                label: 'Tipo *',
+                type: 'select',
+                options: mockTypes.map(type => ({ value: type.id, label: type.name })),
+                required: true,
+                placeholder: 'Selecciona un tipo',
+                helpText: 'Selecciona primero el tipo para ver las categorías disponibles'
+            },
+            {
+                name: 'category_id',
+                label: 'Categoría *',
+                type: 'select',
+                options: availableCategories.map(cat => ({ value: cat.id, label: cat.name })),
+                required: true,
+                placeholder: selectedTypeId ? 'Selecciona una categoría' : 'Primero selecciona un tipo',
+                disabled: !selectedTypeId
+            },
+            {
+                name: 'name',
+                label: 'Nombre *',
+                type: 'text',
+                required: true,
+                placeholder: 'Ej: ELEMENTOS DE MÁQUINAS, VIVIENDA',
+                helpText: 'El nombre de la subcategoría'
+            },
+            {
+                name: 'slug',
+                label: 'Slug *',
+                type: 'text',
+                required: true,
+                placeholder: 'ej: elementos-de-maquinas, vivienda',
+                helpText: 'Se usa en la URL: /[tipo]/[categoria]/[slug]',
+                autoGenerate: true
+            },
+            {
+                name: 'sort_order',
+                label: 'Orden',
+                type: 'number',
+                defaultValue: 0,
+                placeholder: '0',
+                helpText: 'Menor número = aparece primero'
+            },
+            {
+                name: 'is_active',
+                label: 'Activo',
+                type: 'checkbox',
+                defaultValue: true,
+                helpText: 'Las subcategorías inactivas no aparecen en el formulario de upload'
+            }
+        ];
+    };
+
+    const subcategoryFields = getSubcategoryFields();
+
     return (
         <AdminLayout title="Subcategorías">
             <Head title="Subcategorías - Admin" />
@@ -71,14 +155,29 @@ export default function SubcategoriesIndex({ subcategories = [], types = [] }) {
                 <div>
                     <p className="text-gray-500">Gestiona las subcategorías de contenido</p>
                 </div>
-                <Link
-                    href="/admin/subcategories/create"
+                <button
+                    onClick={() => setShowCreateModal(true)}
                     className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-400 text-zinc-900 rounded-lg font-medium hover:bg-yellow-300 transition-colors"
                 >
                     <PlusIcon className="w-5 h-5" />
                     Nueva Subcategoría
-                </Link>
+                </button>
             </div>
+
+            {/* Create Modal */}
+            <CreateModal
+                show={showCreateModal}
+                onClose={() => setShowCreateModal(false)}
+                title="Nueva Subcategoría"
+                fields={subcategoryFields}
+                onSubmit={handleCreateSubcategory}
+                processing={processing}
+                onFieldChange={(fieldName, value) => {
+                    if (fieldName === 'type_id') {
+                        setSelectedTypeId(value);
+                    }
+                }}
+            />
 
             {/* Filters */}
             <div className="bg-white rounded-xl shadow-sm p-4 mb-6">

@@ -1,9 +1,14 @@
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link, router, useForm } from '@inertiajs/react';
 import { useState } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
+import CreateModal from '@/Components/Admin/CreateModal';
 
 export default function CategoriesIndex({ categories = [], types = [] }) {
     const [filterType, setFilterType] = useState('');
+    const [showCreateModal, setShowCreateModal] = useState(false);
+    const [processing, setProcessing] = useState(false);
+
+    const { post, errors } = useForm();
 
     // Mock data for visual
     const mockTypes = types.length > 0 ? types : [
@@ -28,6 +33,75 @@ export default function CategoriesIndex({ categories = [], types = [] }) {
         }
     };
 
+    const handleCreateCategory = (data) => {
+        setProcessing(true);
+        post('/admin/categories', {
+            ...data,
+            onSuccess: () => {
+                setShowCreateModal(false);
+                setProcessing(false);
+            },
+            onError: () => {
+                setProcessing(false);
+            },
+            onFinish: () => {
+                setProcessing(false);
+            }
+        });
+    };
+
+    const generateSlug = (name) => {
+        return name
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/(^-|-$)/g, '');
+    };
+
+    const categoryFields = [
+        {
+            name: 'type_id',
+            label: 'Tipo *',
+            type: 'select',
+            options: mockTypes.map(type => ({ value: type.id, label: type.name })),
+            required: true,
+            placeholder: 'Selecciona un tipo'
+        },
+        {
+            name: 'name',
+            label: 'Nombre *',
+            type: 'text',
+            required: true,
+            placeholder: 'Ej: Mecánica, Arquitectura',
+            helpText: 'El nombre de la categoría'
+        },
+        {
+            name: 'slug',
+            label: 'Slug *',
+            type: 'text',
+            required: true,
+            placeholder: 'ej: mecanica, arquitectura',
+            helpText: 'Se usa en la URL: /[tipo]/[slug]/...',
+            autoGenerate: true
+        },
+        {
+            name: 'sort_order',
+            label: 'Orden',
+            type: 'number',
+            defaultValue: 0,
+            placeholder: '0',
+            helpText: 'Menor número = aparece primero'
+        },
+        {
+            name: 'is_active',
+            label: 'Activo',
+            type: 'checkbox',
+            defaultValue: true,
+            helpText: 'Las categorías inactivas no aparecen en el formulario de upload'
+        }
+    ];
+
     return (
         <AdminLayout title="Categorías">
             <Head title="Categorías - Admin" />
@@ -37,14 +111,24 @@ export default function CategoriesIndex({ categories = [], types = [] }) {
                 <div>
                     <p className="text-gray-500">Gestiona las categorías de contenido</p>
                 </div>
-                <Link
-                    href="/admin/categories/create"
+                <button
+                    onClick={() => setShowCreateModal(true)}
                     className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-400 text-zinc-900 rounded-lg font-medium hover:bg-yellow-300 transition-colors"
                 >
                     <PlusIcon className="w-5 h-5" />
                     Nueva Categoría
-                </Link>
+                </button>
             </div>
+
+            {/* Create Modal */}
+            <CreateModal
+                show={showCreateModal}
+                onClose={() => setShowCreateModal(false)}
+                title="Nueva Categoría"
+                fields={categoryFields}
+                onSubmit={handleCreateCategory}
+                processing={processing}
+            />
 
             {/* Filters */}
             <div className="bg-white rounded-xl shadow-sm p-4 mb-6">
