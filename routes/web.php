@@ -15,30 +15,50 @@ Route::get('/', function () {
     return Inertia::render('Home');
 })->name('home');
 
-Route::get('/files', function () {
-    return Inertia::render('Files/Index');
-})->name('files.index');
+// Categoría principal: 3D
+Route::get('/3d', function () {
+    return Inertia::render('Categories/Main', [
+        'categorySlug' => '3d',
+    ]);
+})->name('3d.index');
 
-Route::get('/files/{slug}', function ($slug) {
+// Categoría principal: PLANOS
+Route::get('/planos', function () {
+    return Inertia::render('Categories/Main', [
+        'categorySlug' => 'planos',
+    ]);
+})->name('planos.index');
+
+// Subcategoría: /3d/mecanica o /planos/arquitectura
+Route::get('/{category}/{subcategory}', function ($category, $subcategory) {
+    return Inertia::render('Categories/Subcategory', [
+        'categorySlug' => $category,
+        'subcategorySlug' => $subcategory,
+    ]);
+})->where(['category' => '3d|planos', 'subcategory' => '[a-z-]+']);
+
+// Elemento/Lista de archivos: /3d/mecanica/elementos-de-maquinas
+Route::get('/{category}/{subcategory}/{element}', function ($category, $subcategory, $element) {
+    return Inertia::render('Files/Index', [
+        'categorySlug' => $category,
+        'subcategorySlug' => $subcategory,
+        'elementSlug' => $element,
+    ]);
+})->where(['category' => '3d|planos', 'subcategory' => '[a-z-]+', 'element' => '[a-z-]+']);
+
+// Archivo individual
+Route::get('/file/{slug}', function ($slug) {
     return Inertia::render('Files/Show', [
         'slug' => $slug,
     ]);
-})->name('files.show');
+})->name('file.show');
 
-Route::get('/categories', function () {
-    return Inertia::render('Categories/Index');
-})->name('categories.index');
-
-Route::get('/categories/{slug}', function ($slug) {
-    return Inertia::render('Categories/Show', [
-        'slug' => $slug,
-    ]);
-})->name('categories.show');
-
+// Upload
 Route::get('/upload', function () {
     return Inertia::render('Upload');
 })->name('upload');
 
+// About
 Route::get('/about', function () {
     return Inertia::render('About');
 })->name('about');

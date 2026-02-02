@@ -1,9 +1,11 @@
 import { Link } from '@inertiajs/react';
 import { useState } from 'react';
+import { categoriesData } from '@/data/categories';
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const [activeDropdown, setActiveDropdown] = useState(null);
 
     return (
         <header className="bg-zinc-900 text-white sticky top-0 z-50">
@@ -22,17 +24,65 @@ export default function Header() {
                     </Link>
 
                     {/* Desktop Navigation */}
-                    <nav className="hidden md:flex items-center gap-6">
-                        <Link href="/" className="text-gray-300 hover:text-yellow-400 transition-colors font-medium">
+                    <nav className="hidden lg:flex items-center gap-1">
+                        <Link href="/" className="px-4 py-2 text-gray-300 hover:text-yellow-400 transition-colors font-medium">
                             Inicio
                         </Link>
-                        <Link href="/categories" className="text-gray-300 hover:text-yellow-400 transition-colors font-medium">
-                            Categorias
-                        </Link>
-                        <Link href="/files" className="text-gray-300 hover:text-yellow-400 transition-colors font-medium">
-                            Archivos
-                        </Link>
-                        <Link href="/about" className="text-gray-300 hover:text-yellow-400 transition-colors font-medium">
+
+                        {/* Categories Dropdowns */}
+                        {categoriesData.categories.map((category) => (
+                            <div
+                                key={category.id}
+                                className="relative"
+                                onMouseEnter={() => setActiveDropdown(category.slug)}
+                                onMouseLeave={() => setActiveDropdown(null)}
+                            >
+                                <button className="flex items-center gap-1 px-4 py-2 text-gray-300 hover:text-yellow-400 transition-colors font-medium">
+                                    {category.name}
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+
+                                {/* Dropdown Menu */}
+                                {activeDropdown === category.slug && (
+                                    <div className="absolute top-full left-0 w-72 bg-zinc-800 rounded-lg shadow-xl py-2 mt-1 border border-zinc-700">
+                                        {category.subcategories.map((subcategory) => (
+                                            <div key={subcategory.id} className="px-2">
+                                                <div className="px-3 py-2 text-xs font-semibold text-yellow-400 uppercase tracking-wider">
+                                                    {subcategory.name}
+                                                </div>
+                                                {subcategory.elements.map((element) => (
+                                                    <Link
+                                                        key={element.id}
+                                                        href={`/${category.slug}/${subcategory.slug}/${element.slug}`}
+                                                        className="flex items-center justify-between px-3 py-2 text-gray-300 hover:bg-zinc-700 hover:text-white rounded transition-colors"
+                                                    >
+                                                        <span>{element.name}</span>
+                                                        <span className="text-xs bg-zinc-700 text-gray-400 px-2 py-0.5 rounded-full">
+                                                            {element.count}
+                                                        </span>
+                                                    </Link>
+                                                ))}
+                                            </div>
+                                        ))}
+                                        <div className="border-t border-zinc-700 mt-2 pt-2 px-2">
+                                            <Link
+                                                href={`/${category.slug}`}
+                                                className="flex items-center justify-center gap-2 px-3 py-2 text-yellow-400 hover:bg-zinc-700 rounded transition-colors font-medium"
+                                            >
+                                                Ver todo {category.name}
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                                                </svg>
+                                            </Link>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+
+                        <Link href="/about" className="px-4 py-2 text-gray-300 hover:text-yellow-400 transition-colors font-medium">
                             Acerca de
                         </Link>
                     </nav>
@@ -73,7 +123,7 @@ export default function Header() {
                         {/* Mobile Menu Button */}
                         <button
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
-                            className="md:hidden p-2 text-gray-300 hover:text-yellow-400 transition-colors"
+                            className="lg:hidden p-2 text-gray-300 hover:text-yellow-400 transition-colors"
                         >
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 {isMenuOpen ? (
@@ -92,7 +142,7 @@ export default function Header() {
                         <div className="relative">
                             <input
                                 type="text"
-                                placeholder="Buscar archivos 3D, categorias..."
+                                placeholder="Buscar archivos 3D, planos, categorias..."
                                 className="w-full bg-zinc-800 border border-zinc-700 rounded-lg py-3 px-4 pl-12 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
                             />
                             <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -104,23 +154,44 @@ export default function Header() {
 
                 {/* Mobile Menu */}
                 {isMenuOpen && (
-                    <nav className="md:hidden py-4 border-t border-zinc-700">
-                        <div className="flex flex-col gap-2">
+                    <nav className="lg:hidden py-4 border-t border-zinc-700">
+                        <div className="flex flex-col gap-1">
                             <Link href="/" className="px-4 py-2 text-gray-300 hover:text-yellow-400 hover:bg-zinc-800 rounded-lg transition-colors">
                                 Inicio
                             </Link>
-                            <Link href="/categories" className="px-4 py-2 text-gray-300 hover:text-yellow-400 hover:bg-zinc-800 rounded-lg transition-colors">
-                                Categorias
-                            </Link>
-                            <Link href="/files" className="px-4 py-2 text-gray-300 hover:text-yellow-400 hover:bg-zinc-800 rounded-lg transition-colors">
-                                Archivos
-                            </Link>
-                            <Link href="/about" className="px-4 py-2 text-gray-300 hover:text-yellow-400 hover:bg-zinc-800 rounded-lg transition-colors">
+
+                            {categoriesData.categories.map((category) => (
+                                <div key={category.id}>
+                                    <div className="px-4 py-2 text-yellow-400 font-semibold text-sm uppercase tracking-wider mt-2">
+                                        {category.name}
+                                    </div>
+                                    {category.subcategories.map((subcategory) => (
+                                        <div key={subcategory.id}>
+                                            <div className="px-4 py-1 text-gray-500 text-xs uppercase">
+                                                {subcategory.name}
+                                            </div>
+                                            {subcategory.elements.map((element) => (
+                                                <Link
+                                                    key={element.id}
+                                                    href={`/${category.slug}/${subcategory.slug}/${element.slug}`}
+                                                    className="flex items-center justify-between px-6 py-2 text-gray-300 hover:text-yellow-400 hover:bg-zinc-800 rounded-lg transition-colors"
+                                                >
+                                                    <span>{element.name}</span>
+                                                    <span className="text-xs text-gray-500">{element.count}</span>
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    ))}
+                                </div>
+                            ))}
+
+                            <Link href="/about" className="px-4 py-2 text-gray-300 hover:text-yellow-400 hover:bg-zinc-800 rounded-lg transition-colors mt-2">
                                 Acerca de
                             </Link>
+
                             <Link
                                 href="/upload"
-                                className="mx-4 mt-2 flex items-center justify-center gap-2 bg-yellow-400 hover:bg-yellow-300 text-zinc-900 px-4 py-2 rounded-lg font-semibold transition-colors"
+                                className="mx-4 mt-4 flex items-center justify-center gap-2 bg-yellow-400 hover:bg-yellow-300 text-zinc-900 px-4 py-2 rounded-lg font-semibold transition-colors"
                             >
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />

@@ -1,4 +1,5 @@
 import { Link } from '@inertiajs/react';
+import { categoriesData, getTotalFiles } from '@/data/categories';
 
 export default function Footer() {
     return (
@@ -18,7 +19,7 @@ export default function Footer() {
                             </span>
                         </Link>
                         <p className="text-sm leading-relaxed">
-                            La mejor plataforma para compartir y descargar archivos 3D CAD.
+                            La mejor plataforma para compartir y descargar archivos 3D CAD y planos.
                             Encuentra modelos de alta calidad para tus proyectos.
                         </p>
                         <div className="flex gap-3">
@@ -40,26 +41,55 @@ export default function Footer() {
                         </div>
                     </div>
 
-                    {/* Links */}
+                    {/* 3D Categories */}
                     <div>
-                        <h4 className="text-white font-semibold mb-4">Enlaces</h4>
+                        <h4 className="text-white font-semibold mb-4">3D</h4>
                         <ul className="space-y-2">
-                            <li><Link href="/" className="hover:text-yellow-400 transition-colors">Inicio</Link></li>
-                            <li><Link href="/categories" className="hover:text-yellow-400 transition-colors">Categorias</Link></li>
-                            <li><Link href="/files" className="hover:text-yellow-400 transition-colors">Archivos</Link></li>
-                            <li><Link href="/upload" className="hover:text-yellow-400 transition-colors">Subir Archivo</Link></li>
+                            {categoriesData.categories[0].subcategories.map((sub) => (
+                                <li key={sub.id}>
+                                    <span className="text-xs text-gray-500 uppercase">{sub.name}</span>
+                                    <ul className="mt-1 space-y-1">
+                                        {sub.elements.slice(0, 3).map((el) => (
+                                            <li key={el.id}>
+                                                <Link
+                                                    href={`/3d/${sub.slug}/${el.slug}`}
+                                                    className="hover:text-yellow-400 transition-colors text-sm"
+                                                >
+                                                    {el.name}
+                                                </Link>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </li>
+                            ))}
                         </ul>
                     </div>
 
-                    {/* Categories */}
+                    {/* Planos Categories */}
                     <div>
-                        <h4 className="text-white font-semibold mb-4">Categorias Populares</h4>
+                        <h4 className="text-white font-semibold mb-4">PLANOS</h4>
                         <ul className="space-y-2">
-                            <li><Link href="/categories/mechanical" className="hover:text-yellow-400 transition-colors">Mecanico</Link></li>
-                            <li><Link href="/categories/architectural" className="hover:text-yellow-400 transition-colors">Arquitectura</Link></li>
-                            <li><Link href="/categories/electronics" className="hover:text-yellow-400 transition-colors">Electronica</Link></li>
-                            <li><Link href="/categories/automotive" className="hover:text-yellow-400 transition-colors">Automotriz</Link></li>
+                            {categoriesData.categories[1].subcategories.map((sub) => (
+                                <li key={sub.id}>
+                                    <span className="text-xs text-gray-500 uppercase">{sub.name}</span>
+                                    <ul className="mt-1 space-y-1">
+                                        {sub.elements.map((el) => (
+                                            <li key={el.id}>
+                                                <Link
+                                                    href={`/planos/${sub.slug}/${el.slug}`}
+                                                    className="hover:text-yellow-400 transition-colors text-sm"
+                                                >
+                                                    {el.name}
+                                                </Link>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </li>
+                            ))}
                         </ul>
+                        <Link href="/upload" className="inline-block mt-4 text-yellow-400 hover:text-yellow-300 font-medium text-sm">
+                            Subir Archivo
+                        </Link>
                     </div>
 
                     {/* Contact */}
@@ -80,6 +110,12 @@ export default function Footer() {
                                 Lima, Peru
                             </li>
                         </ul>
+
+                        {/* Stats */}
+                        <div className="mt-6 p-4 bg-zinc-800 rounded-lg">
+                            <div className="text-2xl font-bold text-yellow-400">{getTotalFiles()}</div>
+                            <div className="text-sm text-gray-400">Archivos disponibles</div>
+                        </div>
                     </div>
                 </div>
 
@@ -91,7 +127,7 @@ export default function Footer() {
                     <div className="flex gap-6 text-sm">
                         <Link href="/privacy" className="hover:text-yellow-400 transition-colors">Privacidad</Link>
                         <Link href="/terms" className="hover:text-yellow-400 transition-colors">Terminos</Link>
-                        <Link href="/contact" className="hover:text-yellow-400 transition-colors">Contacto</Link>
+                        <Link href="/about" className="hover:text-yellow-400 transition-colors">Acerca de</Link>
                     </div>
                 </div>
             </div>
