@@ -1,7 +1,9 @@
 import { Link, usePage } from '@inertiajs/react';
+import { useState } from 'react';
 
 export default function AdminLayout({ children, title }) {
     const { url } = usePage();
+    const [sidebarOpen, setSidebarOpen] = useState(false);
 
     const navigation = [
         { name: 'Dashboard', href: '/admin', icon: HomeIcon },
@@ -19,61 +21,90 @@ export default function AdminLayout({ children, title }) {
 
     return (
         <div className="min-h-screen bg-gray-100">
+            {/* Mobile Overlay */}
+            {sidebarOpen && (
+                <div
+                    className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+                    onClick={() => setSidebarOpen(false)}
+                />
+            )}
+
             {/* Sidebar */}
-            <aside className="fixed inset-y-0 left-0 w-64 bg-zinc-900 text-white">
+            <aside className={`fixed inset-y-0 left-0 w-64 bg-zinc-900 text-white z-50 transform transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+                sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+            }`}>
                 {/* Logo */}
-                <div className="h-16 flex items-center px-6 border-b border-zinc-800">
+                <div className="h-16 flex items-center justify-between px-4 border-b border-zinc-800">
                     <Link href="/" className="flex items-center gap-2">
                         <div className="w-8 h-8 bg-yellow-400 rounded-lg flex items-center justify-center">
                             <span className="text-zinc-900 font-bold text-sm">3D</span>
                         </div>
-                        <span className="font-bold text-lg">Admin Panel</span>
+                        <span className="font-bold text-lg">Admin</span>
                     </Link>
+                    {/* Close button - mobile only */}
+                    <button
+                        onClick={() => setSidebarOpen(false)}
+                        className="lg:hidden p-2 text-gray-400 hover:text-white rounded-lg"
+                    >
+                        <XIcon className="w-5 h-5" />
+                    </button>
                 </div>
 
                 {/* Navigation */}
-                <nav className="p-4 space-y-1">
+                <nav className="p-4 space-y-1 overflow-y-auto h-[calc(100vh-8rem)]">
                     {navigation.map((item) => (
                         <Link
                             key={item.name}
                             href={item.href}
+                            onClick={() => setSidebarOpen(false)}
                             className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                                 isActive(item.href)
                                     ? 'bg-yellow-400 text-zinc-900'
                                     : 'text-gray-300 hover:bg-zinc-800 hover:text-white'
                             }`}
                         >
-                            <item.icon className="w-5 h-5" />
-                            {item.name}
+                            <item.icon className="w-5 h-5 flex-shrink-0" />
+                            <span className="truncate">{item.name}</span>
                         </Link>
                     ))}
                 </nav>
 
                 {/* Back to site */}
-                <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-zinc-800">
+                <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-zinc-800 bg-zinc-900">
                     <Link
                         href="/"
                         className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-zinc-800 hover:text-white rounded-lg transition-colors"
                     >
-                        <ArrowLeftIcon className="w-5 h-5" />
-                        Volver al sitio
+                        <ArrowLeftIcon className="w-5 h-5 flex-shrink-0" />
+                        <span>Volver al sitio</span>
                     </Link>
                 </div>
             </aside>
 
             {/* Main content */}
-            <div className="ml-64">
+            <div className="lg:ml-64">
                 {/* Header */}
-                <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8">
-                    <h1 className="text-xl font-semibold text-gray-900">{title}</h1>
+                <header className="sticky top-0 z-30 h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 lg:px-8">
                     <div className="flex items-center gap-4">
-                        <span className="text-sm text-gray-500">Administrador</span>
-                        <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
+                        {/* Mobile menu button */}
+                        <button
+                            onClick={() => setSidebarOpen(true)}
+                            className="lg:hidden p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg"
+                        >
+                            <MenuIcon className="w-6 h-6" />
+                        </button>
+                        <h1 className="text-lg lg:text-xl font-semibold text-gray-900 truncate">{title}</h1>
+                    </div>
+                    <div className="flex items-center gap-2 lg:gap-4">
+                        <span className="hidden sm:block text-sm text-gray-500">Admin</span>
+                        <div className="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center">
+                            <span className="text-zinc-900 font-bold text-xs">A</span>
+                        </div>
                     </div>
                 </header>
 
                 {/* Page content */}
-                <main className="p-8">
+                <main className="p-4 lg:p-8">
                     {children}
                 </main>
             </div>
@@ -134,6 +165,22 @@ function FileIcon({ className }) {
     return (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+    );
+}
+
+function MenuIcon({ className }) {
+    return (
+        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+    );
+}
+
+function XIcon({ className }) {
+    return (
+        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
         </svg>
     );
 }

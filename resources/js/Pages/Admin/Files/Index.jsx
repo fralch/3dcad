@@ -126,13 +126,13 @@ export default function FilesIndex({ files = [], types = [] }) {
             <Head title="Archivos - Admin" />
 
             {/* Header */}
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 <div>
-                    <p className="text-gray-500">Gestiona todos los archivos del sistema</p>
+                    <p className="text-sm sm:text-base text-gray-500">Gestiona todos los archivos del sistema</p>
                 </div>
                 <Link
                     href="/admin/files/upload"
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-400 text-zinc-900 rounded-lg font-medium hover:bg-yellow-300 transition-colors"
+                    className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-yellow-400 text-zinc-900 rounded-lg font-medium hover:bg-yellow-300 transition-colors text-sm sm:text-base"
                 >
                     <PlusIcon className="w-5 h-5" />
                     Subir Archivo
@@ -141,72 +141,78 @@ export default function FilesIndex({ files = [], types = [] }) {
 
             {/* Filters */}
             <div className="bg-white rounded-xl shadow-sm p-4 mb-6">
-                <div className="flex flex-wrap items-center gap-4">
-                    {/* Type Filter */}
-                    <div className="flex items-center gap-2">
-                        <label className="text-sm font-medium text-gray-700">Tipo:</label>
-                        <select
-                            value={filterType}
-                            onChange={handleTypeChange}
-                            className="border border-gray-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                        >
-                            <option value="">Todos</option>
-                            {mockTypes.map((type) => (
-                                <option key={type.id} value={type.id}>{type.name}</option>
-                            ))}
-                        </select>
-                    </div>
+                <div className="flex flex-col lg:flex-row lg:items-center gap-4">
+                    {/* Filters Grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 flex-1">
+                        {/* Type Filter */}
+                        <div>
+                            <label className="block text-xs font-medium text-gray-500 mb-1 lg:hidden">Tipo</label>
+                            <select
+                                value={filterType}
+                                onChange={handleTypeChange}
+                                className="w-full border border-gray-300 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+                            >
+                                <option value="">Todos los tipos</option>
+                                {mockTypes.map((type) => (
+                                    <option key={type.id} value={type.id}>{type.name}</option>
+                                ))}
+                            </select>
+                        </div>
 
-                    {/* Category Filter */}
-                    <div className="flex items-center gap-2">
-                        <label className="text-sm font-medium text-gray-700">Categoría:</label>
-                        <select
-                            value={filterCategory}
-                            onChange={handleCategoryChange}
-                            disabled={!filterType}
-                            className="border border-gray-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent disabled:bg-gray-100"
-                        >
-                            <option value="">Todas</option>
-                            {availableCategories.map((cat) => (
-                                <option key={cat.id} value={cat.id}>{cat.name}</option>
-                            ))}
-                        </select>
-                    </div>
+                        {/* Category Filter */}
+                        <div>
+                            <label className="block text-xs font-medium text-gray-500 mb-1 lg:hidden">Categoría</label>
+                            <select
+                                value={filterCategory}
+                                onChange={handleCategoryChange}
+                                disabled={!filterType}
+                                className="w-full border border-gray-300 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent disabled:bg-gray-100"
+                            >
+                                <option value="">Todas las categorías</option>
+                                {availableCategories.map((cat) => (
+                                    <option key={cat.id} value={cat.id}>{cat.name}</option>
+                                ))}
+                            </select>
+                        </div>
 
-                    {/* Subcategory Filter */}
-                    <div className="flex items-center gap-2">
-                        <label className="text-sm font-medium text-gray-700">Subcategoría:</label>
-                        <select
-                            value={filterSubcategory}
-                            onChange={(e) => setFilterSubcategory(e.target.value)}
-                            disabled={!filterCategory}
-                            className="border border-gray-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent disabled:bg-gray-100"
-                        >
-                            <option value="">Todas</option>
-                            {availableSubcategories.map((sub) => (
-                                <option key={sub.id} value={sub.id}>{sub.name}</option>
-                            ))}
-                        </select>
+                        {/* Subcategory Filter */}
+                        <div>
+                            <label className="block text-xs font-medium text-gray-500 mb-1 lg:hidden">Subcategoría</label>
+                            <select
+                                value={filterSubcategory}
+                                onChange={(e) => setFilterSubcategory(e.target.value)}
+                                disabled={!filterCategory}
+                                className="w-full border border-gray-300 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent disabled:bg-gray-100"
+                            >
+                                <option value="">Todas las subcategorías</option>
+                                {availableSubcategories.map((sub) => (
+                                    <option key={sub.id} value={sub.id}>{sub.name}</option>
+                                ))}
+                            </select>
+                        </div>
                     </div>
 
                     {/* View Toggle */}
-                    <div className="ml-auto flex items-center gap-1 bg-gray-100 rounded-lg p-1">
-                        <button
-                            onClick={() => setViewMode('grid')}
-                            className={`p-2 rounded-md transition-colors ${
-                                viewMode === 'grid' ? 'bg-white shadow-sm' : 'text-gray-500 hover:text-gray-700'
-                            }`}
-                        >
-                            <GridIcon className="w-5 h-5" />
-                        </button>
-                        <button
-                            onClick={() => setViewMode('table')}
-                            className={`p-2 rounded-md transition-colors ${
-                                viewMode === 'table' ? 'bg-white shadow-sm' : 'text-gray-500 hover:text-gray-700'
-                            }`}
-                        >
-                            <TableIcon className="w-5 h-5" />
-                        </button>
+                    <div className="flex items-center justify-between lg:justify-end gap-2">
+                        <span className="text-sm text-gray-500 lg:hidden">Vista:</span>
+                        <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+                            <button
+                                onClick={() => setViewMode('grid')}
+                                className={`p-2 rounded-md transition-colors ${
+                                    viewMode === 'grid' ? 'bg-white shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                                }`}
+                            >
+                                <GridIcon className="w-5 h-5" />
+                            </button>
+                            <button
+                                onClick={() => setViewMode('table')}
+                                className={`p-2 rounded-md transition-colors ${
+                                    viewMode === 'table' ? 'bg-white shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                                }`}
+                            >
+                                <TableIcon className="w-5 h-5" />
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -254,7 +260,7 @@ export default function FilesIndex({ files = [], types = [] }) {
 
             {/* Grid View */}
             {viewMode === 'grid' && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
                     {filteredFiles.map((file) => (
                         <div key={file.id} className="bg-white rounded-xl shadow-sm overflow-hidden group">
                             {/* Thumbnail */}
@@ -328,7 +334,8 @@ export default function FilesIndex({ files = [], types = [] }) {
             {/* Table View */}
             {viewMode === 'table' && (
                 <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-                    <table className="w-full">
+                    <div className="overflow-x-auto">
+                    <table className="w-full min-w-[800px]">
                         <thead className="bg-gray-50 border-b border-gray-200">
                             <tr>
                                 <th className="text-left px-6 py-4 text-sm font-medium text-gray-500">Archivo</th>

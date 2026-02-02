@@ -28,20 +28,20 @@ export default function Dashboard({ stats = {} }) {
             <Head title="Admin Dashboard" />
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6 lg:mb-8">
                 {statCards.map((stat) => (
                     <Link
                         key={stat.name}
                         href={stat.href}
-                        className="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow"
+                        className="bg-white rounded-xl shadow-sm p-4 sm:p-6 hover:shadow-md transition-shadow"
                     >
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-sm text-gray-500">{stat.name}</p>
-                                <p className="text-3xl font-bold text-gray-900 mt-1">{stat.value}</p>
+                                <p className="text-xs sm:text-sm text-gray-500">{stat.name}</p>
+                                <p className="text-xl sm:text-3xl font-bold text-gray-900 mt-1">{stat.value}</p>
                             </div>
-                            <div className={`w-12 h-12 ${stat.color} rounded-lg flex items-center justify-center`}>
-                                <stat.icon className="w-6 h-6 text-white" />
+                            <div className={`w-10 h-10 sm:w-12 sm:h-12 ${stat.color} rounded-lg flex items-center justify-center`}>
+                                <stat.icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                             </div>
                         </div>
                     </Link>
@@ -49,14 +49,14 @@ export default function Dashboard({ stats = {} }) {
             </div>
 
             {/* Quick Actions */}
-            <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">Acciones Rápidas</h2>
-                <div className="flex flex-wrap gap-3">
+            <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 mb-6 lg:mb-8">
+                <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Acciones Rápidas</h2>
+                <div className="grid grid-cols-1 sm:flex sm:flex-wrap gap-2 sm:gap-3">
                     {quickActions.map((action) => (
                         <Link
                             key={action.name}
                             href={action.href}
-                            className="inline-flex items-center gap-2 px-4 py-2 bg-zinc-900 text-white rounded-lg hover:bg-zinc-800 transition-colors"
+                            className="inline-flex items-center justify-center sm:justify-start gap-2 px-4 py-2.5 sm:py-2 bg-zinc-900 text-white rounded-lg hover:bg-zinc-800 transition-colors text-sm"
                         >
                             <action.icon className="w-4 h-4" />
                             {action.name}
@@ -66,10 +66,10 @@ export default function Dashboard({ stats = {} }) {
             </div>
 
             {/* Recent Activity */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                 {/* Hierarchy Overview */}
-                <div className="bg-white rounded-xl shadow-sm p-6">
-                    <h2 className="text-lg font-semibold text-gray-900 mb-4">Estructura de Categorías</h2>
+                <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6">
+                    <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Estructura de Categorías</h2>
                     <div className="space-y-4">
                         <div className="border border-gray-200 rounded-lg p-4">
                             <div className="flex items-center gap-2 font-medium text-gray-900">
@@ -107,8 +107,8 @@ export default function Dashboard({ stats = {} }) {
                 </div>
 
                 {/* Info Card */}
-                <div className="bg-white rounded-xl shadow-sm p-6">
-                    <h2 className="text-lg font-semibold text-gray-900 mb-4">Información</h2>
+                <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6">
+                    <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Información</h2>
                     <div className="bg-blue-50 rounded-lg p-4">
                         <h3 className="font-medium text-blue-900 mb-2">Sistema de Jerarquía</h3>
                         <p className="text-sm text-blue-800 mb-3">

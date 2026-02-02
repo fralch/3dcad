@@ -67,10 +67,8 @@ export default function FileShow({ file = null, relatedFiles = [] }) {
                                     <svg className="w-32 h-32 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                                     </svg>
-                                    <p className="text-gray-400">Vista previa 3D interactiva</p>
-                                    <button className="mt-4 text-yellow-600 hover:text-yellow-700 font-medium">
-                                        Activar vista 3D
-                                    </button>
+                                    <p className="text-gray-400">Vista previa 3D </p>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -136,15 +134,7 @@ export default function FileShow({ file = null, relatedFiles = [] }) {
                             </div>
                         </div>
 
-                        {/* Related Files */}
-                        <div>
-                            <h3 className="text-xl font-bold text-gray-900 mb-6">Archivos Relacionados</h3>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                {displayRelatedFiles.map((relatedFile) => (
-                                    <FileCard key={relatedFile.id} file={relatedFile} />
-                                ))}
-                            </div>
-                        </div>
+
                     </div>
 
                     {/* Sidebar */}
