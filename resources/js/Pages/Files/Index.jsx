@@ -1,43 +1,109 @@
 import { Head, Link } from '@inertiajs/react';
 import { useState } from 'react';
 import MainLayout from '@/Layouts/MainLayout';
-import FileCard from '@/Components/Public/FileCard';
-import Sidebar from '@/Components/Public/Sidebar';
-import SearchFilters from '@/Components/Public/SearchFilters';
-import { getCategoryBySlug, getSubcategoryBySlug } from '@/data/categories';
 
 export default function FilesIndex({ categorySlug, subcategorySlug, elementSlug, files = [] }) {
     const [viewMode, setViewMode] = useState('grid');
+    const [sortBy, setSortBy] = useState('recent');
 
-    const category = getCategoryBySlug(categorySlug);
-    const subcategory = getSubcategoryBySlug(categorySlug, subcategorySlug);
-    const element = subcategory?.elements.find(el => el.slug === elementSlug);
+    // Mock data structure: types > categories > subcategories
+    const typesData = {
+        '3d': {
+            name: '3D',
+            categories: {
+                'mecanica': {
+                    name: 'Mecánica',
+                    subcategories: {
+                        'elementos-de-maquinas': { name: 'ELEMENTOS DE MÁQUINAS', count: 44 },
+                        'estructuras-metalicas': { name: 'ESTRUCTURAS METÁLICAS', count: 15 },
+                        'instalaciones-mep': { name: 'INSTALACIONES MEP', count: 12 },
+                        'mecanismos-y-maquinas': { name: 'MECANISMOS Y MÁQUINAS', count: 22 },
+                    }
+                },
+                'arquitectura': {
+                    name: 'Arquitectura',
+                    subcategories: {
+                        'vivienda': { name: 'VIVIENDA', count: 124 },
+                        'mobiliario': { name: 'MOBILIARIO', count: 51 },
+                        'paisajismo': { name: 'PAISAJISMO', count: 221 },
+                    }
+                }
+            }
+        },
+        'planos': {
+            name: 'Planos',
+            categories: {
+                'mecanica': {
+                    name: 'Mecánica',
+                    subcategories: {
+                        'general': { name: 'General', count: 10 },
+                    }
+                },
+                'arquitectura': {
+                    name: 'Arquitectura',
+                    subcategories: {
+                        'general': { name: 'General', count: 35 },
+                    }
+                }
+            }
+        }
+    };
+
+    const type = typesData[categorySlug];
+    const category = type?.categories[subcategorySlug];
+    const subcategory = category?.subcategories[elementSlug];
 
     const is3D = categorySlug === '3d';
 
-    // Mock files based on the element
-    const mockFiles = element ? Array.from({ length: element.count > 12 ? 12 : element.count }, (_, i) => ({
-        id: i + 1,
-        title: `${element.name} - Modelo ${i + 1}`,
-        slug: `${elementSlug}-modelo-${i + 1}`,
-        category: `${category?.name} / ${subcategory?.name}`,
-        format: ['STEP', 'STL', 'DWG', 'OBJ', 'FBX'][Math.floor(Math.random() * 5)],
-        downloads: Math.floor(Math.random() * 500) + 10,
-        likes: Math.floor(Math.random() * 100) + 5,
-        author: ['Juan', 'Maria', 'Pedro', 'Ana', 'Carlos'][Math.floor(Math.random() * 5)],
-    })) : [];
+    // Generate mock files
+    const generateMockFiles = (count, subcatName) => {
+        const formats = ['STEP', 'STL', 'DWG', 'OBJ', 'FBX', 'IGES', 'BLEND'];
+        const authors = ['Carlos M.', 'Ana G.', 'Pedro S.', 'María L.', 'Juan R.', 'Sofia T.'];
+        const adjectives = ['Industrial', 'Profesional', 'Técnico', 'Completo', 'Detallado', 'Parametrico'];
 
+        return Array.from({ length: Math.min(count, 12) }, (_, i) => ({
+            id: i + 1,
+            title: `${subcatName} - ${adjectives[i % adjectives.length]} ${i + 1}`,
+            slug: `${elementSlug}-modelo-${i + 1}`,
+            description: 'Modelo 3D de alta calidad, listo para usar en proyectos profesionales.',
+            format: formats[Math.floor(Math.random() * formats.length)],
+            fileSize: `${(Math.random() * 50 + 1).toFixed(1)} MB`,
+            downloads: Math.floor(Math.random() * 500) + 50,
+            likes: Math.floor(Math.random() * 100) + 10,
+            views: Math.floor(Math.random() * 2000) + 100,
+            author: authors[Math.floor(Math.random() * authors.length)],
+            date: `${Math.floor(Math.random() * 28) + 1} Ene 2024`,
+            isFeatured: i < 2,
+            thumbnail: null,
+        }));
+    };
+
+    const mockFiles = subcategory ? generateMockFiles(subcategory.count, subcategory.name) : [];
     const displayFiles = files.length > 0 ? files : mockFiles;
 
-    if (!category || !subcategory || !element) {
+    if (!type || !category || !subcategory) {
         return (
             <MainLayout>
                 <Head title="Archivos no encontrados" />
-                <div className="container mx-auto px-4 py-20 text-center">
-                    <h1 className="text-2xl font-bold text-gray-900">Sección no encontrada</h1>
-                    <Link href="/" className="mt-4 inline-block text-yellow-600 hover:text-yellow-700">
-                        Volver al inicio
-                    </Link>
+                <div className="min-h-[60vh] flex items-center justify-center">
+                    <div className="text-center">
+                        <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <h1 className="text-2xl font-bold text-gray-900 mb-2">Sección no encontrada</h1>
+                        <p className="text-gray-500 mb-6">La categoría que buscas no existe o fue movida.</p>
+                        <Link
+                            href="/"
+                            className="inline-flex items-center gap-2 bg-yellow-400 hover:bg-yellow-300 text-zinc-900 px-6 py-3 rounded-lg font-semibold transition-colors"
+                        >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Volver al inicio
+                        </Link>
+                    </div>
                 </div>
             </MainLayout>
         );
@@ -45,177 +111,354 @@ export default function FilesIndex({ categorySlug, subcategorySlug, elementSlug,
 
     return (
         <MainLayout>
-            <Head title={`${element.name} - ${subcategory.name} - ${category.name}`} />
+            <Head title={`${subcategory.name} - ${category.name} - ${type.name}`} />
 
-            {/* Page Header */}
-            <div className={`${is3D ? 'bg-zinc-900' : 'bg-blue-900'} text-white py-12`}>
+            {/* Hero Header */}
+            <div className={`${is3D ? 'bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900' : 'bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900'} text-white py-12`}>
                 <div className="container mx-auto px-4">
                     {/* Breadcrumb */}
-                    <nav className="flex items-center gap-2 text-sm mb-4">
-                        <Link href="/" className="text-gray-400 hover:text-white transition-colors">Inicio</Link>
-                        <span className="text-gray-600">/</span>
+                    <nav className="flex items-center gap-2 text-sm mb-6">
+                        <Link href="/" className="text-gray-400 hover:text-white transition-colors">
+                            Inicio
+                        </Link>
+                        <ChevronIcon className="w-4 h-4 text-gray-600" />
                         <Link href={`/${categorySlug}`} className="text-gray-400 hover:text-white transition-colors">
+                            {type.name}
+                        </Link>
+                        <ChevronIcon className="w-4 h-4 text-gray-600" />
+                        <Link href={`/${categorySlug}/${subcategorySlug}`} className="text-gray-400 hover:text-white transition-colors">
                             {category.name}
                         </Link>
-                        <span className="text-gray-600">/</span>
-                        <Link href={`/${categorySlug}/${subcategorySlug}`} className="text-gray-400 hover:text-white transition-colors">
-                            {subcategory.name}
-                        </Link>
-                        <span className="text-gray-600">/</span>
-                        <span className={is3D ? 'text-yellow-400' : 'text-blue-300'}>{element.name}</span>
+                        <ChevronIcon className="w-4 h-4 text-gray-600" />
+                        <span className={is3D ? 'text-yellow-400' : 'text-blue-300'}>{subcategory.name}</span>
                     </nav>
 
-                    <div className="flex items-center gap-4">
-                        <div className={`w-14 h-14 rounded-xl flex items-center justify-center ${
-                            is3D ? 'bg-yellow-400' : 'bg-blue-400'
-                        }`}>
-                            <svg className={`w-7 h-7 ${is3D ? 'text-zinc-900' : 'text-white'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
-                            </svg>
-                        </div>
-                        <div>
-                            <div className="flex items-center gap-2 mb-1">
-                                <span className={`text-xs px-2 py-0.5 rounded ${
-                                    is3D ? 'bg-yellow-400/20 text-yellow-400' : 'bg-blue-400/20 text-blue-300'
-                                }`}>
-                                    {category.name}
-                                </span>
-                                <span className="text-gray-500">/</span>
-                                <span className="text-xs text-gray-400">{subcategory.name}</span>
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+                        <div className="flex items-center gap-4">
+                            <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${
+                                is3D ? 'bg-yellow-400' : 'bg-blue-400'
+                            }`}>
+                                <CubeIcon className={`w-8 h-8 ${is3D ? 'text-zinc-900' : 'text-white'}`} />
                             </div>
-                            <h1 className="text-2xl md:text-3xl font-bold">{element.name}</h1>
-                            <p className="text-gray-400 mt-1">{element.count} archivos disponibles</p>
+                            <div>
+                                <div className="flex items-center gap-3 mb-1">
+                                    <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
+                                        is3D ? 'bg-yellow-400/20 text-yellow-400' : 'bg-blue-400/20 text-blue-300'
+                                    }`}>
+                                        {type.name}
+                                    </span>
+                                    <span className="text-xs text-gray-500">•</span>
+                                    <span className="text-xs text-gray-400">{category.name}</span>
+                                </div>
+                                <h1 className="text-3xl md:text-4xl font-bold">{subcategory.name}</h1>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-6 text-sm">
+                            <div className="text-center">
+                                <p className="text-2xl font-bold">{subcategory.count}</p>
+                                <p className="text-gray-400">Archivos</p>
+                            </div>
+                            <div className="w-px h-10 bg-gray-700"></div>
+                            <div className="text-center">
+                                <p className="text-2xl font-bold">{Math.floor(subcategory.count * 15)}</p>
+                                <p className="text-gray-400">Descargas</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
+            {/* Content */}
             <div className="container mx-auto px-4 py-8">
-                <div className="flex flex-col lg:flex-row gap-8">
-                    {/* Main Content */}
-                    <div className="flex-1">
-                        {/* Filters */}
-                        <SearchFilters />
-
-                        {/* Results Header */}
-                        <div className="flex items-center justify-between mb-6">
+                {/* Filters Bar */}
+                <div className="bg-white rounded-xl shadow-sm p-4 mb-6">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div className="flex items-center gap-4">
                             <p className="text-gray-600">
-                                Mostrando <span className="font-semibold text-gray-900">{displayFiles.length}</span> de{' '}
-                                <span className="font-semibold text-gray-900">{element.count}</span> archivos
+                                <span className="font-semibold text-gray-900">{displayFiles.length}</span> de{' '}
+                                <span className="font-semibold text-gray-900">{subcategory.count}</span> archivos
                             </p>
-                            <div className="flex items-center gap-2">
+                        </div>
+                        <div className="flex items-center gap-4">
+                            {/* Sort */}
+                            <select
+                                value={sortBy}
+                                onChange={(e) => setSortBy(e.target.value)}
+                                className="border border-gray-300 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+                            >
+                                <option value="recent">Más recientes</option>
+                                <option value="popular">Más populares</option>
+                                <option value="downloads">Más descargados</option>
+                                <option value="name">Nombre A-Z</option>
+                            </select>
+
+                            {/* View Toggle */}
+                            <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
                                 <button
                                     onClick={() => setViewMode('grid')}
-                                    className={`p-2 rounded-lg transition-colors ${
+                                    className={`p-2 rounded-md transition-colors ${
                                         viewMode === 'grid'
-                                            ? is3D ? 'bg-yellow-100 text-yellow-700' : 'bg-blue-100 text-blue-700'
-                                            : 'text-gray-400 hover:text-gray-600'
+                                            ? 'bg-white shadow-sm text-gray-900'
+                                            : 'text-gray-500 hover:text-gray-700'
                                     }`}
                                 >
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                                    </svg>
+                                    <GridIcon className="w-5 h-5" />
                                 </button>
                                 <button
                                     onClick={() => setViewMode('list')}
-                                    className={`p-2 rounded-lg transition-colors ${
+                                    className={`p-2 rounded-md transition-colors ${
                                         viewMode === 'list'
-                                            ? is3D ? 'bg-yellow-100 text-yellow-700' : 'bg-blue-100 text-blue-700'
-                                            : 'text-gray-400 hover:text-gray-600'
+                                            ? 'bg-white shadow-sm text-gray-900'
+                                            : 'text-gray-500 hover:text-gray-700'
                                     }`}
                                 >
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-                                    </svg>
+                                    <ListIcon className="w-5 h-5" />
                                 </button>
                             </div>
                         </div>
-
-                        {/* Files Grid/List */}
-                        {viewMode === 'grid' ? (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                                {displayFiles.map((file) => (
-                                    <FileCard key={file.id} file={file} />
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="space-y-4">
-                                {displayFiles.map((file) => (
-                                    <Link
-                                        key={file.id}
-                                        href={`/file/${file.slug}`}
-                                        className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-4 flex gap-4"
-                                    >
-                                        <div className="w-32 h-24 bg-gray-100 rounded-lg flex-shrink-0 flex items-center justify-center">
-                                            <svg className="w-10 h-10 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                                            </svg>
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <div className="flex items-start justify-between gap-4">
-                                                <div>
-                                                    <h3 className={`font-semibold text-gray-900 hover:${is3D ? 'text-yellow-600' : 'text-blue-600'} transition-colors`}>
-                                                        {file.title}
-                                                    </h3>
-                                                    <p className="text-sm text-gray-500 mt-1">{file.category}</p>
-                                                </div>
-                                                <span className={`${is3D ? 'bg-yellow-400' : 'bg-blue-500'} text-${is3D ? 'zinc-900' : 'white'} text-xs font-bold px-2 py-1 rounded flex-shrink-0`}>
-                                                    {file.format}
-                                                </span>
-                                            </div>
-                                            <div className="flex items-center gap-4 mt-3 text-sm text-gray-400">
-                                                <span className="flex items-center gap-1">
-                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                                                    </svg>
-                                                    {file.downloads}
-                                                </span>
-                                                <span className="flex items-center gap-1">
-                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                                                    </svg>
-                                                    {file.likes}
-                                                </span>
-                                                <span>por {file.author}</span>
-                                            </div>
-                                        </div>
-                                    </Link>
-                                ))}
-                            </div>
-                        )}
-
-                        {/* Pagination */}
-                        {element.count > 12 && (
-                            <div className="mt-8 flex justify-center">
-                                <nav className="flex items-center gap-1">
-                                    <button className="px-3 py-2 text-gray-400 hover:text-gray-600 transition-colors">
-                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                                        </svg>
-                                    </button>
-                                    <button className={`px-4 py-2 ${is3D ? 'bg-yellow-400 text-zinc-900' : 'bg-blue-500 text-white'} rounded-lg font-semibold`}>1</button>
-                                    <button className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">2</button>
-                                    <button className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">3</button>
-                                    <span className="px-2 text-gray-400">...</span>
-                                    <button className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
-                                        {Math.ceil(element.count / 12)}
-                                    </button>
-                                    <button className="px-3 py-2 text-gray-600 hover:text-gray-900 transition-colors">
-                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                        </svg>
-                                    </button>
-                                </nav>
-                            </div>
-                        )}
                     </div>
+                </div>
 
-                    {/* Sidebar */}
-                    <div className="w-full lg:w-80 flex-shrink-0">
-                        <Sidebar />
+                {/* Files Grid */}
+                {viewMode === 'grid' ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        {displayFiles.map((file) => (
+                            <Link
+                                key={file.id}
+                                href={`/file/${file.slug}`}
+                                className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden"
+                            >
+                                {/* Thumbnail */}
+                                <div className="aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-50 relative overflow-hidden">
+                                    <div className="absolute inset-0 flex items-center justify-center">
+                                        <CubeIcon className="w-20 h-20 text-gray-200 group-hover:scale-110 transition-transform duration-300" />
+                                    </div>
+                                    {/* Badges */}
+                                    <div className="absolute top-3 left-3 flex gap-2">
+                                        {file.isFeatured && (
+                                            <span className="px-2 py-1 bg-yellow-400 text-zinc-900 text-xs font-bold rounded-md">
+                                                Destacado
+                                            </span>
+                                        )}
+                                        <span className={`px-2 py-1 text-xs font-bold rounded-md ${
+                                            is3D ? 'bg-zinc-900 text-white' : 'bg-blue-600 text-white'
+                                        }`}>
+                                            {file.format}
+                                        </span>
+                                    </div>
+                                    {/* Quick Actions */}
+                                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                                        <button className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-gray-700 hover:text-yellow-500 transition-colors">
+                                            <HeartIcon className="w-5 h-5" />
+                                        </button>
+                                        <button className={`w-12 h-12 rounded-full flex items-center justify-center text-white transition-colors ${
+                                            is3D ? 'bg-yellow-400 hover:bg-yellow-300 text-zinc-900' : 'bg-blue-500 hover:bg-blue-400'
+                                        }`}>
+                                            <DownloadIcon className="w-6 h-6" />
+                                        </button>
+                                        <button className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-gray-700 hover:text-blue-500 transition-colors">
+                                            <EyeIcon className="w-5 h-5" />
+                                        </button>
+                                    </div>
+                                </div>
+                                {/* Info */}
+                                <div className="p-4">
+                                    <h3 className="font-semibold text-gray-900 truncate group-hover:text-yellow-600 transition-colors">
+                                        {file.title}
+                                    </h3>
+                                    <p className="text-sm text-gray-500 mt-1">por {file.author}</p>
+                                    <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
+                                        <div className="flex items-center gap-3 text-sm text-gray-400">
+                                            <span className="flex items-center gap-1">
+                                                <DownloadIcon className="w-4 h-4" />
+                                                {file.downloads}
+                                            </span>
+                                            <span className="flex items-center gap-1">
+                                                <HeartIcon className="w-4 h-4" />
+                                                {file.likes}
+                                            </span>
+                                        </div>
+                                        <span className="text-xs text-gray-400">{file.fileSize}</span>
+                                    </div>
+                                </div>
+                            </Link>
+                        ))}
+                    </div>
+                ) : (
+                    /* List View */
+                    <div className="space-y-4">
+                        {displayFiles.map((file) => (
+                            <Link
+                                key={file.id}
+                                href={`/file/${file.slug}`}
+                                className="group bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-4 flex gap-4"
+                            >
+                                {/* Thumbnail */}
+                                <div className="w-40 h-28 bg-gradient-to-br from-gray-100 to-gray-50 rounded-lg flex-shrink-0 flex items-center justify-center relative overflow-hidden">
+                                    <CubeIcon className="w-12 h-12 text-gray-200" />
+                                    {file.isFeatured && (
+                                        <span className="absolute top-2 left-2 px-1.5 py-0.5 bg-yellow-400 text-zinc-900 text-xs font-bold rounded">
+                                            Destacado
+                                        </span>
+                                    )}
+                                </div>
+                                {/* Content */}
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-start justify-between gap-4">
+                                        <div className="min-w-0">
+                                            <h3 className="font-semibold text-gray-900 truncate group-hover:text-yellow-600 transition-colors">
+                                                {file.title}
+                                            </h3>
+                                            <p className="text-sm text-gray-500 mt-1 line-clamp-2">{file.description}</p>
+                                        </div>
+                                        <span className={`px-3 py-1 text-sm font-bold rounded-lg flex-shrink-0 ${
+                                            is3D ? 'bg-zinc-900 text-white' : 'bg-blue-600 text-white'
+                                        }`}>
+                                            {file.format}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center gap-6 mt-4 text-sm text-gray-500">
+                                        <span>por <strong className="text-gray-700">{file.author}</strong></span>
+                                        <span className="flex items-center gap-1">
+                                            <DownloadIcon className="w-4 h-4" />
+                                            {file.downloads} descargas
+                                        </span>
+                                        <span className="flex items-center gap-1">
+                                            <HeartIcon className="w-4 h-4" />
+                                            {file.likes}
+                                        </span>
+                                        <span>{file.fileSize}</span>
+                                        <span className="text-gray-400">{file.date}</span>
+                                    </div>
+                                </div>
+                            </Link>
+                        ))}
+                    </div>
+                )}
+
+                {/* Pagination */}
+                {subcategory.count > 12 && (
+                    <div className="mt-10 flex justify-center">
+                        <nav className="flex items-center gap-1">
+                            <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-lg hover:bg-gray-100">
+                                <ChevronLeftIcon className="w-5 h-5" />
+                            </button>
+                            <button className={`w-10 h-10 rounded-lg font-semibold ${
+                                is3D ? 'bg-yellow-400 text-zinc-900' : 'bg-blue-500 text-white'
+                            }`}>
+                                1
+                            </button>
+                            <button className="w-10 h-10 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">2</button>
+                            <button className="w-10 h-10 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">3</button>
+                            <span className="px-2 text-gray-400">...</span>
+                            <button className="w-10 h-10 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+                                {Math.ceil(subcategory.count / 12)}
+                            </button>
+                            <button className="p-2 text-gray-600 hover:text-gray-900 transition-colors rounded-lg hover:bg-gray-100">
+                                <ChevronRightIcon className="w-5 h-5" />
+                            </button>
+                        </nav>
+                    </div>
+                )}
+
+                {/* Related Categories */}
+                <div className="mt-12">
+                    <h2 className="text-xl font-bold text-gray-900 mb-6">Otras subcategorías en {category.name}</h2>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        {Object.entries(category.subcategories)
+                            .filter(([slug]) => slug !== elementSlug)
+                            .slice(0, 4)
+                            .map(([slug, subcat]) => (
+                                <Link
+                                    key={slug}
+                                    href={`/${categorySlug}/${subcategorySlug}/${slug}`}
+                                    className={`p-4 rounded-xl border-2 transition-colors ${
+                                        is3D
+                                            ? 'border-gray-200 hover:border-yellow-400 hover:bg-yellow-50'
+                                            : 'border-gray-200 hover:border-blue-400 hover:bg-blue-50'
+                                    }`}
+                                >
+                                    <h3 className="font-medium text-gray-900">{subcat.name}</h3>
+                                    <p className="text-sm text-gray-500 mt-1">{subcat.count} archivos</p>
+                                </Link>
+                            ))}
                     </div>
                 </div>
             </div>
         </MainLayout>
+    );
+}
+
+// Icons
+function ChevronIcon({ className }) {
+    return (
+        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+        </svg>
+    );
+}
+
+function CubeIcon({ className }) {
+    return (
+        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+        </svg>
+    );
+}
+
+function GridIcon({ className }) {
+    return (
+        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+        </svg>
+    );
+}
+
+function ListIcon({ className }) {
+    return (
+        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+        </svg>
+    );
+}
+
+function DownloadIcon({ className }) {
+    return (
+        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+        </svg>
+    );
+}
+
+function HeartIcon({ className }) {
+    return (
+        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+        </svg>
+    );
+}
+
+function EyeIcon({ className }) {
+    return (
+        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+        </svg>
+    );
+}
+
+function ChevronLeftIcon({ className }) {
+    return (
+        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
+    );
+}
+
+function ChevronRightIcon({ className }) {
+    return (
+        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+        </svg>
     );
 }

@@ -53,7 +53,7 @@ Route::get('/file/{slug}', function ($slug) {
     ]);
 })->name('file.show');
 
-// Upload
+// Upload (con datos mock para visual)
 Route::get('/upload', function () {
     return Inertia::render('Upload');
 })->name('upload');
@@ -62,6 +62,91 @@ Route::get('/upload', function () {
 Route::get('/about', function () {
     return Inertia::render('About');
 })->name('about');
+
+/*
+|--------------------------------------------------------------------------
+| Admin Routes (Visual Testing)
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    // Dashboard
+    Route::get('/', function () {
+        return Inertia::render('Admin/Dashboard');
+    })->name('dashboard');
+
+    // Files
+    Route::get('/files', function () {
+        return Inertia::render('Admin/Files/Index');
+    })->name('files.index');
+
+    Route::get('/files/upload', function () {
+        return Inertia::render('Admin/Files/Upload');
+    })->name('files.upload');
+
+    Route::get('/files/{id}/edit', function ($id) {
+        // Mock data para edición
+        $file = [
+            'id' => $id,
+            'title' => 'Sistema de Ventilación HVAC',
+            'slug' => 'sistema-ventilacion-hvac',
+            'description' => 'Sistema completo de ventilación HVAC para edificios comerciales.',
+            'type_id' => 1,
+            'category_id' => 1,
+            'subcategory_id' => 3,
+            'tags' => 'hvac, ventilación, aire acondicionado',
+            'license' => 'free',
+            'is_featured' => true,
+            'is_active' => true,
+        ];
+        return Inertia::render('Admin/Files/Upload', ['file' => $file]);
+    })->name('files.edit');
+
+    // Types
+    Route::get('/types', function () {
+        return Inertia::render('Admin/Types/Index');
+    })->name('types.index');
+
+    Route::get('/types/create', function () {
+        return Inertia::render('Admin/Types/Form');
+    })->name('types.create');
+
+    Route::get('/types/{id}/edit', function ($id) {
+        // Mock data para edición
+        $type = ['id' => $id, 'name' => '3D', 'slug' => '3d', 'is_active' => true, 'sort_order' => 1];
+        return Inertia::render('Admin/Types/Form', ['type' => $type]);
+    })->name('types.edit');
+
+    // Categories
+    Route::get('/categories', function () {
+        return Inertia::render('Admin/Categories/Index');
+    })->name('categories.index');
+
+    Route::get('/categories/create', function () {
+        return Inertia::render('Admin/Categories/Form');
+    })->name('categories.create');
+
+    Route::get('/categories/{id}/edit', function ($id) {
+        // Mock data para edición
+        $category = ['id' => $id, 'type_id' => 1, 'name' => 'Mecánica', 'slug' => 'mecanica', 'is_active' => true, 'sort_order' => 1];
+        return Inertia::render('Admin/Categories/Form', ['category' => $category]);
+    })->name('categories.edit');
+
+    // Subcategories
+    Route::get('/subcategories', function () {
+        return Inertia::render('Admin/Subcategories/Index');
+    })->name('subcategories.index');
+
+    Route::get('/subcategories/create', function () {
+        return Inertia::render('Admin/Subcategories/Form');
+    })->name('subcategories.create');
+
+    Route::get('/subcategories/{id}/edit', function ($id) {
+        // Mock data para edición
+        $subcategory = ['id' => $id, 'category_id' => 1, 'name' => 'ELEMENTOS DE MÁQUINAS', 'slug' => 'elementos-de-maquinas', 'is_active' => true, 'sort_order' => 1];
+        return Inertia::render('Admin/Subcategories/Form', ['subcategory' => $subcategory]);
+    })->name('subcategories.edit');
+});
 
 /*
 |--------------------------------------------------------------------------

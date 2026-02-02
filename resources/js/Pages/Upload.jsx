@@ -1,30 +1,77 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import { useState } from 'react';
 import MainLayout from '@/Layouts/MainLayout';
 import UploadZone from '@/Components/Public/UploadZone';
+import CascadeSelect from '@/Components/CascadeSelect';
 
-export default function Upload() {
+export default function Upload({ types = [] }) {
     const [step, setStep] = useState(1);
     const [files, setFiles] = useState([]);
-    const [formData, setFormData] = useState({
+
+    // Mock data for visual if no types provided
+    const mockTypes = types.length > 0 ? types : [
+        {
+            id: 1,
+            name: '3D',
+            slug: '3d',
+            categories: [
+                {
+                    id: 1,
+                    name: 'Mecánica',
+                    slug: 'mecanica',
+                    subcategories: [
+                        { id: 1, name: 'ELEMENTOS DE MÁQUINAS', slug: 'elementos-de-maquinas' },
+                        { id: 2, name: 'ESTRUCTURAS METÁLICAS', slug: 'estructuras-metalicas' },
+                        { id: 3, name: 'INSTALACIONES MEP', slug: 'instalaciones-mep' },
+                        { id: 4, name: 'MECANISMOS Y MÁQUINAS', slug: 'mecanismos-y-maquinas' },
+                    ],
+                },
+                {
+                    id: 2,
+                    name: 'Arquitectura',
+                    slug: 'arquitectura',
+                    subcategories: [
+                        { id: 5, name: 'VIVIENDA', slug: 'vivienda' },
+                        { id: 6, name: 'MOBILIARIO', slug: 'mobiliario' },
+                        { id: 7, name: 'PAISAJISMO', slug: 'paisajismo' },
+                    ],
+                },
+            ],
+        },
+        {
+            id: 2,
+            name: 'Planos',
+            slug: 'planos',
+            categories: [
+                {
+                    id: 3,
+                    name: 'Mecánica',
+                    slug: 'mecanica',
+                    subcategories: [
+                        { id: 8, name: 'General', slug: 'general' },
+                    ],
+                },
+                {
+                    id: 4,
+                    name: 'Arquitectura',
+                    slug: 'arquitectura',
+                    subcategories: [
+                        { id: 9, name: 'General', slug: 'general' },
+                    ],
+                },
+            ],
+        },
+    ];
+
+    const { data, setData, post, processing, errors, reset } = useForm({
         title: '',
         description: '',
-        category: '',
+        type_id: '',
+        category_id: '',
+        subcategory_id: '',
         tags: '',
         license: 'free',
     });
-
-    const categories = [
-        { value: '', label: 'Selecciona una categoria' },
-        { value: 'mecanico', label: 'Mecanico' },
-        { value: 'arquitectura', label: 'Arquitectura' },
-        { value: 'electronica', label: 'Electronica' },
-        { value: 'automotriz', label: 'Automotriz' },
-        { value: 'industrial', label: 'Industrial' },
-        { value: 'aeroespacial', label: 'Aeroespacial' },
-        { value: 'medico', label: 'Medico' },
-        { value: 'arte-diseno', label: 'Arte y Diseno' },
-    ];
 
     const handleFilesSelected = (selectedFiles) => {
         setFiles(selectedFiles);
@@ -33,15 +80,12 @@ export default function Upload() {
         }
     };
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
-    };
-
     const handleSubmit = (e) => {
         e.preventDefault();
-        setStep(3);
-        // Here you would submit to the server
+        // post('/upload', {
+        //     onSuccess: () => setStep(3),
+        // });
+        setStep(3); // Mock success for visual
     };
 
     return (
@@ -147,13 +191,17 @@ export default function Upload() {
                                     </label>
                                     <input
                                         type="text"
-                                        name="title"
-                                        value={formData.title}
-                                        onChange={handleInputChange}
+                                        value={data.title}
+                                        onChange={(e) => setData('title', e.target.value)}
                                         placeholder="Ej: Motor V8 de Alto Rendimiento"
-                                        className="w-full border border-gray-300 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+                                        className={`w-full border rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent ${
+                                            errors.title ? 'border-red-500' : 'border-gray-300'
+                                        }`}
                                         required
                                     />
+                                    {errors.title && (
+                                        <p className="mt-1 text-sm text-red-500">{errors.title}</p>
+                                    )}
                                 </div>
 
                                 {/* Description */}
@@ -162,32 +210,29 @@ export default function Upload() {
                                         Descripcion *
                                     </label>
                                     <textarea
-                                        name="description"
-                                        value={formData.description}
-                                        onChange={handleInputChange}
+                                        value={data.description}
+                                        onChange={(e) => setData('description', e.target.value)}
                                         rows={4}
                                         placeholder="Describe tu modelo 3D, incluye detalles como materiales, dimensiones, uso recomendado..."
-                                        className="w-full border border-gray-300 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent resize-none"
+                                        className={`w-full border rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent resize-none ${
+                                            errors.description ? 'border-red-500' : 'border-gray-300'
+                                        }`}
                                         required
                                     />
+                                    {errors.description && (
+                                        <p className="mt-1 text-sm text-red-500">{errors.description}</p>
+                                    )}
                                 </div>
 
-                                {/* Category */}
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Categoria *
-                                    </label>
-                                    <select
-                                        name="category"
-                                        value={formData.category}
-                                        onChange={handleInputChange}
-                                        className="w-full border border-gray-300 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                                        required
-                                    >
-                                        {categories.map((cat) => (
-                                            <option key={cat.value} value={cat.value}>{cat.label}</option>
-                                        ))}
-                                    </select>
+                                {/* Cascade Select: Tipo > Categoría > Subcategoría */}
+                                <div className="p-4 bg-gray-50 rounded-lg">
+                                    <h3 className="text-sm font-medium text-gray-900 mb-4">Clasificacion *</h3>
+                                    <CascadeSelect
+                                        types={mockTypes}
+                                        data={data}
+                                        setData={setData}
+                                        errors={errors}
+                                    />
                                 </div>
 
                                 {/* Tags */}
@@ -197,9 +242,8 @@ export default function Upload() {
                                     </label>
                                     <input
                                         type="text"
-                                        name="tags"
-                                        value={formData.tags}
-                                        onChange={handleInputChange}
+                                        value={data.tags}
+                                        onChange={(e) => setData('tags', e.target.value)}
                                         placeholder="Ej: motor, automotriz, renderizado (separadas por coma)"
                                         className="w-full border border-gray-300 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
                                     />
@@ -213,7 +257,7 @@ export default function Upload() {
                                     </label>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                         <label className={`flex items-center gap-3 p-4 border rounded-lg cursor-pointer transition-colors ${
-                                            formData.license === 'free'
+                                            data.license === 'free'
                                                 ? 'border-yellow-400 bg-yellow-50'
                                                 : 'border-gray-200 hover:border-gray-300'
                                         }`}>
@@ -221,8 +265,8 @@ export default function Upload() {
                                                 type="radio"
                                                 name="license"
                                                 value="free"
-                                                checked={formData.license === 'free'}
-                                                onChange={handleInputChange}
+                                                checked={data.license === 'free'}
+                                                onChange={(e) => setData('license', e.target.value)}
                                                 className="text-yellow-400 focus:ring-yellow-400"
                                             />
                                             <div>
@@ -231,7 +275,7 @@ export default function Upload() {
                                             </div>
                                         </label>
                                         <label className={`flex items-center gap-3 p-4 border rounded-lg cursor-pointer transition-colors ${
-                                            formData.license === 'attribution'
+                                            data.license === 'attribution'
                                                 ? 'border-yellow-400 bg-yellow-50'
                                                 : 'border-gray-200 hover:border-gray-300'
                                         }`}>
@@ -239,8 +283,8 @@ export default function Upload() {
                                                 type="radio"
                                                 name="license"
                                                 value="attribution"
-                                                checked={formData.license === 'attribution'}
-                                                onChange={handleInputChange}
+                                                checked={data.license === 'attribution'}
+                                                onChange={(e) => setData('license', e.target.value)}
                                                 className="text-yellow-400 focus:ring-yellow-400"
                                             />
                                             <div>
@@ -263,9 +307,10 @@ export default function Upload() {
                                 </button>
                                 <button
                                     type="submit"
-                                    className="bg-yellow-400 hover:bg-yellow-300 text-zinc-900 px-8 py-3 rounded-lg font-bold transition-colors"
+                                    disabled={processing}
+                                    className="bg-yellow-400 hover:bg-yellow-300 text-zinc-900 px-8 py-3 rounded-lg font-bold transition-colors disabled:opacity-50"
                                 >
-                                    Publicar Archivo
+                                    {processing ? 'Publicando...' : 'Publicar Archivo'}
                                 </button>
                             </div>
                         </form>
@@ -294,13 +339,7 @@ export default function Upload() {
                                     onClick={() => {
                                         setStep(1);
                                         setFiles([]);
-                                        setFormData({
-                                            title: '',
-                                            description: '',
-                                            category: '',
-                                            tags: '',
-                                            license: 'free',
-                                        });
+                                        reset();
                                     }}
                                     className="inline-flex items-center justify-center gap-2 border border-gray-300 hover:border-gray-400 text-gray-700 px-6 py-3 rounded-lg font-medium transition-colors"
                                 >
