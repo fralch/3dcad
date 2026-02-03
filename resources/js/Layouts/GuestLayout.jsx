@@ -1,17 +1,68 @@
-import ApplicationLogo from '@/Components/ApplicationLogo';
 import { Link } from '@inertiajs/react';
 
 export default function GuestLayout({ children }) {
     return (
-        <div className="flex min-h-screen flex-col items-center bg-gray-100 pt-6 sm:justify-center sm:pt-0">
-            <div>
-                <Link href="/">
-                    <ApplicationLogo className="h-20 w-20 fill-current text-gray-500" />
-                </Link>
+        <div className="flex min-h-screen">
+            {/* Panel izquierdo - Branding */}
+            <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700 p-12 flex-col justify-between">
+                <div>
+                    <Link href="/" className="flex items-center gap-3">
+                        <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center">
+                            <svg className="w-8 h-8 text-primary-600" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                            </svg>
+                        </div>
+                        <span className="text-2xl font-bold text-white">3D CAD</span>
+                    </Link>
+                </div>
+
+                <div className="space-y-6">
+                    <h1 className="text-4xl font-bold text-white leading-tight">
+                        Tu biblioteca de archivos CAD y modelos 3D
+                    </h1>
+                    <p className="text-primary-100 text-lg">
+                        Accede a miles de archivos CAD, planos y modelos 3D para tus proyectos de ingeniería y arquitectura.
+                    </p>
+                    <div className="flex gap-8 pt-4">
+                        <div>
+                            <div className="text-3xl font-bold text-white">500+</div>
+                            <div className="text-primary-200 text-sm">Archivos CAD</div>
+                        </div>
+                        <div>
+                            <div className="text-3xl font-bold text-white">9</div>
+                            <div className="text-primary-200 text-sm">Categorías</div>
+                        </div>
+                        <div>
+                            <div className="text-3xl font-bold text-white">100%</div>
+                            <div className="text-primary-200 text-sm">Gratis</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="text-primary-200 text-sm">
+                    © 2024 3D CAD. Todos los derechos reservados.
+                </div>
             </div>
 
-            <div className="mt-6 w-full overflow-hidden bg-white px-6 py-4 shadow-md sm:max-w-md sm:rounded-lg">
-                {children}
+            {/* Panel derecho - Formulario */}
+            <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-50">
+                <div className="w-full max-w-md">
+                    {/* Logo móvil */}
+                    <div className="lg:hidden mb-8 text-center">
+                        <Link href="/" className="inline-flex items-center gap-3">
+                            <div className="w-10 h-10 bg-primary-500 rounded-xl flex items-center justify-center">
+                                <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                                </svg>
+                            </div>
+                            <span className="text-xl font-bold text-gray-900">3D CAD</span>
+                        </Link>
+                    </div>
+
+                    <div className="bg-white rounded-2xl shadow-xl p-8">
+                        {children}
+                    </div>
+                </div>
             </div>
         </div>
     );
