@@ -56,7 +56,7 @@ Route::get('/file/{slug}', function ($slug) {
 // Upload (con datos mock para visual)
 Route::get('/upload', function () {
     return Inertia::render('Upload');
-})->name('upload');
+})->middleware(['auth'])->name('upload');
 
 // About
 Route::get('/about', function () {
