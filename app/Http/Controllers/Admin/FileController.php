@@ -27,7 +27,7 @@ class FileController extends Controller
             ->paginate(20)
             ->withQueryString();
 
-        $types = Type::active()->ordered()->get();
+        $types = Type::with(['categories.subcategories'])->active()->ordered()->get();
 
         return Inertia::render('Admin/Files/Index', [
             'files' => $files,

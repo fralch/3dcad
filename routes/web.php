@@ -115,16 +115,16 @@ Route::get('/{typeSlug}/{categorySlug}/{subcategorySlug}', function ($typeSlug, 
 })->where(['typeSlug' => '3d|planos', 'categorySlug' => '[a-z-]+', 'subcategorySlug' => '[a-z-]+']);
 
 // Archivo individual
-Route::get('/file/{slug}', [FileController::class, 'show'])->name('file.show');
+Route::get('/files/{slug}', [FileController::class, 'show'])->name('file.show');
 
 // Descargar archivo
-Route::get('/file/{slug}/download', [FileController::class, 'download'])->name('file.download');
+Route::get('/files/{slug}/download', [FileController::class, 'download'])->name('file.download');
 
 // Upload (requiere autenticación)
 Route::middleware(['auth'])->group(function () {
     Route::get('/upload', [FileController::class, 'upload'])->name('upload');
     Route::post('/upload', [FileController::class, 'store'])->name('upload.store');
-    Route::post('/file/{file}/like', [FileController::class, 'like'])->name('file.like');
+    Route::post('/files/{file}/like', [FileController::class, 'like'])->name('file.like');
 });
 
 // About

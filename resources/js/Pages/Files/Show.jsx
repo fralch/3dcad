@@ -59,7 +59,7 @@ export default function FileShow({ file, relatedFiles = [] }) {
                         <span className="text-gray-400">/</span>
                         {file.type && (
                             <>
-                                <Link href={route(`${file.type.slug}.index`)} className="text-gray-500 hover:text-yellow-600 transition-colors">
+                                <Link href={route(file.type.slug === '2d' ? 'planos.index' : `${file.type.slug}.index`)} className="text-gray-500 hover:text-yellow-600 transition-colors">
                                     {file.type.name}
                                 </Link>
                                 <span className="text-gray-400">/</span>

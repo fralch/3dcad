@@ -2,87 +2,33 @@ import { Head, Link, router } from '@inertiajs/react';
 import { useState } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 
-export default function FilesIndex({ files = [], types = [] }) {
+export default function FilesIndex({ files = { data: [] }, types = [] }) {
     const [filterType, setFilterType] = useState('');
     const [filterCategory, setFilterCategory] = useState('');
     const [filterSubcategory, setFilterSubcategory] = useState('');
     const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'table'
 
-    // Mock data
-    const mockTypes = types.length > 0 ? types : [
-        {
-            id: 1,
-            name: '3D',
-            slug: '3d',
-            categories: [
-                {
-                    id: 1,
-                    name: 'Mecánica',
-                    slug: 'mecanica',
-                    subcategories: [
-                        { id: 1, name: 'ELEMENTOS DE MÁQUINAS', slug: 'elementos-de-maquinas' },
-                        { id: 2, name: 'ESTRUCTURAS METÁLICAS', slug: 'estructuras-metalicas' },
-                        { id: 3, name: 'INSTALACIONES MEP', slug: 'instalaciones-mep' },
-                        { id: 4, name: 'MECANISMOS Y MÁQUINAS', slug: 'mecanismos-y-maquinas' },
-                    ],
-                },
-                {
-                    id: 2,
-                    name: 'Arquitectura',
-                    slug: 'arquitectura',
-                    subcategories: [
-                        { id: 5, name: 'VIVIENDA', slug: 'vivienda' },
-                        { id: 6, name: 'MOBILIARIO', slug: 'mobiliario' },
-                        { id: 7, name: 'PAISAJISMO', slug: 'paisajismo' },
-                    ],
-                },
-            ],
-        },
-        {
-            id: 2,
-            name: 'Planos',
-            slug: 'planos',
-            categories: [
-                {
-                    id: 3,
-                    name: 'Mecánica',
-                    slug: 'mecanica',
-                    subcategories: [
-                        { id: 8, name: 'General', slug: 'general' },
-                    ],
-                },
-                {
-                    id: 4,
-                    name: 'Arquitectura',
-                    slug: 'arquitectura',
-                    subcategories: [
-                        { id: 9, name: 'General', slug: 'general' },
-                    ],
-                },
-            ],
-        },
-    ];
+    // Get files data (handle both paginated and array)
+    const filesData = Array.isArray(files) ? files : (files.data || []);
 
-    const mockFiles = files.length > 0 ? files : [
-        { id: 1, title: 'Sistema de Ventilación HVAC', slug: 'sistema-ventilacion-hvac', thumbnail: null, type: '3D', category: 'Mecánica', subcategory: 'INSTALACIONES MEP', downloads: 234, is_featured: true, is_active: true, created_at: '2024-01-15' },
-        { id: 2, title: 'Ductos de Aire Acondicionado', slug: 'ductos-aire-acondicionado', thumbnail: null, type: '3D', category: 'Mecánica', subcategory: 'INSTALACIONES MEP', downloads: 189, is_featured: false, is_active: true, created_at: '2024-01-14' },
-        { id: 3, title: 'Tubería de Gas Industrial', slug: 'tuberia-gas-industrial', thumbnail: null, type: '3D', category: 'Mecánica', subcategory: 'INSTALACIONES MEP', downloads: 156, is_featured: false, is_active: true, created_at: '2024-01-13' },
-        { id: 4, title: 'Sistema Contra Incendios', slug: 'sistema-contra-incendios', thumbnail: null, type: '3D', category: 'Mecánica', subcategory: 'INSTALACIONES MEP', downloads: 312, is_featured: true, is_active: true, created_at: '2024-01-12' },
-        { id: 5, title: 'Red de Agua Potable', slug: 'red-agua-potable', thumbnail: null, type: '3D', category: 'Mecánica', subcategory: 'INSTALACIONES MEP', downloads: 278, is_featured: false, is_active: false, created_at: '2024-01-11' },
-        { id: 6, title: 'Engranaje Helicoidal', slug: 'engranaje-helicoidal', thumbnail: null, type: '3D', category: 'Mecánica', subcategory: 'ELEMENTOS DE MÁQUINAS', downloads: 445, is_featured: true, is_active: true, created_at: '2024-01-10' },
-        { id: 7, title: 'Rodamiento SKF 6205', slug: 'rodamiento-skf-6205', thumbnail: null, type: '3D', category: 'Mecánica', subcategory: 'ELEMENTOS DE MÁQUINAS', downloads: 521, is_featured: false, is_active: true, created_at: '2024-01-09' },
-        { id: 8, title: 'Casa Moderna Minimalista', slug: 'casa-moderna-minimalista', thumbnail: null, type: '3D', category: 'Arquitectura', subcategory: 'VIVIENDA', downloads: 892, is_featured: true, is_active: true, created_at: '2024-01-08' },
-    ];
+    // Transform files to include type/category/subcategory names
+    const transformedFiles = filesData.map(file => ({
+        ...file,
+        type: file.type?.name || '',
+        category: file.category?.name || '',
+        subcategory: file.subcategory?.name || '',
+        thumbnail: file.thumbnail_path ? `/storage/${file.thumbnail_path}` : null,
+    }));
 
-    const selectedType = mockTypes.find(t => t.id === parseInt(filterType));
+    const selectedType = types.find(t => t.id === parseInt(filterType));
     const availableCategories = selectedType?.categories || [];
     const selectedCategory = availableCategories.find(c => c.id === parseInt(filterCategory));
     const availableSubcategories = selectedCategory?.subcategories || [];
 
-    // Filter files
-    let filteredFiles = mockFiles;
+    // Filter files locally for quick filtering (server already filters by type_id/category_id)
+    let filteredFiles = transformedFiles;
     if (filterType) {
-        const typeName = mockTypes.find(t => t.id === parseInt(filterType))?.name;
+        const typeName = types.find(t => t.id === parseInt(filterType))?.name;
         filteredFiles = filteredFiles.filter(f => f.type === typeName);
     }
     if (filterCategory) {
@@ -112,13 +58,21 @@ export default function FilesIndex({ files = [], types = [] }) {
     };
 
     const toggleFeatured = (id) => {
-        // router.patch(`/admin/files/${id}/toggle-featured`);
-        alert(`Toggle featured for file ${id}`);
+        router.post(`/admin/files/${id}/toggle-featured`, {}, {
+            preserveScroll: true,
+        });
     };
 
     const toggleActive = (id) => {
-        // router.patch(`/admin/files/${id}/toggle-active`);
-        alert(`Toggle active for file ${id}`);
+        router.post(`/admin/files/${id}/toggle-active`, {}, {
+            preserveScroll: true,
+        });
+    };
+
+    const formatDate = (dateString) => {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' });
     };
 
     return (
@@ -153,7 +107,7 @@ export default function FilesIndex({ files = [], types = [] }) {
                                 className="w-full border border-gray-300 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
                             >
                                 <option value="">Todos los tipos</option>
-                                {mockTypes.map((type) => (
+                                {types.map((type) => (
                                     <option key={type.id} value={type.id}>{type.name}</option>
                                 ))}
                             </select>
@@ -223,7 +177,7 @@ export default function FilesIndex({ files = [], types = [] }) {
                             <span className="text-gray-500">Filtros activos:</span>
                             {filterType && (
                                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                    {mockTypes.find(t => t.id === parseInt(filterType))?.name}
+                                    {types.find(t => t.id === parseInt(filterType))?.name}
                                 </span>
                             )}
                             {filterCategory && (
@@ -323,7 +277,7 @@ export default function FilesIndex({ files = [], types = [] }) {
                                         <DownloadIcon className="w-4 h-4" />
                                         {file.downloads}
                                     </span>
-                                    <span>{file.created_at}</span>
+                                    <span>{formatDate(file.created_at)}</span>
                                 </div>
                             </div>
                         </div>
@@ -396,7 +350,7 @@ export default function FilesIndex({ files = [], types = [] }) {
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 text-sm text-gray-500">
-                                        {file.created_at}
+                                        {formatDate(file.created_at)}
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex items-center justify-end gap-1">
