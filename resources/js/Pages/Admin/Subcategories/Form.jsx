@@ -2,7 +2,7 @@ import { Head, Link, useForm } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 
-export default function SubcategoriesForm({ subcategory = null, types = [] }) {
+export default function SubcategoriesForm({ subcategory = null, types = [], categories = [] }) {
     const isEditing = !!subcategory;
 
     // Mock types for visual
@@ -29,20 +29,17 @@ export default function SubcategoriesForm({ subcategory = null, types = [] }) {
 
     // Find type_id from category
     const getTypeIdFromCategory = (categoryId) => {
-        for (const type of mockTypes) {
-            if (type.categories.some(c => c.id === categoryId)) {
-                return type.id;
-            }
-        }
-        return '';
+        const category = categories.find(c => c.id === categoryId);
+        return category ? category.type_id : '';
     };
 
     const [selectedTypeId, setSelectedTypeId] = useState(
         subcategory?.category_id ? getTypeIdFromCategory(subcategory.category_id) : ''
     );
 
-    const selectedType = mockTypes.find(t => t.id === parseInt(selectedTypeId));
-    const availableCategories = selectedType?.categories || [];
+    const availableCategories = selectedTypeId 
+        ? categories.filter(c => c.type_id === parseInt(selectedTypeId))
+        : [];
 
     const { data, setData, post, put, processing, errors } = useForm({
         category_id: subcategory?.category_id || '',

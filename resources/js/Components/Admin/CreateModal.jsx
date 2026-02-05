@@ -7,11 +7,13 @@ import TextInput from '@/Components/TextInput';
 import InputLabel from '@/Components/InputLabel';
 import InputError from '@/Components/InputError';
 
-export default function CreateModal({ show, onClose, title, fields, onSubmit, processing, onFieldChange }) {
-    const { data, setData, errors } = useForm(fields.reduce((acc, field) => {
+export default function CreateModal({ show, onClose, title, fields, onSubmit, processing, onFieldChange, errors: propErrors = {} }) {
+    const { data, setData, errors: formErrors } = useForm(fields.reduce((acc, field) => {
         acc[field.name] = field.defaultValue !== undefined ? field.defaultValue : (field.type === 'checkbox' ? false : '');
         return acc;
     }, {}));
+
+    const errors = { ...formErrors, ...propErrors };
 
     // Reset form when fields change
     useEffect(() => {
