@@ -1,42 +1,26 @@
-import { Head, Link, router, useForm } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import { useState } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import CreateModal from '@/Components/Admin/CreateModal';
 
-export default function CategoriesIndex({ categories = [], types = [] }) {
-    const [filterType, setFilterType] = useState('');
+export default function CategoriesIndex({ categories = [], types = [], filters = {} }) {
+    const [filterType, setFilterType] = useState(filters.type_id || '');
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [processing, setProcessing] = useState(false);
 
-    const { post, errors } = useForm();
-
-    // Mock data for visual
-    const mockTypes = types.length > 0 ? types : [
-        { id: 1, name: '3D', slug: '3d' },
-        { id: 2, name: 'Planos', slug: 'planos' },
-    ];
-
-    const mockCategories = categories.length > 0 ? categories : [
-        { id: 1, name: 'Mecánica', slug: 'mecanica', type_id: 1, type: { id: 1, name: '3D' }, is_active: true, sort_order: 1, subcategories_count: 4 },
-        { id: 2, name: 'Arquitectura', slug: 'arquitectura', type_id: 1, type: { id: 1, name: '3D' }, is_active: true, sort_order: 2, subcategories_count: 3 },
-        { id: 3, name: 'Mecánica', slug: 'mecanica', type_id: 2, type: { id: 2, name: 'Planos' }, is_active: true, sort_order: 1, subcategories_count: 1 },
-        { id: 4, name: 'Arquitectura', slug: 'arquitectura', type_id: 2, type: { id: 2, name: 'Planos' }, is_active: true, sort_order: 2, subcategories_count: 1 },
-    ];
-
     const filteredCategories = filterType
-        ? mockCategories.filter(c => c.type_id === parseInt(filterType))
-        : mockCategories;
+        ? categories.filter(c => c.type_id === parseInt(filterType))
+        : categories;
 
     const handleDelete = (id) => {
         if (confirm('¿Estás seguro de eliminar esta categoría?')) {
-            router.delete(`/admin/categories/${id}`);
+            router.delete(route('admin.categories.destroy', id));
         }
     };
 
     const handleCreateCategory = (data) => {
         setProcessing(true);
-        post('/admin/categories', {
-            ...data,
+        router.post(route('admin.categories.store'), data, {
             onSuccess: () => {
                 setShowCreateModal(false);
                 setProcessing(false);
@@ -50,21 +34,12 @@ export default function CategoriesIndex({ categories = [], types = [] }) {
         });
     };
 
-    const generateSlug = (name) => {
-        return name
-            .toLowerCase()
-            .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '')
-            .replace(/[^a-z0-9]+/g, '-')
-            .replace(/(^-|-$)/g, '');
-    };
-
     const categoryFields = [
         {
             name: 'type_id',
             label: 'Tipo *',
             type: 'select',
-            options: mockTypes.map(type => ({ value: type.id, label: type.name })),
+            options: types.map(type => ({ value: type.id, label: type.name })),
             required: true,
             placeholder: 'Selecciona un tipo'
         },
@@ -78,11 +53,11 @@ export default function CategoriesIndex({ categories = [], types = [] }) {
         },
         {
             name: 'slug',
-            label: 'Slug *',
+            label: 'Slug',
             type: 'text',
-            required: true,
+            required: false,
             placeholder: 'ej: mecanica, arquitectura',
-            helpText: 'Se usa en la URL: /[tipo]/[slug]/...',
+            helpText: 'Se genera automáticamente si se deja vacío',
             autoGenerate: true
         },
         {
@@ -98,7 +73,7 @@ export default function CategoriesIndex({ categories = [], types = [] }) {
             label: 'Activo',
             type: 'checkbox',
             defaultValue: true,
-            helpText: 'Las categorías inactivas no aparecen en el formulario de upload'
+            helpText: 'Las categorías inactivas no aparecen en el sitio'
         }
     ];
 
@@ -140,7 +115,7 @@ export default function CategoriesIndex({ categories = [], types = [] }) {
                         className="border border-gray-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
                     >
                         <option value="">Todos los tipos</option>
-                        {mockTypes.map((type) => (
+                        {types.map((type) => (
                             <option key={type.id} value={type.id}>{type.name}</option>
                         ))}
                     </select>
@@ -156,6 +131,7 @@ export default function CategoriesIndex({ categories = [], types = [] }) {
                             <th className="text-left px-6 py-4 text-sm font-medium text-gray-500">Tipo</th>
                             <th className="text-left px-6 py-4 text-sm font-medium text-gray-500">Slug</th>
                             <th className="text-left px-6 py-4 text-sm font-medium text-gray-500">Subcategorías</th>
+                            <th className="text-left px-6 py-4 text-sm font-medium text-gray-500">Archivos</th>
                             <th className="text-left px-6 py-4 text-sm font-medium text-gray-500">Estado</th>
                             <th className="text-left px-6 py-4 text-sm font-medium text-gray-500">Orden</th>
                             <th className="text-right px-6 py-4 text-sm font-medium text-gray-500">Acciones</th>
@@ -178,7 +154,10 @@ export default function CategoriesIndex({ categories = [], types = [] }) {
                                     </code>
                                 </td>
                                 <td className="px-6 py-4">
-                                    <span className="text-gray-600">{category.subcategories_count}</span>
+                                    <span className="text-gray-600">{category.subcategories_count || 0}</span>
+                                </td>
+                                <td className="px-6 py-4">
+                                    <span className="text-gray-600">{category.files_count || 0}</span>
                                 </td>
                                 <td className="px-6 py-4">
                                     {category.is_active ? (
@@ -197,7 +176,7 @@ export default function CategoriesIndex({ categories = [], types = [] }) {
                                 <td className="px-6 py-4">
                                     <div className="flex items-center justify-end gap-2">
                                         <Link
-                                            href={`/admin/categories/${category.id}/edit`}
+                                            href={route('admin.categories.edit', category.id)}
                                             className="p-2 text-gray-400 hover:text-blue-600 transition-colors"
                                             title="Editar"
                                         >
@@ -220,13 +199,13 @@ export default function CategoriesIndex({ categories = [], types = [] }) {
                 {filteredCategories.length === 0 && (
                     <div className="text-center py-12">
                         <p className="text-gray-500">No hay categorías registradas</p>
-                        <Link
-                            href="/admin/categories/create"
+                        <button
+                            onClick={() => setShowCreateModal(true)}
                             className="inline-flex items-center gap-2 mt-4 text-yellow-600 hover:text-yellow-700"
                         >
                             <PlusIcon className="w-4 h-4" />
                             Crear la primera categoría
-                        </Link>
+                        </button>
                     </div>
                 )}
             </div>

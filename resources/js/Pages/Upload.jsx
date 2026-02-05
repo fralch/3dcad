@@ -1,4 +1,4 @@
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm, router } from '@inertiajs/react';
 import { useState } from 'react';
 import MainLayout from '@/Layouts/MainLayout';
 import UploadZone from '@/Components/Public/UploadZone';
@@ -6,64 +6,10 @@ import CascadeSelect from '@/Components/CascadeSelect';
 
 export default function Upload({ types = [] }) {
     const [step, setStep] = useState(1);
-    const [files, setFiles] = useState([]);
+    const [uploadedFile, setUploadedFile] = useState(null);
+    const [uploadedSlug, setUploadedSlug] = useState(null);
 
-    // Mock data for visual if no types provided
-    const mockTypes = types.length > 0 ? types : [
-        {
-            id: 1,
-            name: '3D',
-            slug: '3d',
-            categories: [
-                {
-                    id: 1,
-                    name: 'Mecánica',
-                    slug: 'mecanica',
-                    subcategories: [
-                        { id: 1, name: 'ELEMENTOS DE MÁQUINAS', slug: 'elementos-de-maquinas' },
-                        { id: 2, name: 'ESTRUCTURAS METÁLICAS', slug: 'estructuras-metalicas' },
-                        { id: 3, name: 'INSTALACIONES MEP', slug: 'instalaciones-mep' },
-                        { id: 4, name: 'MECANISMOS Y MÁQUINAS', slug: 'mecanismos-y-maquinas' },
-                    ],
-                },
-                {
-                    id: 2,
-                    name: 'Arquitectura',
-                    slug: 'arquitectura',
-                    subcategories: [
-                        { id: 5, name: 'VIVIENDA', slug: 'vivienda' },
-                        { id: 6, name: 'MOBILIARIO', slug: 'mobiliario' },
-                        { id: 7, name: 'PAISAJISMO', slug: 'paisajismo' },
-                    ],
-                },
-            ],
-        },
-        {
-            id: 2,
-            name: 'Planos',
-            slug: 'planos',
-            categories: [
-                {
-                    id: 3,
-                    name: 'Mecánica',
-                    slug: 'mecanica',
-                    subcategories: [
-                        { id: 8, name: 'General', slug: 'general' },
-                    ],
-                },
-                {
-                    id: 4,
-                    name: 'Arquitectura',
-                    slug: 'arquitectura',
-                    subcategories: [
-                        { id: 9, name: 'General', slug: 'general' },
-                    ],
-                },
-            ],
-        },
-    ];
-
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, post, processing, errors, reset, progress } = useForm({
         title: '',
         description: '',
         type_id: '',
@@ -71,21 +17,36 @@ export default function Upload({ types = [] }) {
         subcategory_id: '',
         tags: '',
         license: 'free',
+        file: null,
+        thumbnail: null,
     });
 
     const handleFilesSelected = (selectedFiles) => {
-        setFiles(selectedFiles);
         if (selectedFiles.length > 0) {
+            setUploadedFile(selectedFiles[0]);
+            setData('file', selectedFiles[0]);
             setStep(2);
         }
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // post('/upload', {
-        //     onSuccess: () => setStep(3),
-        // });
-        setStep(3); // Mock success for visual
+
+        post(route('upload.store'), {
+            forceFormData: true,
+            onSuccess: (page) => {
+                // Get the slug from the redirect URL or flash message
+                const url = page.url;
+                const match = url.match(/\/file\/([^/]+)/);
+                if (match) {
+                    setUploadedSlug(match[1]);
+                }
+                setStep(3);
+            },
+            onError: () => {
+                // Stay on step 2 to show errors
+            },
+        });
     };
 
     return (
@@ -163,25 +124,49 @@ export default function Upload({ types = [] }) {
                         <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm p-8">
                             <h2 className="text-xl font-bold text-gray-900 mb-6">Informacion del archivo</h2>
 
-                            {/* Selected Files */}
+                            {/* Selected File */}
                             <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-                                <p className="text-sm text-gray-500 mb-2">Archivos seleccionados:</p>
-                                {files.map((file, index) => (
-                                    <div key={index} className="flex items-center gap-2 text-sm">
+                                <p className="text-sm text-gray-500 mb-2">Archivo seleccionado:</p>
+                                {uploadedFile && (
+                                    <div className="flex items-center gap-2 text-sm">
                                         <svg className="w-4 h-4 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                         </svg>
-                                        <span className="text-gray-700">{file.name}</span>
+                                        <span className="text-gray-700">{uploadedFile.name}</span>
+                                        <span className="text-gray-400">({(uploadedFile.size / 1024 / 1024).toFixed(2)} MB)</span>
                                     </div>
-                                ))}
+                                )}
                                 <button
                                     type="button"
-                                    onClick={() => setStep(1)}
+                                    onClick={() => {
+                                        setStep(1);
+                                        setUploadedFile(null);
+                                        setData('file', null);
+                                    }}
                                     className="mt-2 text-sm text-yellow-600 hover:text-yellow-700"
                                 >
-                                    Cambiar archivos
+                                    Cambiar archivo
                                 </button>
+                                {errors.file && (
+                                    <p className="mt-2 text-sm text-red-500">{errors.file}</p>
+                                )}
                             </div>
+
+                            {/* Upload Progress */}
+                            {progress && (
+                                <div className="mb-6">
+                                    <div className="flex justify-between text-sm text-gray-600 mb-1">
+                                        <span>Subiendo...</span>
+                                        <span>{progress.percentage}%</span>
+                                    </div>
+                                    <div className="w-full bg-gray-200 rounded-full h-2">
+                                        <div
+                                            className="bg-yellow-400 h-2 rounded-full transition-all"
+                                            style={{ width: `${progress.percentage}%` }}
+                                        ></div>
+                                    </div>
+                                </div>
+                            )}
 
                             <div className="space-y-6">
                                 {/* Title */}
@@ -207,7 +192,7 @@ export default function Upload({ types = [] }) {
                                 {/* Description */}
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Descripcion *
+                                        Descripcion
                                     </label>
                                     <textarea
                                         value={data.description}
@@ -217,18 +202,17 @@ export default function Upload({ types = [] }) {
                                         className={`w-full border rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent resize-none ${
                                             errors.description ? 'border-red-500' : 'border-gray-300'
                                         }`}
-                                        required
                                     />
                                     {errors.description && (
                                         <p className="mt-1 text-sm text-red-500">{errors.description}</p>
                                     )}
                                 </div>
 
-                                {/* Cascade Select: Tipo > Categoría > Subcategoría */}
+                                {/* Cascade Select: Tipo > Categoria > Subcategoria */}
                                 <div className="p-4 bg-gray-50 rounded-lg">
                                     <h3 className="text-sm font-medium text-gray-900 mb-4">Clasificacion *</h3>
                                     <CascadeSelect
-                                        types={mockTypes}
+                                        types={types}
                                         data={data}
                                         setData={setData}
                                         errors={errors}
@@ -300,8 +284,13 @@ export default function Upload({ types = [] }) {
                             <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-100">
                                 <button
                                     type="button"
-                                    onClick={() => setStep(1)}
+                                    onClick={() => {
+                                        setStep(1);
+                                        setUploadedFile(null);
+                                        setData('file', null);
+                                    }}
                                     className="text-gray-600 hover:text-gray-900 font-medium"
+                                    disabled={processing}
                                 >
                                     Volver
                                 </button>
@@ -329,16 +318,19 @@ export default function Upload({ types = [] }) {
                                 Tu modelo 3D ha sido publicado y ya esta disponible para la comunidad.
                             </p>
                             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                                <Link
-                                    href="/files/motor-v8"
-                                    className="inline-flex items-center justify-center gap-2 bg-yellow-400 hover:bg-yellow-300 text-zinc-900 px-6 py-3 rounded-lg font-bold transition-colors"
-                                >
-                                    Ver mi archivo
-                                </Link>
+                                {uploadedSlug && (
+                                    <Link
+                                        href={route('file.show', uploadedSlug)}
+                                        className="inline-flex items-center justify-center gap-2 bg-yellow-400 hover:bg-yellow-300 text-zinc-900 px-6 py-3 rounded-lg font-bold transition-colors"
+                                    >
+                                        Ver mi archivo
+                                    </Link>
+                                )}
                                 <button
                                     onClick={() => {
                                         setStep(1);
-                                        setFiles([]);
+                                        setUploadedFile(null);
+                                        setUploadedSlug(null);
                                         reset();
                                     }}
                                     className="inline-flex items-center justify-center gap-2 border border-gray-300 hover:border-gray-400 text-gray-700 px-6 py-3 rounded-lg font-medium transition-colors"
@@ -361,10 +353,10 @@ export default function Upload({ types = [] }) {
                                 Consejos para una buena publicacion
                             </h3>
                             <ul className="text-sm text-blue-800 space-y-2">
-                                <li>• Usa un titulo descriptivo que ayude a encontrar tu modelo</li>
-                                <li>• Incluye una descripcion detallada con dimensiones y materiales</li>
-                                <li>• Agrega etiquetas relevantes para mejorar la busqueda</li>
-                                <li>• Asegurate de que el archivo este en un formato compatible</li>
+                                <li>Usa un titulo descriptivo que ayude a encontrar tu modelo</li>
+                                <li>Incluye una descripcion detallada con dimensiones y materiales</li>
+                                <li>Agrega etiquetas relevantes para mejorar la busqueda</li>
+                                <li>Asegurate de que el archivo este en un formato compatible</li>
                             </ul>
                         </div>
                     </div>
