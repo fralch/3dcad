@@ -1,5 +1,84 @@
 import { Link } from '@inertiajs/react';
 import { getTotalFiles, getTotalSubcategories, typesData } from '@/data/categories';
+import { useRef } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { Edges, OrbitControls } from '@react-three/drei';
+
+function MechanicalPart() {
+    const groupRef = useRef();
+
+    useFrame((state, delta) => {
+        if (groupRef.current) {
+            groupRef.current.rotation.y += delta * 0.2;
+            groupRef.current.rotation.x += delta * 0.1;
+        }
+    });
+
+    return (
+        <group ref={groupRef}>
+            {/* Base Cylinder */}
+            <mesh position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
+                <cylinderGeometry args={[2, 2, 0.5, 32]} />
+                <meshStandardMaterial color="#27272a" transparent opacity={0.9} />
+                <Edges scale={1} threshold={15} color="#fbbf24" />
+            </mesh>
+
+            {/* Inner hole */}
+            <mesh position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
+                <cylinderGeometry args={[0.8, 0.8, 0.52, 32]} />
+                <meshStandardMaterial color="#18181b" />
+                <Edges scale={1} threshold={15} color="#3b82f6" />
+            </mesh>
+
+            {/* Gear Teeth */}
+            {Array.from({ length: 16 }).map((_, index) => {
+                const angle = (index / 16) * Math.PI * 2;
+                const radius = 2.05;
+                const x = Math.cos(angle) * radius;
+                const y = Math.sin(angle) * radius;
+                
+                return (
+                    <mesh key={index} position={[x, y, 0]} rotation={[0, 0, angle]}>
+                        <boxGeometry args={[0.4, 0.4, 0.5]} />
+                        <meshStandardMaterial color="#27272a" />
+                        <Edges scale={1} threshold={15} color="#fbbf24" />
+                    </mesh>
+                );
+            })}
+
+            {/* Central Shaft */}
+            <mesh position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
+                <cylinderGeometry args={[0.3, 0.3, 3, 16]} />
+                <meshStandardMaterial color="#27272a" />
+                <Edges scale={1} threshold={15} color="#3b82f6" />
+            </mesh>
+            
+            {/* Side rings */}
+            <mesh position={[0, 0, 1.2]} rotation={[Math.PI / 2, 0, 0]}>
+                <torusGeometry args={[0.8, 0.1, 16, 32]} />
+                <meshStandardMaterial color="#27272a" />
+                <Edges scale={1} threshold={15} color="#fbbf24" />
+            </mesh>
+            <mesh position={[0, 0, -1.2]} rotation={[Math.PI / 2, 0, 0]}>
+                <torusGeometry args={[0.8, 0.1, 16, 32]} />
+                <meshStandardMaterial color="#27272a" />
+                <Edges scale={1} threshold={15} color="#fbbf24" />
+            </mesh>
+
+            {/* Connectors */}
+            {Array.from({ length: 4 }).map((_, index) => {
+                const angle = (index / 4) * Math.PI * 2;
+                return (
+                    <mesh key={`conn-${index}`} position={[Math.cos(angle)*0.55, Math.sin(angle)*0.55, 0]} rotation={[0, 0, angle]}>
+                        <boxGeometry args={[0.5, 0.1, 0.4]} />
+                        <meshStandardMaterial color="#27272a" />
+                        <Edges scale={1} threshold={15} color="#60a5fa" />
+                    </mesh>
+                );
+            })}
+        </group>
+    );
+}
 
 export default function HeroSection() {
     const totalFiles = getTotalFiles();
@@ -61,12 +140,26 @@ export default function HeroSection() {
                     <div className="flex-1 relative">
                         <div className="relative w-full aspect-square max-w-lg mx-auto">
                             <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/20 to-blue-500/10 rounded-3xl"></div>
-                            <div className="absolute inset-4 bg-zinc-800 rounded-2xl shadow-2xl flex items-center justify-center overflow-hidden">
-                                <div className="text-center p-8">
-                                    <svg className="w-32 h-32 mx-auto text-yellow-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                                    </svg>
-                                    <p className="text-gray-400 text-sm">Modelos 3D de alta calidad</p>
+                            <div className="absolute inset-4 bg-zinc-800 rounded-2xl shadow-2xl flex items-center justify-center overflow-hidden border border-zinc-700/50">
+                                <div className="w-full h-full cursor-grab active:cursor-grabbing font-sans">
+                                    <Canvas camera={{ position: [4, 4, 5], fov: 45 }}>
+                                        <ambientLight intensity={0.5} />
+                                        <directionalLight position={[10, 10, 10]} intensity={1.5} color="#ffffff" />
+                                        <directionalLight position={[-10, 10, -10]} intensity={1} color="#3b82f6" />
+                                        
+                                        <MechanicalPart />
+                                        
+                                        <OrbitControls 
+                                            enableZoom={false} 
+                                            autoRotate={true}
+                                            autoRotateSpeed={1.5}
+                                        />
+                                    </Canvas>
+                                </div>
+                                <div className="absolute bottom-6 left-0 right-0 text-center pointer-events-none">
+                                    <p className="text-gray-300 text-xs font-mono bg-zinc-900/80 inline-block px-4 py-2 rounded-full backdrop-blur-md border border-zinc-700 shadow-xl">
+                                        <span className="text-yellow-400 mr-2">●</span> Modelo CAD Interactivo
+                                    </p>
                                 </div>
                             </div>
                             <div className="absolute -top-4 -right-4 w-20 h-20 bg-yellow-400 rounded-xl shadow-lg flex items-center justify-center">
