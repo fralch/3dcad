@@ -31,6 +31,9 @@ class File extends Model
         'views',
         'is_featured',
         'is_active',
+        'glb_path',
+        'conversion_status',
+        'conversion_error',
     ];
 
     protected function casts(): array
