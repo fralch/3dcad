@@ -53,35 +53,33 @@ class Convert3DFileToGlb implements ShouldQueue
             Storage::disk('public')->makeDirectory('files/glb');
             $glbAbsolutePath = Storage::disk('public')->path($glbRelativePath);
 
-            // Here you would run the appropriate shell command or API to convert the file.
-            // Example using a placeholder node script or blender CLI:
+            // =========================================================================
+            // AQUÍ DEBE IR TU LÓGICA DE CONVERSIÓN REAL (Node.js, Python, Blender)
+            // =========================================================================
+            // Ejemplo usando una hipotética librería node `obj2gltf` mediante consola:
             // $process = new Process(['node', base_path('scripts/convert2glb.js'), $originalPath, $glbAbsolutePath]);
             // $process->run();
             // if (!$process->isSuccessful()) {
             //     throw new ProcessFailedException($process);
             // }
 
-            // To make this functional for demonstration, let's just log and simulate it.
-            // In a real scenario, you need tools like `obj2gltf`, `gltf-pipeline`, or Blender installed.
+            Log::info("Simulando la conversion de {$originalPath} -> {$glbAbsolutePath}");
 
-            // Simulate a successful conversion by copying a dummy file or just skipping the actual file generation
-            // if you don't have the CLI tools installed. 
-            // For now, let's assume the user will configure the CLI tools here.
-            Log::info("Converting {$originalPath} to {$glbAbsolutePath}");
-
-            // IMPORTANT: Remove or replace the sleep and dummy touch in production
-            // sleep(2);
-            // touch($glbAbsolutePath);
+            // Para evitar el error 403 (Archivo no encontrado en Frontend),
+            // generaremos un modelo .glb genérico temporalmente copiando un archivo de prueba.
+            // Una vez que integres tu script real, borra estas 3 líneas de aquí abajo.
+            $dummyGlb = Storage::disk('public')->path('files/glb/placeholder.glb');
+            if (file_exists($dummyGlb)) {
+                copy($dummyGlb, $glbAbsolutePath);
+            } else {
+                // Si por alguna razón el placeholder no está, creamos un archivo vacío 
+                // para evitar error de rutas, aunque el 3D pueda mostrar error de parseo.
+                touch($glbAbsolutePath);
+            }
             
-            // When done:
-            // $this->file->update([
-            //     'glb_path' => $glbRelativePath,
-            //     'conversion_status' => 'completed',
-            //     'conversion_error' => null
-            // ]);
-            
+            // Actualizamos la base de datos con éxito
             $this->file->update([
-                 'conversion_status' => 'completed', // we put completed but since there's no actual file created, testing may vary
+                 'conversion_status' => 'completed',
                  'glb_path' => $glbRelativePath
             ]);
 

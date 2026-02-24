@@ -2,6 +2,7 @@ import { Head, Link, router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import MainLayout from '@/Layouts/MainLayout';
 import FileCard from '@/Components/Public/FileCard';
+import ModelViewer from '@/Components/Public/ModelViewer';
 
 export default function FileShow({ file, relatedFiles = [] }) {
     const { auth } = usePage().props;
@@ -84,20 +85,36 @@ export default function FileShow({ file, relatedFiles = [] }) {
                     <div className="flex-1">
                         {/* Preview */}
                         <div className="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
-                            <div className="aspect-video bg-gray-100 flex items-center justify-center">
-                                {file.thumbnail_path ? (
-                                    <img
-                                        src={`/storage/${file.thumbnail_path}`}
-                                        alt={file.title}
-                                        className="w-full h-full object-cover"
+                            <div className="aspect-video bg-gray-100 flex items-center justify-center relative">
+                                {file.conversion_status === 'completed' && file.glb_path ? (
+                                    <ModelViewer
+                                        url={`/storage/${file.glb_path}`}
+                                        thumbnail={file.thumbnail_path ? `/storage/${file.thumbnail_path}` : null}
                                     />
-                                ) : (
-                                    <div className="text-center p-8">
-                                        <svg className="w-32 h-32 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                                ) : (file.conversion_status === 'pending' || file.conversion_status === 'processing') ? (
+                                    <div className="text-center p-8 flex flex-col items-center justify-center h-full w-full">
+                                        <svg className="animate-spin w-12 h-12 text-yellow-400 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                         </svg>
-                                        <p className="text-gray-400">Vista previa 3D</p>
+                                        <p className="text-gray-600 font-medium font-medium">Procesando modelo 3D</p>
+                                        <p className="text-sm text-gray-500 mt-2">La vista interactiva estará disponible pronto...</p>
                                     </div>
+                                ) : (
+                                    file.thumbnail_path ? (
+                                        <img
+                                            src={`/storage/${file.thumbnail_path}`}
+                                            alt={file.title}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    ) : (
+                                        <div className="text-center p-8">
+                                            <svg className="w-32 h-32 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                                            </svg>
+                                            <p className="text-gray-400">Vista previa no disponible</p>
+                                        </div>
+                                    )
                                 )}
                             </div>
                         </div>
