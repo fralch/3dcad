@@ -65,11 +65,11 @@ Route::get('/about', function () {
 
 /*
 |--------------------------------------------------------------------------
-| Admin Routes (Visual Testing)
+| Admin Routes (Protected)
 |--------------------------------------------------------------------------
 */
 
-Route::prefix('admin')->name('admin.')->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () {
     // Dashboard
     Route::get('/', function () {
         return Inertia::render('Admin/Dashboard');
@@ -146,19 +146,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         $subcategory = ['id' => $id, 'category_id' => 1, 'name' => 'ELEMENTOS DE MÁQUINAS', 'slug' => 'elementos-de-maquinas', 'is_active' => true, 'sort_order' => 1];
         return Inertia::render('Admin/Subcategories/Form', ['subcategory' => $subcategory]);
     })->name('subcategories.edit');
-});
 
-/*
-|--------------------------------------------------------------------------
-| Auth Routes
-|--------------------------------------------------------------------------
-*/
-
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::middleware('auth')->group(function () {
+    // Profile (dentro de admin)
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
