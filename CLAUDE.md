@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-3D CAD file sharing platform built with Laravel 12 + React 18 + Inertia.js. Features a hierarchical content organization system (Types > Categories > Subcategories > Files) with public browsing and admin management interfaces.
+Sketch3dlab is a file sharing platform built with Laravel 12 + React 18 + Inertia.js. Features a hierarchical content organization system (Types > Categories > Subcategories > Files) with public browsing and admin management interfaces.
 
 ## Tech Stack
 

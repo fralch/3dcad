@@ -9,14 +9,8 @@ export default function Footer() {
                     {/* Brand */}
                     <div className="space-y-4">
                         <Link href="/" className="flex items-center gap-2">
-                            <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center">
-                                <svg className="w-6 h-6 text-zinc-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                                </svg>
-                            </div>
-                            <span className="text-xl font-bold text-white">
-                                <span className="text-yellow-400">3D</span>CAD
-                            </span>
+                            <img src="/asset/sketch3dlab-small.png" alt="Logo" className="w-10 h-10 rounded-lg" />
+                            <span className="text-xl font-bold text-white">Sketch3Dlab</span>
                         </Link>
                         <p className="text-sm leading-relaxed">
                             La mejor plataforma para compartir y descargar archivos 3D CAD y planos técnicos.
@@ -74,7 +68,7 @@ export default function Footer() {
                                 <svg className="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                 </svg>
-                                contacto@3dcad.com
+                                contacto@sketch3dlab.com
                             </li>
                             <li className="flex items-center gap-3">
                                 <svg className="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -95,7 +89,7 @@ export default function Footer() {
                 {/* Bottom */}
                 <div className="pt-8 border-t border-zinc-800 flex flex-col md:flex-row items-center justify-between gap-4">
                     <p className="text-sm text-zinc-400">
-                        &copy; {new Date().getFullYear()} 3DCAD. Todos los derechos reservados.
+                        &copy; {new Date().getFullYear()} Sketch3Dlab. Todos los derechos reservados.
                     </p>
                     <div className="flex gap-6 text-sm">
                         <Link href="/privacy" className="hover:text-yellow-400 transition-colors">Privacidad</Link>

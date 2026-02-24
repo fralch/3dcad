@@ -43,10 +43,8 @@ export default function AdminLayout({ children, title }) {
                 {/* Logo */}
                 <div className="h-16 flex items-center justify-between px-4 border-b border-zinc-800">
                     <Link href="/" className="flex items-center gap-2">
-                        <div className="w-8 h-8 bg-primary-400 rounded-lg flex items-center justify-center">
-                            <span className="text-zinc-900 font-bold text-sm">3D</span>
-                        </div>
-                        <span className="font-bold text-lg">Admin</span>
+                        <img src="/asset/sketch3dlab-small.png" alt="Logo" className="w-8 h-8 rounded-lg" />
+                        <span className="font-bold text-lg">Sketch3Dlab Admin</span>
                     </Link>
                     {/* Close button - mobile only */}
                     <button

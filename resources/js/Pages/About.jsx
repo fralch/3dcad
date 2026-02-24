@@ -33,7 +33,7 @@ export default function About() {
                             <div>
                                 <h2 className="text-3xl font-bold text-gray-900 mb-6">Nuestra Mision</h2>
                                 <p className="text-gray-600 leading-relaxed mb-4">
-                                    En 3DCAD creemos que el conocimiento debe ser accesible para todos.
+                                    En Sketch3Dlab creemos que el conocimiento debe ser accesible para todos.
                                     Nuestra mision es crear la biblioteca mas completa de modelos 3D CAD,
                                     donde ingenieros, arquitectos y disenadores puedan compartir su trabajo
                                     y aprender de otros.
