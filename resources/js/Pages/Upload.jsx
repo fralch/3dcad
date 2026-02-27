@@ -8,6 +8,7 @@ export default function Upload({ types = [] }) {
     const [step, setStep] = useState(1);
     const [uploadedFile, setUploadedFile] = useState(null);
     const [uploadedSlug, setUploadedSlug] = useState(null);
+    const [thumbnailPreview, setThumbnailPreview] = useState(null);
 
     const { data, setData, post, processing, errors, reset, progress } = useForm({
         title: '',
@@ -20,6 +21,24 @@ export default function Upload({ types = [] }) {
         file: null,
         thumbnail: null,
     });
+
+    const handleThumbnailChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setData('thumbnail', file);
+            // Create preview URL
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                setThumbnailPreview(e.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const removeThumbnail = () => {
+        setData('thumbnail', null);
+        setThumbnailPreview(null);
+    };
 
     const handleFilesSelected = (selectedFiles) => {
         if (selectedFiles.length > 0) {
@@ -278,6 +297,56 @@ export default function Upload({ types = [] }) {
                                         </label>
                                     </div>
                                 </div>
+
+                                {/* Thumbnail Preview (Optional) */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        Imagen de Previsualizacion <span className="text-gray-400 font-normal">(opcional)</span>
+                                    </label>
+                                    <p className="text-sm text-gray-500 mb-3">
+                                        Sube una imagen para mostrar como previsualizacion de tu archivo
+                                    </p>
+                                    
+                                    {thumbnailPreview ? (
+                                        <div className="relative inline-block">
+                                            <img 
+                                                src={thumbnailPreview} 
+                                                alt="Previsualizacion" 
+                                                className="w-48 h-48 object-cover rounded-lg border-2 border-gray-200"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={removeThumbnail}
+                                                className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                                            >
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
+                                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                                <svg className="w-8 h-8 mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                </svg>
+                                                <p className="text-sm text-gray-500">
+                                                    <span className="font-medium text-yellow-600">Haz clic para subir</span> o arrastra
+                                                </p>
+                                                <p className="text-xs text-gray-400">PNG, JPG, WEBP (max 5MB)</p>
+                                            </div>
+                                            <input
+                                                type="file"
+                                                accept="image/png,image/jpeg,image/webp"
+                                                onChange={handleThumbnailChange}
+                                                className="hidden"
+                                            />
+                                        </label>
+                                    )}
+                                    {errors.thumbnail && (
+                                        <p className="mt-2 text-sm text-red-500">{errors.thumbnail}</p>
+                                    )}
+                                </div>
                             </div>
 
                             {/* Actions */}
@@ -288,6 +357,7 @@ export default function Upload({ types = [] }) {
                                         setStep(1);
                                         setUploadedFile(null);
                                         setData('file', null);
+                                        setThumbnailPreview(null);
                                     }}
                                     className="text-gray-600 hover:text-gray-900 font-medium"
                                     disabled={processing}
@@ -331,6 +401,7 @@ export default function Upload({ types = [] }) {
                                         setStep(1);
                                         setUploadedFile(null);
                                         setUploadedSlug(null);
+                                        setThumbnailPreview(null);
                                         reset();
                                     }}
                                     className="inline-flex items-center justify-center gap-2 border border-gray-300 hover:border-gray-400 text-gray-700 px-6 py-3 rounded-lg font-medium transition-colors"
