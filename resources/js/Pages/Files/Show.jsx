@@ -86,7 +86,13 @@ export default function FileShow({ file, relatedFiles = [] }) {
                         {/* Preview */}
                         <div className="bg-white rounded-xl shadow-sm overflow-hidden mb-6 border border-gray-100">
                             <div className="aspect-video bg-gray-100 flex items-center justify-center relative">
-                                {file.conversion_status === 'completed' && file.glb_path ? (
+                                {file.thumbnail_path ? (
+                                    <img
+                                        src={`/storage/${file.thumbnail_path}`}
+                                        alt={file.title}
+                                        className="w-full h-full object-contain"
+                                    />
+                                ) : file.conversion_status === 'completed' && file.glb_path ? (
                                     <ModelViewer
                                         url={`/storage/${file.glb_path}`}
                                         thumbnail={file.thumbnail_path ? `/storage/${file.thumbnail_path}` : null}
@@ -101,21 +107,13 @@ export default function FileShow({ file, relatedFiles = [] }) {
                                         <p className="text-sm text-gray-500 mt-2">La vista interactiva estará disponible pronto...</p>
                                     </div>
                                 ) : (
-                                    file.thumbnail_path ? (
-                                        <img
-                                            src={`/storage/${file.thumbnail_path}`}
-                                            alt={file.title}
-                                            className="w-full h-full object-cover"
-                                        />
-                                    ) : (
                                         <div className="text-center p-8">
                                             <svg className="w-32 h-32 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                                             </svg>
                                             <p className="text-gray-400">Vista previa no disponible</p>
                                         </div>
-                                    )
-                                )}
+                                    )}
                             </div>
                         </div>
 
