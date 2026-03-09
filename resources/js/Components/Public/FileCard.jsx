@@ -10,6 +10,17 @@ export default function FileCard({ file }) {
     // Determine format
     const fileFormat = file?.file_type || file?.format || 'STL';
 
+    // Format file size
+    const formatFileSize = (bytes) => {
+        if (!bytes) return 'N/A';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    };
+
+    const fileSize = formatFileSize(file?.file_size);
+
     // Default/mock data for visual purposes
     const defaultFile = {
         id: 1,
@@ -84,7 +95,7 @@ export default function FileCard({ file }) {
 
                 <div className="flex justify-between items-center mt-1">
                     <p className="text-xs text-gray-500">por {authorName}</p>
-                    <span className="text-xs text-gray-400">{file.file_size || '15.5 MB'}</span>
+                    <span className="text-xs text-gray-400">{fileSize}</span>
                 </div>
 
                 {/* Stats */}

@@ -3,23 +3,15 @@ import MainLayout from '@/Layouts/MainLayout';
 import HeroSection from '@/Components/Public/HeroSection';
 import SectionTitle from '@/Components/Public/SectionTitle';
 import FileCard from '@/Components/Public/FileCard';
-import { typesData, getTotalFiles, getPopularSubcategories } from '@/data/categories';
 
-export default function Home({ recentFiles = [] }) {
-    const mockFiles = [
-        { id: 1, title: 'Rodamiento SKF 6205', slug: 'rodamiento-skf', category: '3D / Mecánica', format: 'STEP', downloads: 234, likes: 45, author: 'Juan' },
-        { id: 2, title: 'Casa Moderna 2 Pisos', slug: 'casa-moderna', category: '3D / Arquitectura', format: 'DWG', downloads: 189, likes: 32, author: 'Maria' },
-        { id: 3, title: 'Engranaje Helicoidal Z40', slug: 'engranaje-helicoidal', category: '3D / Mecánica', format: 'STL', downloads: 156, likes: 28, author: 'Pedro' },
-        { id: 4, title: 'Sistema HVAC Comercial', slug: 'sistema-hvac', category: '3D / Mecánica', format: 'STEP', downloads: 98, likes: 21, author: 'Ana' },
-        { id: 5, title: 'Silla de Oficina', slug: 'silla-oficina', category: '3D / Arquitectura', format: 'OBJ', downloads: 87, likes: 19, author: 'Carlos' },
-        { id: 6, title: 'Jardín Moderno', slug: 'jardin-moderno', category: '3D / Arquitectura', format: 'SKP', downloads: 221, likes: 56, author: 'Laura' },
-        { id: 7, title: 'Reductor de Velocidad', slug: 'reductor-velocidad', category: '3D / Mecánica', format: 'STEP', downloads: 67, likes: 15, author: 'Diego' },
-        { id: 8, title: 'Estructura Metálica', slug: 'estructura-nave', category: '3D / Mecánica', format: 'DWG', downloads: 45, likes: 12, author: 'Sofia' },
-    ];
+export default function Home({ recentFiles = [], types = [], popularSubcategories = [] }) {
+    const displayFiles = recentFiles;
 
-    const displayFiles = recentFiles.length > 0 ? recentFiles : mockFiles;
-    const popularSubcategories = getPopularSubcategories(6);
-    const totalFiles = getTotalFiles();
+    const totalFiles = types.reduce((acc, type) => 
+        acc + type.categories.reduce((catAcc, cat) => 
+            catAcc + cat.subcategories.reduce((subAcc, sub) => subAcc + (sub.files_count || 0), 0)
+        , 0)
+    , 0);
 
     return (
         <MainLayout>
@@ -36,10 +28,10 @@ export default function Home({ recentFiles = [] }) {
                     />
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {typesData.types.map((type) => {
+                        {types.map((type) => {
                             const is3D = type.slug === '3d';
                             const totalTypeFiles = type.categories.reduce((acc, cat) =>
-                                acc + cat.subcategories.reduce((a, sub) => a + sub.count, 0), 0
+                                acc + cat.subcategories.reduce((a, sub) => a + (sub.files_count || 0), 0), 0
                             );
 
                             return (
@@ -84,7 +76,7 @@ export default function Home({ recentFiles = [] }) {
                                                                 {sub.name}
                                                             </span>
                                                             <span className="text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded-full ml-2 flex-shrink-0">
-                                                                {sub.count}
+                                                                {sub.files_count || 0}
                                                             </span>
                                                         </Link>
                                                     ))}
@@ -125,7 +117,7 @@ export default function Home({ recentFiles = [] }) {
                         {popularSubcategories.map((sub, index) => (
                             <Link
                                 key={sub.id}
-                                href={`/${sub.typeSlug}/${sub.categorySlug}/${sub.slug}`}
+                                href={`/${sub.category?.type?.slug}/${sub.category?.slug}/${sub.slug}`}
                                 className="bg-white rounded-xl p-4 text-center hover:shadow-lg transition-all group border border-gray-100"
                             >
                                 <div className={`w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center ${
@@ -134,13 +126,13 @@ export default function Home({ recentFiles = [] }) {
                                     index === 2 ? 'bg-green-100 text-green-600' :
                                     'bg-gray-100 text-gray-600'
                                 }`}>
-                                    <span className="text-lg font-bold">{sub.count}</span>
+                                    <span className="text-lg font-bold">{sub.files_count}</span>
                                 </div>
                                 <h4 className="font-semibold text-gray-900 group-hover:text-primary-600 transition-colors text-sm">
                                     {sub.name}
                                 </h4>
                                 <p className="text-xs text-gray-500 mt-1">
-                                    {sub.type} / {sub.category}
+                                    {sub.category?.type?.name} / {sub.category?.name}
                                 </p>
                             </Link>
                         ))}

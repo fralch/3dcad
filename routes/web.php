@@ -33,12 +33,24 @@ Route::get('/', function () {
         ->limit(8)
         ->get();
 
-    $types = Type::withCount('files')->active()->ordered()->get();
+    $types = Type::with(['categories' => function ($query) {
+        $query->active()->ordered()->with(['subcategories' => function ($query) {
+            $query->active()->ordered()->withCount('files');
+        }]);
+    }])->active()->ordered()->get();
+
+    $popularSubcategories = Subcategory::with(['category.type'])
+        ->withCount('files')
+        ->active()
+        ->orderByDesc('files_count')
+        ->limit(6)
+        ->get();
 
     return Inertia::render('Home', [
         'featuredFiles' => $featuredFiles,
         'recentFiles' => $recentFiles,
         'types' => $types,
+        'popularSubcategories' => $popularSubcategories,
     ]);
 })->name('home');
 
