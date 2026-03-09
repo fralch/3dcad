@@ -12,7 +12,7 @@ export default function SectionTitle({ title, subtitle, viewAllLink, viewAllText
             {viewAllLink && (
                 <Link
                     href={viewAllLink}
-                    className="inline-flex items-center gap-2 text-yellow-600 hover:text-yellow-700 font-semibold transition-colors group"
+                    className="inline-flex items-center gap-2 text-secondary-600 hover:text-secondary-700 font-semibold transition-colors group"
                 >
                     {viewAllText}
                     <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">

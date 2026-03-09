@@ -50,7 +50,7 @@ export default function SearchFilters({ onFilterChange }) {
                             value={filters.search}
                             onChange={(e) => handleChange('search', e.target.value)}
                             placeholder="Buscar archivos..."
-                            className="w-full bg-gray-50 border border-gray-200 rounded-lg py-2.5 px-4 pl-10 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+                            className="w-full bg-gray-50 border border-gray-200 rounded-lg py-2.5 px-4 pl-10 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                         />
                         <svg
                             className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
@@ -68,7 +68,7 @@ export default function SearchFilters({ onFilterChange }) {
                     <select
                         value={filters.category}
                         onChange={(e) => handleChange('category', e.target.value)}
-                        className="w-full bg-gray-50 border border-gray-200 rounded-lg py-2.5 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent appearance-none cursor-pointer"
+                        className="w-full bg-gray-50 border border-gray-200 rounded-lg py-2.5 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent appearance-none cursor-pointer"
                     >
                         {categories.map((cat) => (
                             <option key={cat.value} value={cat.value}>{cat.label}</option>
@@ -81,7 +81,7 @@ export default function SearchFilters({ onFilterChange }) {
                     <select
                         value={filters.format}
                         onChange={(e) => handleChange('format', e.target.value)}
-                        className="w-full bg-gray-50 border border-gray-200 rounded-lg py-2.5 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent appearance-none cursor-pointer"
+                        className="w-full bg-gray-50 border border-gray-200 rounded-lg py-2.5 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent appearance-none cursor-pointer"
                     >
                         {formats.map((fmt) => (
                             <option key={fmt.value} value={fmt.value}>{fmt.label}</option>
@@ -94,7 +94,7 @@ export default function SearchFilters({ onFilterChange }) {
                     <select
                         value={filters.sort}
                         onChange={(e) => handleChange('sort', e.target.value)}
-                        className="w-full bg-gray-50 border border-gray-200 rounded-lg py-2.5 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent appearance-none cursor-pointer"
+                        className="w-full bg-gray-50 border border-gray-200 rounded-lg py-2.5 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent appearance-none cursor-pointer"
                     >
                         {sortOptions.map((opt) => (
                             <option key={opt.value} value={opt.value}>{opt.label}</option>

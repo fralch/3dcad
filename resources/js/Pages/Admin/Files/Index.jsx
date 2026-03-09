@@ -233,6 +233,19 @@ export default function FilesIndex({ files = { data: [] }, types = [] }) {
                                             Destacado
                                         </span>
                                     )}
+                                    {file.conversion_status === 'pending' || file.conversion_status === 'processing' ? (
+                                        <span className="px-2 py-0.5 bg-blue-500 text-white text-xs font-medium rounded">
+                                            Convirtiendo 3D...
+                                        </span>
+                                    ) : file.conversion_status === 'failed' ? (
+                                        <span className="px-2 py-0.5 bg-red-500 text-white text-xs font-medium rounded" title={file.conversion_error}>
+                                            Error 3D
+                                        </span>
+                                    ) : file.conversion_status === 'completed' ? (
+                                        <span className="px-2 py-0.5 bg-green-500 text-white text-xs font-medium rounded">
+                                            GLB Listo
+                                        </span>
+                                    ) : null}
                                     {!file.is_active && (
                                         <span className="px-2 py-0.5 bg-gray-500 text-white text-xs font-medium rounded">
                                             Inactivo
@@ -347,6 +360,19 @@ export default function FilesIndex({ files = { data: [] }, types = [] }) {
                                                     Inactivo
                                                 </span>
                                             )}
+                                            {file.conversion_status === 'pending' || file.conversion_status === 'processing' ? (
+                                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                    Convirtiendo...
+                                                </span>
+                                            ) : file.conversion_status === 'failed' ? (
+                                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800" title={file.conversion_error}>
+                                                    Fallo 3D
+                                                </span>
+                                            ) : file.conversion_status === 'completed' ? (
+                                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                                                    GLB Listo
+                                                </span>
+                                            ) : null}
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 text-sm text-gray-500">

@@ -14,7 +14,7 @@ export default function Dashboard({ stats = {} }) {
         { name: 'Tipos', value: mockStats.types, href: '/admin/types', color: 'bg-blue-500', icon: CubeIcon },
         { name: 'Categorías', value: mockStats.categories, href: '/admin/categories', color: 'bg-green-500', icon: FolderIcon },
         { name: 'Subcategorías', value: mockStats.subcategories, href: '/admin/subcategories', color: 'bg-purple-500', icon: TagIcon },
-        { name: 'Archivos', value: mockStats.files, href: '#', color: 'bg-yellow-500', icon: FileIcon },
+        { name: 'Archivos', value: mockStats.files, href: '#', color: 'bg-secondary-500', icon: FileIcon },
     ];
 
     const quickActions = [

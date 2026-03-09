@@ -67,7 +67,7 @@ export default function TypesForm({ type = null }) {
                                 value={data.name}
                                 onChange={handleNameChange}
                                 placeholder="Ej: 3D, Planos"
-                                className={`w-full border rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent ${
+                                className={`w-full border rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-secondary-400 focus:border-transparent ${
                                     errors.name ? 'border-red-500' : 'border-gray-300'
                                 }`}
                                 required
@@ -87,7 +87,7 @@ export default function TypesForm({ type = null }) {
                                 value={data.slug}
                                 onChange={(e) => setData('slug', e.target.value)}
                                 placeholder="ej: 3d, planos"
-                                className={`w-full border rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent ${
+                                className={`w-full border rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-secondary-400 focus:border-transparent ${
                                     errors.slug ? 'border-red-500' : 'border-gray-300'
                                 }`}
                                 required

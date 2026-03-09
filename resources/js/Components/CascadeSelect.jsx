@@ -36,7 +36,7 @@ export default function CascadeSelect({ types, data, setData, errors }) {
                 <select
                     value={data.type_id}
                     onChange={handleTypeChange}
-                    className={`w-full border rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent ${
+                    className={`w-full border rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-secondary-400 focus:border-transparent ${
                         errors?.type_id ? 'border-red-500' : 'border-gray-300'
                     }`}
                     required
@@ -62,7 +62,7 @@ export default function CascadeSelect({ types, data, setData, errors }) {
                     value={data.category_id}
                     onChange={handleCategoryChange}
                     disabled={!selectedType}
-                    className={`w-full border rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed ${
+                    className={`w-full border rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-secondary-400 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed ${
                         errors?.category_id ? 'border-red-500' : 'border-gray-300'
                     }`}
                     required
@@ -90,7 +90,7 @@ export default function CascadeSelect({ types, data, setData, errors }) {
                     value={data.subcategory_id}
                     onChange={handleSubcategoryChange}
                     disabled={!selectedCategory}
-                    className={`w-full border rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed ${
+                    className={`w-full border rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-secondary-400 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed ${
                         errors?.subcategory_id ? 'border-red-500' : 'border-gray-300'
                     }`}
                     required

@@ -123,7 +123,7 @@ export default function AdminUpload({ types = [], file = null }) {
                             onDrop={handleDrop}
                             className={`relative border-2 border-dashed rounded-xl p-8 text-center transition-colors ${
                                 dragActive
-                                    ? 'border-yellow-400 bg-yellow-50'
+                                    ? 'border-secondary-400 bg-secondary-50'
                                     : 'border-gray-300 hover:border-gray-400'
                             }`}
                         >
@@ -135,7 +135,7 @@ export default function AdminUpload({ types = [], file = null }) {
                             />
                             <UploadIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                             <p className="text-gray-600 mb-2">
-                                Arrastra archivos aquí o <span className="text-yellow-600 font-medium">haz clic para seleccionar</span>
+                                Arrastra archivos aquí o <span className="text-secondary-600 font-medium">haz clic para seleccionar</span>
                             </p>
                             <p className="text-sm text-gray-500">
                                 STL, OBJ, FBX, BLEND, DWG, DXF, STEP, PDF, ZIP (máx. 100MB)
@@ -171,7 +171,7 @@ export default function AdminUpload({ types = [], file = null }) {
                             <div className="mt-4">
                                 <div className="w-full bg-gray-200 rounded-full h-2.5">
                                     <div
-                                        className="bg-yellow-400 h-2.5 rounded-full transition-all"
+                                        className="bg-secondary-400 h-2.5 rounded-full transition-all"
                                         style={{ width: `${progress.percentage}%` }}
                                     ></div>
                                 </div>
@@ -200,7 +200,7 @@ export default function AdminUpload({ types = [], file = null }) {
                                     value={data.title}
                                     onChange={(e) => setData('title', e.target.value)}
                                     placeholder="Ej: Motor V8 de Alto Rendimiento"
-                                    className={`w-full border rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent ${
+                                    className={`w-full border rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-secondary-400 focus:border-transparent ${
                                         errors.title ? 'border-red-500' : 'border-gray-300'
                                     }`}
                                     required
@@ -220,7 +220,7 @@ export default function AdminUpload({ types = [], file = null }) {
                                     onChange={(e) => setData('description', e.target.value)}
                                     rows={4}
                                     placeholder="Describe el modelo, incluye dimensiones, materiales, uso recomendado..."
-                                    className={`w-full border rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent resize-none ${
+                                    className={`w-full border rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-secondary-400 focus:border-transparent resize-none ${
                                         errors.description ? 'border-red-500' : 'border-gray-300'
                                     }`}
                                 />
@@ -239,7 +239,7 @@ export default function AdminUpload({ types = [], file = null }) {
                                     value={data.tags}
                                     onChange={(e) => setData('tags', e.target.value)}
                                     placeholder="motor, automotriz, renderizado (separadas por coma)"
-                                    className="w-full border border-gray-300 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+                                    className="w-full border border-gray-300 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-secondary-400 focus:border-transparent"
                                 />
                                 <p className="mt-1 text-sm text-gray-500">Separa las etiquetas con comas</p>
                             </div>
@@ -270,7 +270,7 @@ export default function AdminUpload({ types = [], file = null }) {
                                 <select
                                     value={data.license}
                                     onChange={(e) => setData('license', e.target.value)}
-                                    className="w-full border border-gray-300 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+                                    className="w-full border border-gray-300 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-secondary-400 focus:border-transparent"
                                 >
                                     <option value="free">Gratis</option>
                                     <option value="attribution">Con Atribución</option>
@@ -285,7 +285,7 @@ export default function AdminUpload({ types = [], file = null }) {
                                         type="checkbox"
                                         checked={data.is_featured}
                                         onChange={(e) => setData('is_featured', e.target.checked)}
-                                        className="w-5 h-5 rounded border-gray-300 text-yellow-400 focus:ring-yellow-400"
+                                        className="w-5 h-5 rounded border-gray-300 text-secondary-400 focus:ring-secondary-400"
                                     />
                                     <span className="text-sm font-medium text-gray-700">
                                         Destacado
@@ -296,7 +296,7 @@ export default function AdminUpload({ types = [], file = null }) {
                                         type="checkbox"
                                         checked={data.is_active}
                                         onChange={(e) => setData('is_active', e.target.checked)}
-                                        className="w-5 h-5 rounded border-gray-300 text-yellow-400 focus:ring-yellow-400"
+                                        className="w-5 h-5 rounded border-gray-300 text-secondary-400 focus:ring-secondary-400"
                                     />
                                     <span className="text-sm font-medium text-gray-700">
                                         Publicar inmediatamente

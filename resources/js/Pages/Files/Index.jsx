@@ -96,7 +96,7 @@ export default function FilesIndex({ categorySlug, subcategorySlug, elementSlug,
                         <p className="text-gray-500 mb-6">La categoría que buscas no existe o fue movida.</p>
                         <Link
                             href="/"
-                            className="inline-flex items-center gap-2 bg-yellow-400 hover:bg-yellow-300 text-zinc-900 px-6 py-3 rounded-lg font-semibold transition-colors"
+                            className="inline-flex items-center gap-2 bg-secondary-500 hover:bg-secondary-400 text-white px-6 py-3 rounded-lg font-semibold transition-colors shadow-lg"
                         >
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -114,54 +114,50 @@ export default function FilesIndex({ categorySlug, subcategorySlug, elementSlug,
             <Head title={`${subcategory.name} - ${category.name} - ${type.name}`} />
 
             {/* Hero Header */}
-            <div className={`${is3D ? 'bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900' : 'bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900'} text-white py-12`}>
+            <div className="bg-primary-900 text-white py-12">
                 <div className="container mx-auto px-4">
                     {/* Breadcrumb */}
                     <nav className="flex items-center gap-2 text-sm mb-6">
-                        <Link href="/" className="text-gray-400 hover:text-white transition-colors">
+                        <Link href="/" className="text-primary-200 hover:text-white transition-colors">
                             Inicio
                         </Link>
-                        <ChevronIcon className="w-4 h-4 text-gray-600" />
-                        <Link href={`/${categorySlug}`} className="text-gray-400 hover:text-white transition-colors">
+                        <ChevronIcon className="w-4 h-4 text-primary-400" />
+                        <Link href={`/${categorySlug}`} className="text-primary-200 hover:text-white transition-colors">
                             {type.name}
                         </Link>
-                        <ChevronIcon className="w-4 h-4 text-gray-600" />
-                        <Link href={`/${categorySlug}/${subcategorySlug}`} className="text-gray-400 hover:text-white transition-colors">
+                        <ChevronIcon className="w-4 h-4 text-primary-400" />
+                        <Link href={`/${categorySlug}/${subcategorySlug}`} className="text-primary-200 hover:text-white transition-colors">
                             {category.name}
                         </Link>
-                        <ChevronIcon className="w-4 h-4 text-gray-600" />
-                        <span className={is3D ? 'text-yellow-400' : 'text-blue-300'}>{subcategory.name}</span>
+                        <ChevronIcon className="w-4 h-4 text-primary-400" />
+                        <span className="text-secondary-400">{subcategory.name}</span>
                     </nav>
 
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
                         <div className="flex items-center gap-4">
-                            <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${
-                                is3D ? 'bg-yellow-400' : 'bg-blue-400'
-                            }`}>
-                                <CubeIcon className={`w-8 h-8 ${is3D ? 'text-zinc-900' : 'text-white'}`} />
+                            <div className="w-16 h-16 rounded-2xl flex items-center justify-center bg-secondary-500 shadow-lg shadow-secondary-900/20">
+                                <CubeIcon className="w-8 h-8 text-white" />
                             </div>
                             <div>
                                 <div className="flex items-center gap-3 mb-1">
-                                    <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
-                                        is3D ? 'bg-yellow-400/20 text-yellow-400' : 'bg-blue-400/20 text-blue-300'
-                                    }`}>
+                                    <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-primary-800 text-primary-200 border border-primary-700">
                                         {type.name}
                                     </span>
-                                    <span className="text-xs text-gray-500">•</span>
-                                    <span className="text-xs text-gray-400">{category.name}</span>
+                                    <span className="text-xs text-primary-500">•</span>
+                                    <span className="text-xs text-primary-300">{category.name}</span>
                                 </div>
                                 <h1 className="text-3xl md:text-4xl font-bold">{subcategory.name}</h1>
                             </div>
                         </div>
                         <div className="flex items-center gap-6 text-sm">
                             <div className="text-center">
-                                <p className="text-2xl font-bold">{subcategory.count}</p>
-                                <p className="text-gray-400">Archivos</p>
+                                <p className="text-2xl font-bold text-secondary-400">{subcategory.count}</p>
+                                <p className="text-primary-300">Archivos</p>
                             </div>
-                            <div className="w-px h-10 bg-gray-700"></div>
+                            <div className="w-px h-10 bg-primary-800"></div>
                             <div className="text-center">
-                                <p className="text-2xl font-bold">{Math.floor(subcategory.count * 15)}</p>
-                                <p className="text-gray-400">Descargas</p>
+                                <p className="text-2xl font-bold text-secondary-400">{Math.floor(subcategory.count * 15)}</p>
+                                <p className="text-primary-300">Descargas</p>
                             </div>
                         </div>
                     </div>
@@ -171,7 +167,7 @@ export default function FilesIndex({ categorySlug, subcategorySlug, elementSlug,
             {/* Content */}
             <div className="container mx-auto px-4 py-8">
                 {/* Filters Bar */}
-                <div className="bg-white rounded-xl shadow-sm p-4 mb-6">
+                <div className="bg-white rounded-xl shadow-sm p-4 mb-6 border border-gray-100">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div className="flex items-center gap-4">
                             <p className="text-gray-600">
@@ -184,13 +180,14 @@ export default function FilesIndex({ categorySlug, subcategorySlug, elementSlug,
                             <select
                                 value={sortBy}
                                 onChange={(e) => setSortBy(e.target.value)}
-                                className="border border-gray-300 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+                                className="border border-gray-300 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                             >
                                 <option value="recent">Más recientes</option>
                                 <option value="popular">Más populares</option>
                                 <option value="downloads">Más descargados</option>
                                 <option value="name">Nombre A-Z</option>
                             </select>
+
 
                             {/* View Toggle */}
                             <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
@@ -225,8 +222,8 @@ export default function FilesIndex({ categorySlug, subcategorySlug, elementSlug,
                         {displayFiles.map((file) => (
                             <Link
                                 key={file.id}
-                                href={`/file/${file.slug}`}
-                                className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden"
+                                href={`/${categorySlug}/${subcategorySlug}/${elementSlug}/${file.slug}`}
+                                className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100"
                             >
                                 {/* Thumbnail */}
                                 <div className="aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-50 relative overflow-hidden">
@@ -236,49 +233,45 @@ export default function FilesIndex({ categorySlug, subcategorySlug, elementSlug,
                                     {/* Badges */}
                                     <div className="absolute top-3 left-3 flex gap-2">
                                         {file.isFeatured && (
-                                            <span className="px-2 py-1 bg-yellow-400 text-zinc-900 text-xs font-bold rounded-md">
+                                            <span className="px-2 py-1 bg-secondary-400 text-white text-xs font-bold rounded-md shadow-sm">
                                                 Destacado
                                             </span>
                                         )}
-                                        <span className={`px-2 py-1 text-xs font-bold rounded-md ${
-                                            is3D ? 'bg-zinc-900 text-white' : 'bg-blue-600 text-white'
-                                        }`}>
+                                        <span className="px-2 py-1 text-xs font-bold rounded-md bg-zinc-900 text-white shadow-sm uppercase">
                                             {file.format}
                                         </span>
                                     </div>
                                     {/* Quick Actions */}
-                                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                                        <button className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-gray-700 hover:text-yellow-500 transition-colors">
+                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center gap-3">
+                                        <button className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-gray-700 hover:text-secondary-500 transition-colors shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-75">
                                             <HeartIcon className="w-5 h-5" />
                                         </button>
-                                        <button className={`w-12 h-12 rounded-full flex items-center justify-center text-white transition-colors ${
-                                            is3D ? 'bg-yellow-400 hover:bg-yellow-300 text-zinc-900' : 'bg-blue-500 hover:bg-blue-400'
-                                        }`}>
+                                        <button className="w-12 h-12 bg-secondary-500 rounded-full flex items-center justify-center text-white hover:bg-secondary-400 transition-colors shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
                                             <DownloadIcon className="w-6 h-6" />
                                         </button>
-                                        <button className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-gray-700 hover:text-blue-500 transition-colors">
+                                        <button className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-gray-700 hover:text-primary-500 transition-colors shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-75">
                                             <EyeIcon className="w-5 h-5" />
                                         </button>
                                     </div>
                                 </div>
                                 {/* Info */}
                                 <div className="p-4">
-                                    <h3 className="font-semibold text-gray-900 truncate group-hover:text-yellow-600 transition-colors">
+                                    <h3 className="font-semibold text-gray-900 truncate group-hover:text-primary-600 transition-colors">
                                         {file.title}
                                     </h3>
-                                    <p className="text-sm text-gray-500 mt-1">por {file.author}</p>
-                                    <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
-                                        <div className="flex items-center gap-3 text-sm text-gray-400">
-                                            <span className="flex items-center gap-1">
-                                                <DownloadIcon className="w-4 h-4" />
-                                                {file.downloads}
-                                            </span>
-                                            <span className="flex items-center gap-1">
-                                                <HeartIcon className="w-4 h-4" />
-                                                {file.likes}
-                                            </span>
-                                        </div>
+                                    <div className="flex justify-between items-center mt-1">
+                                        <p className="text-xs text-gray-500">por {file.author}</p>
                                         <span className="text-xs text-gray-400">{file.fileSize}</span>
+                                    </div>
+                                    <div className="flex items-center gap-4 mt-3 pt-3 border-t border-gray-100 text-xs text-gray-400">
+                                        <span className="flex items-center gap-1">
+                                            <DownloadIcon className="w-4 h-4" />
+                                            {file.downloads}
+                                        </span>
+                                        <span className="flex items-center gap-1">
+                                            <HeartIcon className="w-4 h-4" />
+                                            {file.likes}
+                                        </span>
                                     </div>
                                 </div>
                             </Link>
@@ -290,14 +283,14 @@ export default function FilesIndex({ categorySlug, subcategorySlug, elementSlug,
                         {displayFiles.map((file) => (
                             <Link
                                 key={file.id}
-                                href={`/file/${file.slug}`}
-                                className="group bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-4 flex gap-4"
+                                href={`/${categorySlug}/${subcategorySlug}/${elementSlug}/${file.slug}`}
+                                className="group bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-4 flex gap-4 border border-gray-100"
                             >
                                 {/* Thumbnail */}
                                 <div className="w-40 h-28 bg-gradient-to-br from-gray-100 to-gray-50 rounded-lg flex-shrink-0 flex items-center justify-center relative overflow-hidden">
                                     <CubeIcon className="w-12 h-12 text-gray-200" />
                                     {file.isFeatured && (
-                                        <span className="absolute top-2 left-2 px-1.5 py-0.5 bg-yellow-400 text-zinc-900 text-xs font-bold rounded">
+                                        <span className="absolute top-2 left-2 px-1.5 py-0.5 bg-secondary-400 text-white text-xs font-bold rounded shadow-sm">
                                             Destacado
                                         </span>
                                     )}
@@ -306,14 +299,12 @@ export default function FilesIndex({ categorySlug, subcategorySlug, elementSlug,
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-start justify-between gap-4">
                                         <div className="min-w-0">
-                                            <h3 className="font-semibold text-gray-900 truncate group-hover:text-yellow-600 transition-colors">
+                                            <h3 className="font-semibold text-gray-900 truncate group-hover:text-primary-600 transition-colors">
                                                 {file.title}
                                             </h3>
                                             <p className="text-sm text-gray-500 mt-1 line-clamp-2">{file.description}</p>
                                         </div>
-                                        <span className={`px-3 py-1 text-sm font-bold rounded-lg flex-shrink-0 ${
-                                            is3D ? 'bg-zinc-900 text-white' : 'bg-blue-600 text-white'
-                                        }`}>
+                                        <span className="px-3 py-1 text-sm font-bold rounded-lg flex-shrink-0 bg-zinc-900 text-white uppercase">
                                             {file.format}
                                         </span>
                                     </div>
@@ -343,9 +334,7 @@ export default function FilesIndex({ categorySlug, subcategorySlug, elementSlug,
                             <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-lg hover:bg-gray-100">
                                 <ChevronLeftIcon className="w-5 h-5" />
                             </button>
-                            <button className={`w-10 h-10 rounded-lg font-semibold ${
-                                is3D ? 'bg-yellow-400 text-zinc-900' : 'bg-blue-500 text-white'
-                            }`}>
+                            <button className="w-10 h-10 rounded-lg font-semibold bg-secondary-500 text-white shadow-lg shadow-secondary-900/20">
                                 1
                             </button>
                             <button className="w-10 h-10 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">2</button>
@@ -372,11 +361,7 @@ export default function FilesIndex({ categorySlug, subcategorySlug, elementSlug,
                                 <Link
                                     key={slug}
                                     href={`/${categorySlug}/${subcategorySlug}/${slug}`}
-                                    className={`p-4 rounded-xl border-2 transition-colors ${
-                                        is3D
-                                            ? 'border-gray-200 hover:border-yellow-400 hover:bg-yellow-50'
-                                            : 'border-gray-200 hover:border-blue-400 hover:bg-blue-50'
-                                    }`}
+                                    className="p-4 rounded-xl border-2 transition-colors border-gray-200 hover:border-secondary-400 hover:bg-secondary-50"
                                 >
                                     <h3 className="font-medium text-gray-900">{subcat.name}</h3>
                                     <p className="text-sm text-gray-500 mt-1">{subcat.count} archivos</p>

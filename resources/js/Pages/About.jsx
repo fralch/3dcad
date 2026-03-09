@@ -51,15 +51,15 @@ export default function About() {
                                         <div className="text-gray-600">Archivos</div>
                                     </div>
                                     <div>
-                                        <div className="text-4xl font-bold text-yellow-500 mb-2">5K+</div>
+                                        <div className="text-4xl font-bold text-secondary-500 mb-2">5K+</div>
                                         <div className="text-gray-600">Usuarios</div>
                                     </div>
                                     <div>
-                                        <div className="text-4xl font-bold text-yellow-500 mb-2">50+</div>
+                                        <div className="text-4xl font-bold text-secondary-500 mb-2">50+</div>
                                         <div className="text-gray-600">Categorias</div>
                                     </div>
                                     <div>
-                                        <div className="text-4xl font-bold text-yellow-500 mb-2">100K+</div>
+                                        <div className="text-4xl font-bold text-secondary-500 mb-2">100K+</div>
                                         <div className="text-gray-600">Descargas</div>
                                     </div>
                                 </div>

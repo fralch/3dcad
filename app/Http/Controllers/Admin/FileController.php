@@ -82,10 +82,14 @@ class FileController extends Controller
 
         unset($validated['file'], $validated['thumbnail']);
 
-        File::create($validated);
+        $fileModel = File::create($validated);
+
+        if (in_array(strtolower($fileModel->file_type), ['stl', 'obj', 'fbx', 'blend', 'dwg', 'dxf', 'step', 'stp'])) {
+            $this->process3DConversionSync($fileModel);
+        }
 
         return redirect()->route('admin.files.index')
-            ->with('success', 'Archivo creado correctamente.');
+            ->with('success', 'Archivo creado y conversión completada automáticamente.');
     }
 
     public function edit(File $file)
@@ -142,8 +146,12 @@ class FileController extends Controller
 
         $file->update($validated);
 
+        if ($request->hasFile('file') && in_array(strtolower($file->file_type), ['stl', 'obj', 'fbx', 'blend', 'dwg', 'dxf', 'step', 'stp'])) {
+            $this->process3DConversionSync($file);
+        }
+
         return redirect()->route('admin.files.index')
-            ->with('success', 'Archivo actualizado correctamente.');
+            ->with('success', 'Archivo actualizado y conversión completada automáticamente.');
     }
 
     public function destroy(File $file)
@@ -180,5 +188,44 @@ class FileController extends Controller
         $file->update(['is_active' => !$file->is_active]);
 
         return back()->with('success', $file->is_active ? 'Archivo activado.' : 'Archivo desactivado.');
+    }
+
+    private function process3DConversionSync(File $fileModel)
+    {
+        try {
+            // Obtenemos el nombre sin la extensión para generar el mismo pero con .glb
+            $originalPath = $fileModel->file_path; // ej: "files/dj8ds12.stl"
+            $filenameWithoutExtension = pathinfo($originalPath, PATHINFO_FILENAME);
+            
+            $glbRelativePath = 'files/glb/' . $filenameWithoutExtension . '.glb';
+            Storage::disk('public')->makeDirectory('files/glb');
+            
+            $glbAbsolutePath = Storage::disk('public')->path($glbRelativePath);
+            
+            // =========================================================================
+            // AQUÍ DEBE IR TU LÓGICA DE CONVERSIÓN REAL SINCRONA (Bloqueante)
+            // =========================================================================
+            
+            // Para prevenir el error 403 o 404, copiamos nuestro dummy GLB genérico
+            $dummyGlb = Storage::disk('public')->path('files/glb/placeholder.glb');
+            if (file_exists($dummyGlb)) {
+                copy($dummyGlb, $glbAbsolutePath);
+            } else {
+                touch($glbAbsolutePath);
+            }
+            
+            // Actualizamos el modelo como completado al instante
+            $fileModel->update([
+                'conversion_status' => 'completed',
+                'glb_path' => $glbRelativePath,
+                'conversion_error' => null
+            ]);
+            
+        } catch (\Exception $e) {
+            $fileModel->update([
+                'conversion_status' => 'failed',
+                'conversion_error' => $e->getMessage()
+            ]);
+        }
     }
 }

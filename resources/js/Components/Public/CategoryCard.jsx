@@ -13,8 +13,8 @@ export default function CategoryCard({ category }) {
     };
 
     const colorClasses = {
-        yellow: 'from-yellow-400 to-yellow-500',
-        blue: 'from-blue-400 to-blue-600',
+        yellow: 'from-secondary-400 to-secondary-600',
+        blue: 'from-primary-400 to-primary-600',
         red: 'from-red-400 to-red-600',
         green: 'from-green-400 to-green-600',
         purple: 'from-purple-400 to-purple-600',
@@ -42,7 +42,7 @@ export default function CategoryCard({ category }) {
             </div>
 
             {/* Content */}
-            <h3 className="font-semibold text-gray-900 group-hover:text-yellow-600 transition-colors">
+            <h3 className="font-semibold text-gray-900 group-hover:text-secondary-600 transition-colors">
                 {defaultCategory.name}
             </h3>
             <p className="text-sm text-gray-500 mt-1">
@@ -51,7 +51,7 @@ export default function CategoryCard({ category }) {
 
             {/* Arrow */}
             <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                <svg className="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-secondary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>
             </div>

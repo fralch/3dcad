@@ -156,7 +156,7 @@ export default function SubcategoriesIndex({ subcategories = [], types = [], cat
                 </div>
                 <button
                     onClick={() => setShowCreateModal(true)}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-400 text-zinc-900 rounded-lg font-medium hover:bg-yellow-300 transition-colors"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-secondary-500 text-white rounded-lg font-medium hover:bg-secondary-400 transition-colors"
                 >
                     <PlusIcon className="w-5 h-5" />
                     Nueva Subcategoría
@@ -187,7 +187,7 @@ export default function SubcategoriesIndex({ subcategories = [], types = [], cat
                         <select
                             value={filterType}
                             onChange={handleTypeChange}
-                            className="border border-gray-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+                            className="border border-gray-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-secondary-400 focus:border-transparent"
                         >
                             <option value="">Todos</option>
                             {mockTypes.map((type) => (

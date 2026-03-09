@@ -89,7 +89,7 @@ export default function CreateModal({ show, onClose, title, fields, onSubmit, pr
                                     id={field.name}
                                     value={data[field.name]}
                                     onChange={(e) => handleFieldChange(field.name, e)}
-                                    className={`mt-1 block w-full border rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent ${
+                                    className={`mt-1 block w-full border rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-secondary-400 focus:border-transparent ${
                                         errors[field.name] ? 'border-red-500' : 'border-gray-300'
                                     }`}
                                     required={field.required}
@@ -107,7 +107,7 @@ export default function CreateModal({ show, onClose, title, fields, onSubmit, pr
                                         id={field.name}
                                         checked={data[field.name]}
                                         onChange={(e) => setData(field.name, e.target.checked)}
-                                        className="w-5 h-5 rounded border-gray-300 text-yellow-400 focus:ring-yellow-400"
+                                        className="w-5 h-5 rounded border-gray-300 text-secondary-400 focus:ring-secondary-400"
                                     />
                                     <span className="text-sm font-medium text-gray-700">
                                         {field.label}
