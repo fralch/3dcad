@@ -236,4 +236,36 @@ class FileUploadTest extends TestCase
 
         $response->assertSessionHasErrors('file');
     }
+
+    public function test_admin_upload_accepts_any_file_extension(): void
+    {
+        Storage::fake('public');
+        $this->withoutMiddleware();
+
+        $file = UploadedFile::fake()->createWithContent('script.exe', 'binary-content');
+        $thumbnail = UploadedFile::fake()->image('thumbnail.jpg', 800, 600);
+
+        $response = $this->actingAs($this->user)->post('/admin/files', [
+            'title' => 'Admin Any Extension Upload',
+            'description' => 'Test description',
+            'type_id' => $this->type->id,
+            'category_id' => $this->category->id,
+            'subcategory_id' => $this->subcategory->id,
+            'tags' => 'admin,test',
+            'license' => 'free',
+            'file' => $file,
+            'thumbnail' => $thumbnail,
+            'is_featured' => false,
+            'is_active' => true,
+        ]);
+
+        $response->assertRedirect('/admin/files');
+        $response->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('files', [
+            'title' => 'Admin Any Extension Upload',
+            'user_id' => $this->user->id,
+            'file_type' => 'exe',
+        ]);
+    }
 }
