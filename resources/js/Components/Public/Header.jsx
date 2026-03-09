@@ -1,11 +1,34 @@
 import { Link } from '@inertiajs/react';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { typesData } from '@/data/categories';
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [activeDropdown, setActiveDropdown] = useState(null);
+    const timeoutRef = useRef(null);
+
+    useEffect(() => {
+        return () => {
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+        };
+    }, []);
+
+    const handleMouseEnter = (slug) => {
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+            timeoutRef.current = null;
+        }
+        setActiveDropdown(slug);
+    };
+
+    const handleMouseLeave = () => {
+        timeoutRef.current = setTimeout(() => {
+            setActiveDropdown(null);
+        }, 2000);
+    };
 
     return (
         <header className="bg-primary-900 text-white sticky top-0 z-50 shadow-md shadow-primary-900/50">
@@ -28,8 +51,8 @@ export default function Header() {
                             <div
                                 key={type.id}
                                 className="relative"
-                                onMouseEnter={() => setActiveDropdown(type.slug)}
-                                onMouseLeave={() => setActiveDropdown(null)}
+                                onMouseEnter={() => handleMouseEnter(type.slug)}
+                                onMouseLeave={handleMouseLeave}
                             >
                                 <button className="flex items-center gap-1 px-4 py-2 text-primary-100 hover:text-white transition-colors font-medium">
                                     {type.name}
