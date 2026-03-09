@@ -82,7 +82,7 @@ class FileController extends Controller
             'tags' => 'nullable|string|max:500',
             'license' => 'required|in:free,attribution,commercial',
             'file' => 'required|file|max:102400|mimes:stl,obj,fbx,blend,3ds,dwg,dxf,step,stp,iges,igs,pdf,zip,rar',
-            'thumbnail' => 'nullable|image|max:5120',
+            'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
         ]);
 
         $validated['slug'] = Str::slug($validated['title']) . '-' . Str::random(6);

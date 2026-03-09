@@ -6,6 +6,8 @@ import CascadeSelect from '@/Components/CascadeSelect';
 export default function AdminUpload({ types = [], file = null }) {
     const isEditing = !!file;
     const [dragActive, setDragActive] = useState(false);
+    const existingThumbnail = file?.thumbnail_url || (file?.thumbnail_path ? `/storage/${file.thumbnail_path}` : null);
+    const [thumbnailPreview, setThumbnailPreview] = useState(existingThumbnail);
 
     const { data, setData, post, processing, errors, reset, progress } = useForm({
         title: file?.title || '',
@@ -50,6 +52,30 @@ export default function AdminUpload({ types = [], file = null }) {
 
     const removeFile = () => {
         setData('file', null);
+    };
+
+    const handleThumbnailInput = (e) => {
+        const selectedThumbnail = e.target.files[0];
+        if (!selectedThumbnail) {
+            return;
+        }
+
+        setData('thumbnail', selectedThumbnail);
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            setThumbnailPreview(event.target.result);
+        };
+        reader.readAsDataURL(selectedThumbnail);
+    };
+
+    const removeThumbnail = () => {
+        setData('thumbnail', null);
+        setThumbnailPreview(null);
+    };
+
+    const handleReset = () => {
+        reset();
+        setThumbnailPreview(existingThumbnail);
     };
 
     const handleSubmit = (e) => {
@@ -243,6 +269,46 @@ export default function AdminUpload({ types = [], file = null }) {
                                 />
                                 <p className="mt-1 text-sm text-gray-500">Separa las etiquetas con comas</p>
                             </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    Imagen de previsualización
+                                </label>
+                                <p className="text-sm text-gray-500 mb-3">
+                                    JPG, PNG o WEBP (máx. 5MB)
+                                </p>
+
+                                {thumbnailPreview ? (
+                                    <div className="relative inline-block">
+                                        <img
+                                            src={thumbnailPreview}
+                                            alt="Previsualización"
+                                            className="w-48 h-48 object-cover rounded-lg border border-gray-200"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={removeThumbnail}
+                                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                                        >
+                                            <XIcon className="w-4 h-4" />
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <label className="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
+                                        <span className="text-sm font-medium text-gray-700">Seleccionar imagen</span>
+                                        <span className="text-xs text-gray-500 mt-1">Opcional para mostrar portada</span>
+                                        <input
+                                            type="file"
+                                            accept="image/png,image/jpeg,image/webp"
+                                            onChange={handleThumbnailInput}
+                                            className="hidden"
+                                        />
+                                    </label>
+                                )}
+                                {errors.thumbnail && (
+                                    <p className="mt-2 text-sm text-red-500">{errors.thumbnail}</p>
+                                )}
+                            </div>
                         </div>
                     </div>
 
@@ -310,7 +376,7 @@ export default function AdminUpload({ types = [], file = null }) {
                     <div className="flex items-center justify-end gap-4">
                         <button
                             type="button"
-                            onClick={() => reset()}
+                            onClick={handleReset}
                             className="px-6 py-3 text-gray-600 hover:text-gray-900 font-medium transition-colors"
                         >
                             Limpiar

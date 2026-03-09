@@ -7,10 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
 
 class File extends Model
 {
     use HasFactory;
+
+    protected $appends = [
+        'thumbnail_url',
+    ];
 
     protected $fillable = [
         'user_id',
@@ -131,5 +136,14 @@ class File extends Model
             $i++;
         }
         return round($bytes, 2) . ' ' . $units[$i];
+    }
+
+    public function getThumbnailUrlAttribute(): ?string
+    {
+        if (empty($this->thumbnail_path)) {
+            return null;
+        }
+
+        return Storage::disk('public')->url($this->thumbnail_path);
     }
 }
