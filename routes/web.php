@@ -46,11 +46,20 @@ Route::get('/', function () {
         ->limit(6)
         ->get();
 
+    $homeStats = [
+        'totalFiles' => File::active()->count(),
+        'totalSubcategories' => Subcategory::active()
+            ->whereHas('category', fn($query) => $query->active()->whereHas('type', fn($typeQuery) => $typeQuery->active()))
+            ->count(),
+        'totalTypes' => Type::active()->count(),
+    ];
+
     return Inertia::render('Home', [
         'featuredFiles' => $featuredFiles,
         'recentFiles' => $recentFiles,
         'types' => $types,
         'popularSubcategories' => $popularSubcategories,
+        'homeStats' => $homeStats,
     ]);
 })->name('home');
 

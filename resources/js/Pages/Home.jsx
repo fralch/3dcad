@@ -4,20 +4,32 @@ import HeroSection from '@/Components/Public/HeroSection';
 import SectionTitle from '@/Components/Public/SectionTitle';
 import FileCard from '@/Components/Public/FileCard';
 
-export default function Home({ recentFiles = [], types = [], popularSubcategories = [] }) {
+export default function Home({ recentFiles = [], types = [], popularSubcategories = [], homeStats = {} }) {
     const displayFiles = recentFiles;
 
-    const totalFiles = types.reduce((acc, type) => 
+    const fallbackTotalFiles = types.reduce((acc, type) => 
         acc + type.categories.reduce((catAcc, cat) => 
             catAcc + cat.subcategories.reduce((subAcc, sub) => subAcc + (sub.files_count || 0), 0)
         , 0)
     , 0);
+    const fallbackTotalSubcategories = types.reduce(
+        (acc, type) => acc + type.categories.reduce((catAcc, cat) => catAcc + cat.subcategories.length, 0),
+        0
+    );
+    const fallbackTotalTypes = types.length;
+    const totalFiles = homeStats.totalFiles ?? fallbackTotalFiles;
+    const totalSubcategories = homeStats.totalSubcategories ?? fallbackTotalSubcategories;
+    const totalTypes = homeStats.totalTypes ?? fallbackTotalTypes;
 
     return (
         <MainLayout>
             <Head title="Inicio - Archivos 3D CAD y Planos" />
 
-            <HeroSection />
+            <HeroSection
+                totalFiles={totalFiles}
+                totalSubcategories={totalSubcategories}
+                totalTypes={totalTypes}
+            />
 
             {/* Types Section */}
             <section className="py-16 bg-white">

@@ -1,5 +1,4 @@
 import { Link } from '@inertiajs/react';
-import { getTotalFiles, getTotalSubcategories, typesData } from '@/data/categories';
 import { useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Edges, OrbitControls } from '@react-three/drei';
@@ -80,10 +79,7 @@ function MechanicalPart() {
     );
 }
 
-export default function HeroSection() {
-    const totalFiles = getTotalFiles();
-    const totalSubcategories = getTotalSubcategories();
-
+export default function HeroSection({ totalFiles = 0, totalSubcategories = 0, totalTypes = 0 }) {
     return (
         <section className="bg-gradient-to-br from-primary-600 via-primary-700 to-primary-900 text-white py-16 md:py-24">
             <div className="container mx-auto px-4">
@@ -130,7 +126,7 @@ export default function HeroSection() {
                                 <div className="text-sm text-primary-200">Subcategorías</div>
                             </div>
                             <div className="text-center">
-                                <div className="text-3xl font-bold text-white">{typesData.types.length}</div>
+                                <div className="text-3xl font-bold text-white">{totalTypes}</div>
                                 <div className="text-sm text-primary-200">Tipos</div>
                             </div>
                         </div>
