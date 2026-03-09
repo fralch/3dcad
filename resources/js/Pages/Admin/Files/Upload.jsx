@@ -1,4 +1,4 @@
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm, router } from '@inertiajs/react';
 import { useState, useCallback } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import CascadeSelect from '@/Components/CascadeSelect';
@@ -6,65 +6,8 @@ import CascadeSelect from '@/Components/CascadeSelect';
 export default function AdminUpload({ types = [], file = null }) {
     const isEditing = !!file;
     const [dragActive, setDragActive] = useState(false);
-    const [files, setFiles] = useState([]);
-    const [previews, setPreviews] = useState([]);
 
-    // Mock data for visual
-    const mockTypes = types.length > 0 ? types : [
-        {
-            id: 1,
-            name: '3D',
-            slug: '3d',
-            categories: [
-                {
-                    id: 1,
-                    name: 'Mecánica',
-                    slug: 'mecanica',
-                    subcategories: [
-                        { id: 1, name: 'ELEMENTOS DE MÁQUINAS', slug: 'elementos-de-maquinas' },
-                        { id: 2, name: 'ESTRUCTURAS METÁLICAS', slug: 'estructuras-metalicas' },
-                        { id: 3, name: 'INSTALACIONES MEP', slug: 'instalaciones-mep' },
-                        { id: 4, name: 'MECANISMOS Y MÁQUINAS', slug: 'mecanismos-y-maquinas' },
-                    ],
-                },
-                {
-                    id: 2,
-                    name: 'Arquitectura',
-                    slug: 'arquitectura',
-                    subcategories: [
-                        { id: 5, name: 'VIVIENDA', slug: 'vivienda' },
-                        { id: 6, name: 'MOBILIARIO', slug: 'mobiliario' },
-                        { id: 7, name: 'PAISAJISMO', slug: 'paisajismo' },
-                    ],
-                },
-            ],
-        },
-        {
-            id: 2,
-            name: 'Planos',
-            slug: 'planos',
-            categories: [
-                {
-                    id: 3,
-                    name: 'Mecánica',
-                    slug: 'mecanica',
-                    subcategories: [
-                        { id: 8, name: 'General', slug: 'general' },
-                    ],
-                },
-                {
-                    id: 4,
-                    name: 'Arquitectura',
-                    slug: 'arquitectura',
-                    subcategories: [
-                        { id: 9, name: 'General', slug: 'general' },
-                    ],
-                },
-            ],
-        },
-    ];
-
-    const { data, setData, post, put, processing, errors, reset } = useForm({
+    const { data, setData, post, processing, errors, reset, progress } = useForm({
         title: file?.title || '',
         description: file?.description || '',
         type_id: file?.type_id || '',
@@ -74,6 +17,8 @@ export default function AdminUpload({ types = [], file = null }) {
         license: file?.license || 'free',
         is_featured: file?.is_featured || false,
         is_active: file?.is_active ?? true,
+        file: null,
+        thumbnail: null,
     });
 
     const handleDrag = useCallback((e) => {
@@ -91,43 +36,35 @@ export default function AdminUpload({ types = [], file = null }) {
         e.stopPropagation();
         setDragActive(false);
 
-        const droppedFiles = Array.from(e.dataTransfer.files);
-        handleFiles(droppedFiles);
+        const droppedFiles = e.dataTransfer.files;
+        if (droppedFiles.length > 0) {
+            setData('file', droppedFiles[0]);
+        }
     }, []);
 
     const handleFileInput = (e) => {
-        const selectedFiles = Array.from(e.target.files);
-        handleFiles(selectedFiles);
+        if (e.target.files.length > 0) {
+            setData('file', e.target.files[0]);
+        }
     };
 
-    const handleFiles = (newFiles) => {
-        setFiles(prev => [...prev, ...newFiles]);
-
-        // Generate previews for images
-        newFiles.forEach(file => {
-            if (file.type.startsWith('image/')) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    setPreviews(prev => [...prev, { name: file.name, url: e.target.result }]);
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-    };
-
-    const removeFile = (index) => {
-        setFiles(prev => prev.filter((_, i) => i !== index));
-        setPreviews(prev => prev.filter((_, i) => i !== index));
+    const removeFile = () => {
+        setData('file', null);
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
         if (isEditing) {
-            // put(`/admin/files/${file.id}`, { ... });
-            alert('Archivo actualizado (mock)');
+            router.post(`/admin/files/${file.id}`, {
+                _method: 'put',
+                ...data,
+            }, {
+                forceFormData: true,
+            });
         } else {
-            // post('/admin/files', { ... });
-            alert('Archivo subido (mock)');
+            post('/admin/files', {
+                forceFormData: true,
+            });
         }
     };
 
@@ -171,7 +108,7 @@ export default function AdminUpload({ types = [], file = null }) {
                         </h2>
 
                         {/* Show existing file info when editing */}
-                        {isEditing && files.length === 0 && (
+                        {isEditing && !data.file && (
                             <div className="mb-4 p-4 bg-blue-50 rounded-lg">
                                 <p className="text-sm text-blue-800">
                                     El archivo actual se mantendrá. Solo sube un nuevo archivo si deseas reemplazarlo.
@@ -192,7 +129,6 @@ export default function AdminUpload({ types = [], file = null }) {
                         >
                             <input
                                 type="file"
-                                multiple
                                 onChange={handleFileInput}
                                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                                 accept=".stl,.obj,.fbx,.blend,.3ds,.dwg,.dxf,.step,.stp,.iges,.igs,.pdf,.zip,.rar"
@@ -206,30 +142,46 @@ export default function AdminUpload({ types = [], file = null }) {
                             </p>
                         </div>
 
-                        {/* File List */}
-                        {files.length > 0 && (
+                        {/* Selected File */}
+                        {data.file && (
                             <div className="mt-4 space-y-2">
-                                {files.map((file, index) => (
-                                    <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                                        <div className="flex items-center gap-3">
-                                            <span className="text-2xl">{getFileIcon(file.name)}</span>
-                                            <div>
-                                                <p className="font-medium text-gray-900 text-sm">{file.name}</p>
-                                                <p className="text-xs text-gray-500">
-                                                    {(file.size / 1024 / 1024).toFixed(2)} MB
-                                                </p>
-                                            </div>
+                                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-2xl">{getFileIcon(data.file.name)}</span>
+                                        <div>
+                                            <p className="font-medium text-gray-900 text-sm">{data.file.name}</p>
+                                            <p className="text-xs text-gray-500">
+                                                {(data.file.size / 1024 / 1024).toFixed(2)} MB
+                                            </p>
                                         </div>
-                                        <button
-                                            type="button"
-                                            onClick={() => removeFile(index)}
-                                            className="p-1 text-gray-400 hover:text-red-500 transition-colors"
-                                        >
-                                            <XIcon className="w-5 h-5" />
-                                        </button>
                                     </div>
-                                ))}
+                                    <button
+                                        type="button"
+                                        onClick={removeFile}
+                                        className="p-1 text-gray-400 hover:text-red-500 transition-colors"
+                                    >
+                                        <XIcon className="w-5 h-5" />
+                                    </button>
+                                </div>
                             </div>
+                        )}
+
+                        {/* Upload Progress */}
+                        {progress && (
+                            <div className="mt-4">
+                                <div className="w-full bg-gray-200 rounded-full h-2.5">
+                                    <div
+                                        className="bg-yellow-400 h-2.5 rounded-full transition-all"
+                                        style={{ width: `${progress.percentage}%` }}
+                                    ></div>
+                                </div>
+                                <p className="text-sm text-gray-500 mt-1">{progress.percentage}% subido</p>
+                            </div>
+                        )}
+
+                        {/* File error */}
+                        {errors.file && (
+                            <p className="mt-2 text-sm text-red-500">{errors.file}</p>
                         )}
                     </div>
 
@@ -261,7 +213,7 @@ export default function AdminUpload({ types = [], file = null }) {
                             {/* Description */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Descripción *
+                                    Descripción
                                 </label>
                                 <textarea
                                     value={data.description}
@@ -271,7 +223,6 @@ export default function AdminUpload({ types = [], file = null }) {
                                     className={`w-full border rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent resize-none ${
                                         errors.description ? 'border-red-500' : 'border-gray-300'
                                     }`}
-                                    required
                                 />
                                 {errors.description && (
                                     <p className="mt-1 text-sm text-red-500">{errors.description}</p>
@@ -299,7 +250,7 @@ export default function AdminUpload({ types = [], file = null }) {
                     <div className="bg-white rounded-xl shadow-sm p-6">
                         <h2 className="text-lg font-semibold text-gray-900 mb-4">Clasificación</h2>
                         <CascadeSelect
-                            types={mockTypes}
+                            types={types}
                             data={data}
                             setData={setData}
                             errors={errors}
@@ -359,18 +310,14 @@ export default function AdminUpload({ types = [], file = null }) {
                     <div className="flex items-center justify-end gap-4">
                         <button
                             type="button"
-                            onClick={() => {
-                                reset();
-                                setFiles([]);
-                                setPreviews([]);
-                            }}
+                            onClick={() => reset()}
                             className="px-6 py-3 text-gray-600 hover:text-gray-900 font-medium transition-colors"
                         >
                             Limpiar
                         </button>
                         <button
                             type="submit"
-                            disabled={processing || (!isEditing && files.length === 0)}
+                            disabled={processing || (!isEditing && !data.file)}
                             className="px-8 py-3 bg-yellow-400 text-zinc-900 rounded-lg font-bold hover:bg-yellow-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {processing

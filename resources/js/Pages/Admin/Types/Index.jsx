@@ -1,29 +1,21 @@
-import { Head, Link, router, useForm } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import { useState } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import CreateModal from '@/Components/Admin/CreateModal';
 
 export default function TypesIndex({ types = [] }) {
-    // Mock data for visual
-    const mockTypes = types.length > 0 ? types : [
-        { id: 1, name: '3D', slug: '3d', is_active: true, sort_order: 1, categories_count: 2 },
-        { id: 2, name: 'Planos', slug: 'planos', is_active: true, sort_order: 2, categories_count: 2 },
-    ];
-
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [processing, setProcessing] = useState(false);
-    const { post, errors } = useForm();
 
     const handleDelete = (id) => {
         if (confirm('¿Estás seguro de eliminar este tipo?')) {
-            router.delete(`/admin/types/${id}`);
+            router.delete(route('admin.types.destroy', id));
         }
     };
 
     const handleCreateType = (data) => {
         setProcessing(true);
-        post('/admin/types', {
-            ...data,
+        router.post(route('admin.types.store'), data, {
             onSuccess: () => {
                 setShowCreateModal(false);
                 setProcessing(false);
@@ -48,11 +40,11 @@ export default function TypesIndex({ types = [] }) {
         },
         {
             name: 'slug',
-            label: 'Slug *',
+            label: 'Slug',
             type: 'text',
-            required: true,
+            required: false,
             placeholder: 'ej: 3d, planos',
-            helpText: 'Se usa en la URL: /[slug]/...',
+            helpText: 'Se genera automáticamente si se deja vacío',
             autoGenerate: true
         },
         {
@@ -68,7 +60,7 @@ export default function TypesIndex({ types = [] }) {
             label: 'Activo',
             type: 'checkbox',
             defaultValue: true,
-            helpText: 'Los tipos inactivos no aparecen en el formulario de upload'
+            helpText: 'Los tipos inactivos no aparecen en el sitio'
         }
     ];
 
@@ -108,13 +100,14 @@ export default function TypesIndex({ types = [] }) {
                             <th className="text-left px-6 py-4 text-sm font-medium text-gray-500">Nombre</th>
                             <th className="text-left px-6 py-4 text-sm font-medium text-gray-500">Slug</th>
                             <th className="text-left px-6 py-4 text-sm font-medium text-gray-500">Categorías</th>
+                            <th className="text-left px-6 py-4 text-sm font-medium text-gray-500">Archivos</th>
                             <th className="text-left px-6 py-4 text-sm font-medium text-gray-500">Estado</th>
                             <th className="text-left px-6 py-4 text-sm font-medium text-gray-500">Orden</th>
                             <th className="text-right px-6 py-4 text-sm font-medium text-gray-500">Acciones</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                        {mockTypes.map((type) => (
+                        {types.map((type) => (
                             <tr key={type.id} className="hover:bg-gray-50">
                                 <td className="px-6 py-4">
                                     <span className="font-medium text-gray-900">{type.name}</span>
@@ -125,7 +118,10 @@ export default function TypesIndex({ types = [] }) {
                                     </code>
                                 </td>
                                 <td className="px-6 py-4">
-                                    <span className="text-gray-600">{type.categories_count}</span>
+                                    <span className="text-gray-600">{type.categories_count || 0}</span>
+                                </td>
+                                <td className="px-6 py-4">
+                                    <span className="text-gray-600">{type.files_count || 0}</span>
                                 </td>
                                 <td className="px-6 py-4">
                                     {type.is_active ? (
@@ -144,7 +140,7 @@ export default function TypesIndex({ types = [] }) {
                                 <td className="px-6 py-4">
                                     <div className="flex items-center justify-end gap-2">
                                         <Link
-                                            href={`/admin/types/${type.id}/edit`}
+                                            href={route('admin.types.edit', type.id)}
                                             className="p-2 text-gray-400 hover:text-blue-600 transition-colors"
                                             title="Editar"
                                         >
@@ -164,16 +160,16 @@ export default function TypesIndex({ types = [] }) {
                     </tbody>
                 </table>
 
-                {mockTypes.length === 0 && (
+                {types.length === 0 && (
                     <div className="text-center py-12">
                         <p className="text-gray-500">No hay tipos registrados</p>
-                        <Link
-                            href="/admin/types/create"
+                        <button
+                            onClick={() => setShowCreateModal(true)}
                             className="inline-flex items-center gap-2 mt-4 text-yellow-600 hover:text-yellow-700"
                         >
                             <PlusIcon className="w-4 h-4" />
                             Crear el primer tipo
-                        </Link>
+                        </button>
                     </div>
                 )}
             </div>

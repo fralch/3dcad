@@ -4,12 +4,6 @@ import AdminLayout from '@/Layouts/AdminLayout';
 export default function CategoriesForm({ category = null, types = [] }) {
     const isEditing = !!category;
 
-    // Mock types for visual
-    const mockTypes = types.length > 0 ? types : [
-        { id: 1, name: '3D', slug: '3d' },
-        { id: 2, name: 'Planos', slug: 'planos' },
-    ];
-
     const { data, setData, post, put, processing, errors } = useForm({
         type_id: category?.type_id || '',
         name: category?.name || '',
@@ -21,9 +15,9 @@ export default function CategoriesForm({ category = null, types = [] }) {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (isEditing) {
-            put(`/admin/categories/${category.id}`);
+            put(route('admin.categories.update', category.id));
         } else {
-            post('/admin/categories');
+            post(route('admin.categories.store'));
         }
     };
 
@@ -52,7 +46,7 @@ export default function CategoriesForm({ category = null, types = [] }) {
             {/* Breadcrumb */}
             <div className="mb-6">
                 <nav className="flex items-center gap-2 text-sm">
-                    <Link href="/admin/categories" className="text-gray-500 hover:text-gray-700">
+                    <Link href={route('admin.categories.index')} className="text-gray-500 hover:text-gray-700">
                         Categorías
                     </Link>
                     <span className="text-gray-400">/</span>
@@ -78,7 +72,7 @@ export default function CategoriesForm({ category = null, types = [] }) {
                                 required
                             >
                                 <option value="">Selecciona un tipo</option>
-                                {mockTypes.map((type) => (
+                                {types.map((type) => (
                                     <option key={type.id} value={type.id}>{type.name}</option>
                                 ))}
                             </select>
@@ -110,7 +104,7 @@ export default function CategoriesForm({ category = null, types = [] }) {
                         {/* Slug */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Slug *
+                                Slug
                             </label>
                             <input
                                 type="text"
@@ -120,10 +114,9 @@ export default function CategoriesForm({ category = null, types = [] }) {
                                 className={`w-full border rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent ${
                                     errors.slug ? 'border-red-500' : 'border-gray-300'
                                 }`}
-                                required
                             />
                             <p className="mt-1 text-sm text-gray-500">
-                                Se usa en la URL: /[tipo]/[slug]/...
+                                Se genera automáticamente si se deja vacío
                             </p>
                             {errors.slug && (
                                 <p className="mt-1 text-sm text-red-500">{errors.slug}</p>
@@ -166,7 +159,7 @@ export default function CategoriesForm({ category = null, types = [] }) {
                                 </span>
                             </label>
                             <p className="mt-1 text-sm text-gray-500 ml-8">
-                                Las categorías inactivas no aparecen en el formulario de upload
+                                Las categorías inactivas no aparecen en el sitio
                             </p>
                         </div>
                     </div>
@@ -174,7 +167,7 @@ export default function CategoriesForm({ category = null, types = [] }) {
                     {/* Actions */}
                     <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-200">
                         <Link
-                            href="/admin/categories"
+                            href={route('admin.categories.index')}
                             className="text-gray-600 hover:text-gray-900 font-medium"
                         >
                             Cancelar

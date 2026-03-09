@@ -14,9 +14,9 @@ export default function TypesForm({ type = null }) {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (isEditing) {
-            put(`/admin/types/${type.id}`);
+            put(route('admin.types.update', type.id));
         } else {
-            post('/admin/types');
+            post(route('admin.types.store'));
         }
     };
 
@@ -45,7 +45,7 @@ export default function TypesForm({ type = null }) {
             {/* Breadcrumb */}
             <div className="mb-6">
                 <nav className="flex items-center gap-2 text-sm">
-                    <Link href="/admin/types" className="text-gray-500 hover:text-gray-700">
+                    <Link href={route('admin.types.index')} className="text-gray-500 hover:text-gray-700">
                         Tipos
                     </Link>
                     <span className="text-gray-400">/</span>
@@ -144,7 +144,7 @@ export default function TypesForm({ type = null }) {
                     {/* Actions */}
                     <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-200">
                         <Link
-                            href="/admin/types"
+                            href={route('admin.types.index')}
                             className="text-gray-600 hover:text-gray-900 font-medium"
                         >
                             Cancelar

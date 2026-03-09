@@ -1,16 +1,14 @@
-import { Head, Link, router, useForm } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import { useState } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import CreateModal from '@/Components/Admin/CreateModal';
 
-export default function SubcategoriesIndex({ subcategories = [], types = [] }) {
+export default function SubcategoriesIndex({ subcategories = [], types = [], categories = [], errors }) {
     const [filterType, setFilterType] = useState('');
     const [filterCategory, setFilterCategory] = useState('');
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [processing, setProcessing] = useState(false);
     const [selectedTypeId, setSelectedTypeId] = useState('');
-
-    const { post, errors } = useForm();
 
     // Mock data for visual
     const mockTypes = types.length > 0 ? types : [
@@ -46,14 +44,15 @@ export default function SubcategoriesIndex({ subcategories = [], types = [] }) {
         { id: 9, name: 'General', slug: 'general', category_id: 4, category: { id: 4, name: 'Arquitectura', type: { id: 2, name: 'Planos' } }, is_active: true, sort_order: 1 },
     ];
 
-    const selectedType = mockTypes.find(t => t.id === parseInt(filterType));
-    const availableCategories = selectedType?.categories || [];
+    const availableFilterCategories = filterType 
+        ? categories.filter(c => c.type_id === parseInt(filterType))
+        : [];
 
     let filteredSubcategories = mockSubcategories;
     if (filterCategory) {
         filteredSubcategories = filteredSubcategories.filter(s => s.category_id === parseInt(filterCategory));
     } else if (filterType) {
-        const categoryIds = availableCategories.map(c => c.id);
+        const categoryIds = availableFilterCategories.map(c => c.id);
         filteredSubcategories = filteredSubcategories.filter(s => categoryIds.includes(s.category_id));
     }
 
@@ -70,8 +69,7 @@ export default function SubcategoriesIndex({ subcategories = [], types = [] }) {
 
     const handleCreateSubcategory = (data) => {
         setProcessing(true);
-        post('/admin/subcategories', {
-            ...data,
+        router.post('/admin/subcategories', data, {
             onSuccess: () => {
                 setShowCreateModal(false);
                 setProcessing(false);
@@ -87,8 +85,9 @@ export default function SubcategoriesIndex({ subcategories = [], types = [] }) {
 
     // Function to get fields dynamically based on selected type
     const getSubcategoryFields = () => {
-        const selectedType = mockTypes.find(t => t.id === parseInt(selectedTypeId));
-        const availableCategories = selectedType?.categories || [];
+        const availableCategories = selectedTypeId 
+            ? categories.filter(c => c.type_id === parseInt(selectedTypeId))
+            : [];
         
         return [
             {
@@ -172,6 +171,7 @@ export default function SubcategoriesIndex({ subcategories = [], types = [] }) {
                 fields={subcategoryFields}
                 onSubmit={handleCreateSubcategory}
                 processing={processing}
+                errors={errors}
                 onFieldChange={(fieldName, value) => {
                     if (fieldName === 'type_id') {
                         setSelectedTypeId(value);
@@ -204,7 +204,7 @@ export default function SubcategoriesIndex({ subcategories = [], types = [] }) {
                             className="border border-gray-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent disabled:bg-gray-100"
                         >
                             <option value="">Todas</option>
-                            {availableCategories.map((cat) => (
+                            {availableFilterCategories.map((cat) => (
                                 <option key={cat.id} value={cat.id}>{cat.name}</option>
                             ))}
                         </select>

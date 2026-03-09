@@ -1,17 +1,23 @@
 import { Link } from '@inertiajs/react';
 
 export default function FileCard({ file }) {
+    // Determine category name regardless of whether it's an object (real data) or string (mock)
+    const categoryName = file?.category?.name || file?.category || 'General';
+    
+    // Determine author name
+    const authorName = file?.user?.name || file?.author || 'Usuario';
+
+    // Determine format
+    const fileFormat = file?.file_type || file?.format || 'STL';
+
     // Default/mock data for visual purposes
     const defaultFile = {
         id: 1,
         title: 'Modelo 3D',
         slug: 'modelo-3d',
         thumbnail: null,
-        category: 'General',
-        format: 'STL',
         downloads: 0,
         likes: 0,
-        author: 'Usuario',
         created_at: new Date().toISOString(),
         ...file
     };
@@ -23,9 +29,9 @@ export default function FileCard({ file }) {
         >
             {/* Thumbnail */}
             <div className="relative aspect-[4/3] bg-gray-100 overflow-hidden">
-                {defaultFile.thumbnail ? (
+                {defaultFile.thumbnail || defaultFile.thumbnail_path ? (
                     <img
-                        src={defaultFile.thumbnail}
+                        src={defaultFile.thumbnail || `/storage/${defaultFile.thumbnail_path}`}
                         alt={defaultFile.title}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     />
@@ -40,7 +46,7 @@ export default function FileCard({ file }) {
                 {/* Format badge */}
                 <div className="absolute top-3 left-3">
                     <span className="bg-yellow-400 text-zinc-900 text-xs font-bold px-2 py-1 rounded">
-                        {defaultFile.format}
+                        {fileFormat}
                     </span>
                 </div>
 
@@ -60,7 +66,7 @@ export default function FileCard({ file }) {
                     {defaultFile.title}
                 </h3>
 
-                <p className="text-sm text-gray-500 mt-1">{defaultFile.category}</p>
+                <p className="text-sm text-gray-500 mt-1">{categoryName}</p>
 
                 {/* Stats */}
                 <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
@@ -78,7 +84,7 @@ export default function FileCard({ file }) {
                             {defaultFile.likes}
                         </span>
                     </div>
-                    <span className="text-xs text-gray-400">{defaultFile.author}</span>
+                    <span className="text-xs text-gray-400">{authorName}</span>
                 </div>
             </div>
         </Link>
