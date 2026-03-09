@@ -66,7 +66,7 @@ export default function CategoriesForm({ category = null, types = [] }) {
                             <select
                                 value={data.type_id}
                                 onChange={(e) => setData('type_id', e.target.value)}
-                                className={`w-full border rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent ${
+                                className={`w-full border rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-secondary-400 focus:border-transparent ${
                                     errors.type_id ? 'border-red-500' : 'border-gray-300'
                                 }`}
                                 required
@@ -91,7 +91,7 @@ export default function CategoriesForm({ category = null, types = [] }) {
                                 value={data.name}
                                 onChange={handleNameChange}
                                 placeholder="Ej: Mecánica, Arquitectura"
-                                className={`w-full border rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent ${
+                                className={`w-full border rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-secondary-400 focus:border-transparent ${
                                     errors.name ? 'border-red-500' : 'border-gray-300'
                                 }`}
                                 required

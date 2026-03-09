@@ -27,14 +27,12 @@ export default function CategoriesMain({ typeSlug, categorySlug }) {
             <Head title={category.name} />
 
             {/* Page Header */}
-            <div className={`${is3D ? 'bg-zinc-900' : 'bg-blue-900'} text-white py-16`}>
+            <div className="bg-primary-900 text-white py-16">
                 <div className="container mx-auto px-4">
                     <div className="flex items-center gap-6 mb-6">
-                        <div className={`w-20 h-20 rounded-xl flex items-center justify-center ${
-                            is3D ? 'bg-yellow-400' : 'bg-blue-400'
-                        }`}>
+                        <div className="w-20 h-20 rounded-xl flex items-center justify-center bg-secondary-500 shadow-lg shadow-secondary-900/20">
                             {is3D ? (
-                                <svg className="w-10 h-10 text-zinc-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                                 </svg>
                             ) : (
@@ -45,7 +43,7 @@ export default function CategoriesMain({ typeSlug, categorySlug }) {
                         </div>
                         <div>
                             <h1 className="text-4xl md:text-5xl font-bold">{category.name}</h1>
-                            <p className="text-gray-300 mt-2">
+                            <p className="text-primary-200 mt-2">
                                 {is3D
                                     ? 'Modelos 3D CAD para tus proyectos de ingeniería y diseño'
                                     : 'Planos técnicos y documentación profesional'
@@ -57,22 +55,22 @@ export default function CategoriesMain({ typeSlug, categorySlug }) {
                     {/* Stats */}
                     <div className="flex gap-8">
                         <div>
-                            <div className={`text-3xl font-bold ${is3D ? 'text-yellow-400' : 'text-blue-300'}`}>
+                            <div className="text-3xl font-bold text-secondary-400">
                                 {totalFiles}
                             </div>
-                            <div className="text-sm text-gray-400">Archivos totales</div>
+                            <div className="text-sm text-primary-300">Archivos totales</div>
                         </div>
                         <div>
-                            <div className={`text-3xl font-bold ${is3D ? 'text-yellow-400' : 'text-blue-300'}`}>
+                            <div className="text-3xl font-bold text-secondary-400">
                                 {category.subcategories.length}
                             </div>
-                            <div className="text-sm text-gray-400">Subcategorías</div>
+                            <div className="text-sm text-primary-300">Subcategorías</div>
                         </div>
                         <div>
-                            <div className={`text-3xl font-bold ${is3D ? 'text-yellow-400' : 'text-blue-300'}`}>
+                            <div className="text-3xl font-bold text-secondary-400">
                                 {category.subcategories.length}
                             </div>
-                            <div className="text-sm text-gray-400">Secciones</div>
+                            <div className="text-sm text-primary-300">Secciones</div>
                         </div>
                     </div>
                 </div>
@@ -92,16 +90,14 @@ export default function CategoriesMain({ typeSlug, categorySlug }) {
                                 </div>
                                 <Link
                                     href={`/${typeSlug}/${subcategory.slug}`}
-                                    className={`text-sm font-semibold ${
-                                        is3D ? 'text-yellow-600 hover:text-yellow-700' : 'text-blue-600 hover:text-blue-700'
-                                    }`}
+                                    className="text-sm font-semibold text-primary-600 hover:text-primary-700"
                                 >
                                     Ver todo
                                 </Link>
                             </div>
 
                             {/* Elements grid removed as they don't exist in current data structure */}
-                            <div className="bg-gray-50 rounded-xl p-6 text-center">
+                            <div className="bg-gray-50 rounded-xl p-6 text-center border border-gray-100">
                                 <p className="text-gray-600">
                                     {subcategory.count} archivos disponibles en esta subcategoría
                                 </p>
@@ -111,7 +107,7 @@ export default function CategoriesMain({ typeSlug, categorySlug }) {
                 </div>
 
                 {/* Other Category CTA */}
-                <div className={`mt-16 rounded-2xl p-8 ${is3D ? 'bg-blue-50' : 'bg-yellow-50'}`}>
+                <div className={`mt-16 rounded-2xl p-8 ${is3D ? 'bg-primary-50' : 'bg-secondary-50'} border border-gray-100`}>
                     <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                         <div>
                             <h3 className="text-xl font-bold text-gray-900">
@@ -126,10 +122,10 @@ export default function CategoriesMain({ typeSlug, categorySlug }) {
                         </div>
                         <Link
                             href={is3D ? '/planos' : '/3d'}
-                            className={`inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-colors ${
+                            className={`inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-colors shadow-md ${
                                 is3D
-                                    ? 'bg-blue-600 hover:bg-blue-500 text-white'
-                                    : 'bg-yellow-400 hover:bg-yellow-300 text-zinc-900'
+                                    ? 'bg-secondary-500 hover:bg-secondary-400 text-white shadow-secondary-900/20'
+                                    : 'bg-primary-500 hover:bg-primary-400 text-white shadow-primary-900/20'
                             }`}
                         >
                             {is3D ? 'Ver Planos' : 'Ver 3D'}

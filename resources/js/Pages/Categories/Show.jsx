@@ -11,7 +11,7 @@ export default function CategoryShow({ category = null, files = [] }) {
         slug: 'mecanico',
         description: 'Encuentra modelos 3D de piezas mecanicas como engranajes, rodamientos, tornillos, tuercas, poleas y todo tipo de componentes para proyectos de ingenieria mecanica.',
         files_count: 234,
-        color: 'yellow',
+        color: 'secondary',
         ...category
     };
 
@@ -34,42 +34,42 @@ export default function CategoryShow({ category = null, files = [] }) {
             <Head title={displayCategory.name} />
 
             {/* Page Header */}
-            <div className="bg-zinc-900 text-white py-12">
+            <div className="bg-primary-900 text-white py-12">
                 <div className="container mx-auto px-4">
                     {/* Breadcrumb */}
                     <nav className="flex items-center gap-2 text-sm mb-4">
-                        <Link href="/" className="text-gray-400 hover:text-yellow-400 transition-colors">Inicio</Link>
-                        <span className="text-gray-600">/</span>
-                        <Link href="/categories" className="text-gray-400 hover:text-yellow-400 transition-colors">Categorias</Link>
-                        <span className="text-gray-600">/</span>
-                        <span className="text-yellow-400">{displayCategory.name}</span>
+                        <Link href="/" className="text-primary-200 hover:text-white transition-colors">Inicio</Link>
+                        <span className="text-primary-400">/</span>
+                        <Link href="/categories" className="text-primary-200 hover:text-white transition-colors">Categorias</Link>
+                        <span className="text-primary-400">/</span>
+                        <span className="text-secondary-400">{displayCategory.name}</span>
                     </nav>
 
                     <div className="flex items-center gap-6">
-                        <div className="w-20 h-20 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl flex items-center justify-center">
-                            <svg className="w-10 h-10 text-zinc-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="w-20 h-20 bg-secondary-500 rounded-xl flex items-center justify-center shadow-lg shadow-secondary-900/20">
+                            <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
                             </svg>
                         </div>
                         <div>
                             <h1 className="text-3xl md:text-4xl font-bold">{displayCategory.name}</h1>
-                            <p className="text-gray-400 mt-2 max-w-2xl">{displayCategory.description}</p>
+                            <p className="text-primary-200 mt-2 max-w-2xl">{displayCategory.description}</p>
                         </div>
                     </div>
 
                     {/* Stats */}
                     <div className="flex gap-8 mt-8">
                         <div>
-                            <div className="text-2xl font-bold text-yellow-400">{displayCategory.files_count}</div>
-                            <div className="text-sm text-gray-400">Archivos</div>
+                            <div className="text-2xl font-bold text-secondary-400">{displayCategory.files_count}</div>
+                            <div className="text-sm text-primary-300">Archivos</div>
                         </div>
                         <div>
-                            <div className="text-2xl font-bold text-yellow-400">12.5K</div>
-                            <div className="text-sm text-gray-400">Descargas</div>
+                            <div className="text-2xl font-bold text-secondary-400">12.5K</div>
+                            <div className="text-sm text-primary-300">Descargas</div>
                         </div>
                         <div>
-                            <div className="text-2xl font-bold text-yellow-400">45</div>
-                            <div className="text-sm text-gray-400">Contribuidores</div>
+                            <div className="text-2xl font-bold text-secondary-400">45</div>
+                            <div className="text-sm text-primary-300">Contribuidores</div>
                         </div>
                     </div>
                 </div>
@@ -101,7 +101,7 @@ export default function CategoryShow({ category = null, files = [] }) {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                             </svg>
                         </button>
-                        <button className="px-4 py-2 bg-yellow-400 text-zinc-900 rounded-lg font-semibold">1</button>
+                        <button className="px-4 py-2 bg-secondary-500 text-white rounded-lg font-semibold shadow-md shadow-secondary-900/20">1</button>
                         <button className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">2</button>
                         <button className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">3</button>
                         <button className="px-3 py-2 text-gray-600 hover:text-gray-900 transition-colors">

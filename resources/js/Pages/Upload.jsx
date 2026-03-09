@@ -391,7 +391,7 @@ export default function Upload({ types = [] }) {
                                 {uploadedSlug && (
                                     <Link
                                         href={route('file.show', uploadedSlug)}
-                                        className="inline-flex items-center justify-center gap-2 bg-yellow-400 hover:bg-yellow-300 text-zinc-900 px-6 py-3 rounded-lg font-bold transition-colors"
+                                        className="inline-flex items-center justify-center gap-2 bg-secondary-500 hover:bg-secondary-400 text-white px-6 py-3 rounded-lg font-bold transition-colors"
                                     >
                                         Ver mi archivo
                                     </Link>

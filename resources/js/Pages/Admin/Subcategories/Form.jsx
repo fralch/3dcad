@@ -108,7 +108,7 @@ export default function SubcategoriesForm({ subcategory = null, types = [], cate
                             <select
                                 value={selectedTypeId}
                                 onChange={handleTypeChange}
-                                className="w-full border border-gray-300 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+                                className="w-full border border-gray-300 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-secondary-400 focus:border-transparent"
                                 required
                             >
                                 <option value="">Selecciona un tipo</option>
@@ -130,7 +130,7 @@ export default function SubcategoriesForm({ subcategory = null, types = [], cate
                                 value={data.category_id}
                                 onChange={(e) => setData('category_id', e.target.value)}
                                 disabled={!selectedTypeId}
-                                className={`w-full border rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed ${
+                                className={`w-full border rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-secondary-400 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed ${
                                     errors.category_id ? 'border-red-500' : 'border-gray-300'
                                 }`}
                                 required
@@ -157,7 +157,7 @@ export default function SubcategoriesForm({ subcategory = null, types = [], cate
                                 value={data.name}
                                 onChange={handleNameChange}
                                 placeholder="Ej: ELEMENTOS DE MÁQUINAS, VIVIENDA"
-                                className={`w-full border rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent ${
+                                className={`w-full border rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-secondary-400 focus:border-transparent ${
                                     errors.name ? 'border-red-500' : 'border-gray-300'
                                 }`}
                                 required
@@ -177,7 +177,7 @@ export default function SubcategoriesForm({ subcategory = null, types = [], cate
                                 value={data.slug}
                                 onChange={(e) => setData('slug', e.target.value)}
                                 placeholder="ej: elementos-de-maquinas, vivienda"
-                                className={`w-full border rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent ${
+                                className={`w-full border rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-secondary-400 focus:border-transparent ${
                                     errors.slug ? 'border-red-500' : 'border-gray-300'
                                 }`}
                                 required

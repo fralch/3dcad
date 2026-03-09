@@ -3,7 +3,7 @@ import { typesData, getTotalFiles } from '@/data/categories';
 
 export default function Footer() {
     return (
-        <footer className="bg-zinc-900 text-gray-300 pt-16 pb-8">
+        <footer className="bg-primary-900 text-primary-100 pt-16 pb-8 border-t border-primary-800">
             <div className="container mx-auto px-4">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
                     {/* Brand */}
@@ -12,7 +12,7 @@ export default function Footer() {
                             <img src="/asset/sketch3dlab-small.png" alt="Logo" className="w-10 h-10 rounded-lg" />
                             <span className="text-xl font-bold text-white">Sketch3Dlab</span>
                         </Link>
-                        <p className="text-sm leading-relaxed">
+                        <p className="text-sm leading-relaxed text-primary-200">
                             La mejor plataforma para compartir y descargar archivos 3D CAD y planos técnicos.
                         </p>
                         <div className="flex gap-3">
@@ -38,7 +38,7 @@ export default function Footer() {
                                     <li key={category.id}>
                                         <Link
                                             href={`/${type.slug}/${category.slug}`}
-                                            className="text-xs text-gray-500 uppercase hover:text-yellow-400 transition-colors"
+                                            className="text-xs text-primary-400 uppercase hover:text-secondary-400 transition-colors"
                                         >
                                             {category.name}
                                         </Link>
@@ -47,7 +47,7 @@ export default function Footer() {
                                                 <li key={sub.id}>
                                                     <Link
                                                         href={`/${type.slug}/${category.slug}/${sub.slug}`}
-                                                        className="text-sm hover:text-yellow-400 transition-colors"
+                                                        className="text-sm hover:text-secondary-400 transition-colors"
                                                     >
                                                         {sub.name}
                                                     </Link>
@@ -65,13 +65,13 @@ export default function Footer() {
                         <h4 className="text-white font-semibold mb-4">Contacto</h4>
                         <ul className="space-y-3">
                             <li className="flex items-center gap-3">
-                                <svg className="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-5 h-5 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                 </svg>
                                 contacto@sketch3dlab.com
                             </li>
                             <li className="flex items-center gap-3">
-                                <svg className="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-5 h-5 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                 </svg>
@@ -79,22 +79,22 @@ export default function Footer() {
                             </li>
                         </ul>
 
-                        <div className="mt-6 p-4 bg-zinc-800 rounded-lg">
-                            <div className="text-2xl font-bold text-yellow-400">{getTotalFiles()}</div>
-                            <div className="text-sm text-gray-400">Archivos disponibles</div>
+                        <div className="mt-6 p-4 bg-primary-800 rounded-lg border border-primary-700">
+                            <div className="text-2xl font-bold text-secondary-400">{getTotalFiles()}</div>
+                            <div className="text-sm text-primary-300">Archivos disponibles</div>
                         </div>
                     </div>
                 </div>
 
                 {/* Bottom */}
-                <div className="pt-8 border-t border-zinc-800 flex flex-col md:flex-row items-center justify-between gap-4">
-                    <p className="text-sm text-zinc-400">
+                <div className="pt-8 border-t border-primary-800 flex flex-col md:flex-row items-center justify-between gap-4">
+                    <p className="text-sm text-primary-400">
                         &copy; {new Date().getFullYear()} Sketch3Dlab. Todos los derechos reservados.
                     </p>
                     <div className="flex gap-6 text-sm">
-                        <Link href="/privacy" className="hover:text-yellow-400 transition-colors">Privacidad</Link>
-                        <Link href="/terms" className="hover:text-yellow-400 transition-colors">Términos</Link>
-                        <Link href="/about" className="hover:text-yellow-400 transition-colors">Acerca de</Link>
+                        <Link href="/privacy" className="hover:text-secondary-400 transition-colors">Privacidad</Link>
+                        <Link href="/terms" className="hover:text-secondary-400 transition-colors">Términos</Link>
+                        <Link href="/about" className="hover:text-secondary-400 transition-colors">Acerca de</Link>
                     </div>
                 </div>
             </div>

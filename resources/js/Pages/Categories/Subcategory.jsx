@@ -35,7 +35,7 @@ export default function CategoriesSubcategory({ categorySlug, subcategorySlug })
                             {category.name}
                         </Link>
                         <span className="text-gray-600">/</span>
-                        <span className={is3D ? 'text-yellow-400' : 'text-blue-300'}>{subcategory.name}</span>
+                        <span className={is3D ? 'text-secondary-400' : 'text-blue-300'}>{subcategory.name}</span>
                     </nav>
 
                     <div className="flex items-center gap-6">

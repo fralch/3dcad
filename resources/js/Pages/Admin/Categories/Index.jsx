@@ -88,7 +88,7 @@ export default function CategoriesIndex({ categories = [], types = [], filters =
                 </div>
                 <button
                     onClick={() => setShowCreateModal(true)}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-400 text-zinc-900 rounded-lg font-medium hover:bg-yellow-300 transition-colors"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-secondary-500 text-white rounded-lg font-medium hover:bg-secondary-400 transition-colors"
                 >
                     <PlusIcon className="w-5 h-5" />
                     Nueva Categoría
