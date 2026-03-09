@@ -1,7 +1,10 @@
-import { Link } from '@inertiajs/react';
-import { typesData, getTotalFiles } from '@/data/categories';
+import { Link, usePage } from '@inertiajs/react';
+import { typesData } from '@/data/categories';
 
 export default function Footer() {
+    const { stats = {} } = usePage().props;
+    const totalFiles = stats.totalFiles ?? 0;
+
     return (
         <footer className="bg-primary-900 text-primary-100 pt-16 pb-8 border-t border-primary-800">
             <div className="container mx-auto px-4">
@@ -74,7 +77,7 @@ export default function Footer() {
                         </ul>
 
                         <div className="mt-6 p-4 bg-primary-800 rounded-lg border border-primary-700">
-                            <div className="text-2xl font-bold text-secondary-400">{getTotalFiles()}</div>
+                            <div className="text-2xl font-bold text-secondary-400">{totalFiles}</div>
                             <div className="text-sm text-primary-300">Archivos disponibles</div>
                         </div>
                     </div>
