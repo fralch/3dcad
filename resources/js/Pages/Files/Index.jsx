@@ -80,12 +80,14 @@ export default function FilesIndex({ type, category, subcategory, categorySlug, 
                         </div>
                         <div className="flex items-center gap-6 text-sm">
                             <div className="text-center">
-                                <p className="text-2xl font-bold text-secondary-400">{subcategory.files_count || 0}</p>
+                                <p className="text-2xl font-bold text-secondary-400">{files?.total || files?.data?.length || displayFiles.length}</p>
                                 <p className="text-primary-300">Archivos</p>
                             </div>
                             <div className="w-px h-10 bg-primary-800"></div>
                             <div className="text-center">
-                                <p className="text-2xl font-bold text-secondary-400">{Math.floor((subcategory.files_count || 0) * 15)}</p>
+                                <p className="text-2xl font-bold text-secondary-400">
+                                    {displayFiles.reduce((total, file) => total + (file.downloads || 0), 0)}
+                                </p>
                                 <p className="text-primary-300">Descargas</p>
                             </div>
                         </div>
@@ -101,7 +103,7 @@ export default function FilesIndex({ type, category, subcategory, categorySlug, 
                         <div className="flex items-center gap-4">
                             <p className="text-gray-600">
                                 <span className="font-semibold text-gray-900">{displayFiles.length}</span> de{' '}
-                                <span className="font-semibold text-gray-900">{subcategory.files_count || 0}</span> archivos
+                                <span className="font-semibold text-gray-900">{files?.total || files?.data?.length || displayFiles.length}</span> archivos
                             </p>
                         </div>
                         <div className="flex items-center gap-4">
