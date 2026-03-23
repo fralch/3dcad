@@ -31,17 +31,14 @@ export default function About() {
                     <div className="max-w-4xl mx-auto">
                         <div className="grid md:grid-cols-2 gap-12 items-center">
                             <div>
-                                <h2 className="text-3xl font-bold text-gray-900 mb-6">Nuestra Mision</h2>
-                                <p className="text-gray-600 leading-relaxed mb-4">
-                                    En Sketch3Dlab creemos que el conocimiento debe ser accesible para todos.
-                                    Nuestra mision es crear la biblioteca mas completa de modelos 3D CAD,
-                                    donde ingenieros, arquitectos y disenadores puedan compartir su trabajo
-                                    y aprender de otros.
+                                <h2 className="text-3xl font-bold text-gray-900 mb-4">Misión</h2>
+                                <p className="text-gray-600 leading-relaxed mb-8">
+                                    Brindar una plataforma digital especializada en ingeniería y arquitectura que facilite el acceso a modelos 2D y 3D de alta calidad, acompañados de contenido técnico claro y estructurado. Nuestra misión es apoyar el aprendizaje, la investigación y el desarrollo profesional mediante recursos prácticos que permitan comprender desde conceptos básicos hasta aplicaciones complejas del diseño y la ingeniería.
                                 </p>
+
+                                <h2 className="text-3xl font-bold text-gray-900 mb-4">Visión</h2>
                                 <p className="text-gray-600 leading-relaxed">
-                                    Desde nuestra fundacion en 2020, hemos ayudado a miles de profesionales
-                                    a encontrar los modelos que necesitan para sus proyectos, ahorrando
-                                    tiempo y recursos valiosos.
+                                    Convertirnos en una plataforma de referencia en el ámbito de la ingeniería y arquitectura en habla hispana, reconocida por la calidad de sus modelos técnicos, la claridad de su contenido educativo y su contribución al desarrollo de profesionales capaces de transformar ideas en soluciones reales mediante el diseño desde conceptos básicos hasta aplicaciones complejas del diseño y la ingeniería.
                                 </p>
                             </div>
                             <div className="bg-gray-100 rounded-2xl p-8">
