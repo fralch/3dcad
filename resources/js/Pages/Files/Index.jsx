@@ -2,84 +2,13 @@ import { Head, Link } from '@inertiajs/react';
 import { useState } from 'react';
 import MainLayout from '@/Layouts/MainLayout';
 
-export default function FilesIndex({ categorySlug, subcategorySlug, elementSlug, files = [] }) {
+export default function FilesIndex({ type, category, subcategory, categorySlug, subcategorySlug, elementSlug, files = [] }) {
     const [viewMode, setViewMode] = useState('grid');
     const [sortBy, setSortBy] = useState('recent');
 
-    // Mock data structure: types > categories > subcategories
-    const typesData = {
-        '3d': {
-            name: '3D',
-            categories: {
-                'mecanica': {
-                    name: 'Mecánica',
-                    subcategories: {
-                        'elementos-de-maquinas': { name: 'ELEMENTOS DE MÁQUINAS', count: 44 },
-                        'estructuras-metalicas': { name: 'ESTRUCTURAS METÁLICAS', count: 15 },
-                        'instalaciones-mep': { name: 'INSTALACIONES MEP', count: 12 },
-                        'mecanismos-y-maquinas': { name: 'MECANISMOS Y MÁQUINAS', count: 22 },
-                    }
-                },
-                'arquitectura': {
-                    name: 'Arquitectura',
-                    subcategories: {
-                        'vivienda': { name: 'VIVIENDA', count: 124 },
-                        'mobiliario': { name: 'MOBILIARIO', count: 51 },
-                        'paisajismo': { name: 'PAISAJISMO', count: 221 },
-                    }
-                }
-            }
-        },
-        'planos': {
-            name: 'Planos',
-            categories: {
-                'mecanica': {
-                    name: 'Mecánica',
-                    subcategories: {
-                        'general': { name: 'General', count: 10 },
-                    }
-                },
-                'arquitectura': {
-                    name: 'Arquitectura',
-                    subcategories: {
-                        'general': { name: 'General', count: 35 },
-                    }
-                }
-            }
-        }
-    };
-
-    const type = typesData[categorySlug];
-    const category = type?.categories[subcategorySlug];
-    const subcategory = category?.subcategories[elementSlug];
-
     const is3D = categorySlug === '3d';
 
-    // Generate mock files
-    const generateMockFiles = (count, subcatName) => {
-        const formats = ['STEP', 'STL', 'DWG', 'OBJ', 'FBX', 'IGES', 'BLEND'];
-        const authors = ['Carlos M.', 'Ana G.', 'Pedro S.', 'María L.', 'Juan R.', 'Sofia T.'];
-        const adjectives = ['Industrial', 'Profesional', 'Técnico', 'Completo', 'Detallado', 'Parametrico'];
-
-        return Array.from({ length: Math.min(count, 12) }, (_, i) => ({
-            id: i + 1,
-            title: `${subcatName} - ${adjectives[i % adjectives.length]} ${i + 1}`,
-            slug: `${elementSlug}-modelo-${i + 1}`,
-            description: 'Modelo 3D de alta calidad, listo para usar en proyectos profesionales.',
-            format: formats[Math.floor(Math.random() * formats.length)],
-            fileSize: `${(Math.random() * 50 + 1).toFixed(1)} MB`,
-            downloads: Math.floor(Math.random() * 500) + 50,
-            likes: Math.floor(Math.random() * 100) + 10,
-            views: Math.floor(Math.random() * 2000) + 100,
-            author: authors[Math.floor(Math.random() * authors.length)],
-            date: `${Math.floor(Math.random() * 28) + 1} Ene 2024`,
-            isFeatured: i < 2,
-            thumbnail: null,
-        }));
-    };
-
-    const mockFiles = subcategory ? generateMockFiles(subcategory.count, subcategory.name) : [];
-    const displayFiles = files.length > 0 ? files : mockFiles;
+    const displayFiles = files?.data || files || [];
 
     if (!type || !category || !subcategory) {
         return (
@@ -151,12 +80,12 @@ export default function FilesIndex({ categorySlug, subcategorySlug, elementSlug,
                         </div>
                         <div className="flex items-center gap-6 text-sm">
                             <div className="text-center">
-                                <p className="text-2xl font-bold text-secondary-400">{subcategory.count}</p>
+                                <p className="text-2xl font-bold text-secondary-400">{subcategory.files_count || 0}</p>
                                 <p className="text-primary-300">Archivos</p>
                             </div>
                             <div className="w-px h-10 bg-primary-800"></div>
                             <div className="text-center">
-                                <p className="text-2xl font-bold text-secondary-400">{Math.floor(subcategory.count * 15)}</p>
+                                <p className="text-2xl font-bold text-secondary-400">{Math.floor((subcategory.files_count || 0) * 15)}</p>
                                 <p className="text-primary-300">Descargas</p>
                             </div>
                         </div>
@@ -172,7 +101,7 @@ export default function FilesIndex({ categorySlug, subcategorySlug, elementSlug,
                         <div className="flex items-center gap-4">
                             <p className="text-gray-600">
                                 <span className="font-semibold text-gray-900">{displayFiles.length}</span> de{' '}
-                                <span className="font-semibold text-gray-900">{subcategory.count}</span> archivos
+                                <span className="font-semibold text-gray-900">{subcategory.files_count || 0}</span> archivos
                             </p>
                         </div>
                         <div className="flex items-center gap-4">
@@ -217,19 +146,44 @@ export default function FilesIndex({ categorySlug, subcategorySlug, elementSlug,
                 </div>
 
                 {/* Files Grid */}
-                {viewMode === 'grid' ? (
+                {displayFiles.length === 0 ? (
+                    <div className="text-center py-20 bg-white rounded-xl shadow-sm border border-gray-100">
+                        <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <CubeIcon className="w-10 h-10 text-gray-400" />
+                        </div>
+                        <h3 className="text-lg font-bold text-gray-900 mb-2">No hay archivos todavía</h3>
+                        <p className="text-gray-500 mb-6">Sé el primero en subir un archivo a esta subcategoría.</p>
+                        <Link
+                            href="/upload"
+                            className="inline-flex items-center gap-2 bg-secondary-500 hover:bg-secondary-400 text-white px-6 py-2.5 rounded-lg font-semibold transition-colors"
+                        >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                            </svg>
+                            Subir Archivo
+                        </Link>
+                    </div>
+                ) : viewMode === 'grid' ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         {displayFiles.map((file) => (
                             <Link
                                 key={file.id}
-                                href={`/${categorySlug}/${subcategorySlug}/${elementSlug}/${file.slug}`}
+                                href={`/files/${file.slug}`}
                                 className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100"
                             >
                                 {/* Thumbnail */}
                                 <div className="aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-50 relative overflow-hidden">
-                                    <div className="absolute inset-0 flex items-center justify-center">
-                                        <CubeIcon className="w-20 h-20 text-gray-200 group-hover:scale-110 transition-transform duration-300" />
-                                    </div>
+                                    {file.thumbnail_path ? (
+                                        <img 
+                                            src={`/storage/${file.thumbnail_path}`} 
+                                            alt={file.title}
+                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                        />
+                                    ) : (
+                                        <div className="absolute inset-0 flex items-center justify-center">
+                                            <CubeIcon className="w-20 h-20 text-gray-200 group-hover:scale-110 transition-transform duration-300" />
+                                        </div>
+                                    )}
                                     {/* Badges */}
                                     <div className="absolute top-3 left-3 flex gap-2">
                                         {file.isFeatured && (
@@ -238,7 +192,7 @@ export default function FilesIndex({ categorySlug, subcategorySlug, elementSlug,
                                             </span>
                                         )}
                                         <span className="px-2 py-1 text-xs font-bold rounded-md bg-zinc-900 text-white shadow-sm uppercase">
-                                            {file.format}
+                                            {file.file_type || 'N/A'}
                                         </span>
                                     </div>
                                     {/* Quick Actions */}
@@ -260,17 +214,17 @@ export default function FilesIndex({ categorySlug, subcategorySlug, elementSlug,
                                         {file.title}
                                     </h3>
                                     <div className="flex justify-between items-center mt-1">
-                                        <p className="text-xs text-gray-500">por {file.author}</p>
-                                        <span className="text-xs text-gray-400">{file.fileSize}</span>
+                                        <p className="text-xs text-gray-500">por {file.user?.name || 'Usuario'}</p>
+                                        <span className="text-xs text-gray-400">{(file.file_size / 1024 / 1024).toFixed(2)} MB</span>
                                     </div>
                                     <div className="flex items-center gap-4 mt-3 pt-3 border-t border-gray-100 text-xs text-gray-400">
                                         <span className="flex items-center gap-1">
                                             <DownloadIcon className="w-4 h-4" />
-                                            {file.downloads}
+                                            {file.downloads || 0}
                                         </span>
                                         <span className="flex items-center gap-1">
                                             <HeartIcon className="w-4 h-4" />
-                                            {file.likes}
+                                            {file.likes || 0}
                                         </span>
                                     </div>
                                 </div>
@@ -283,12 +237,20 @@ export default function FilesIndex({ categorySlug, subcategorySlug, elementSlug,
                         {displayFiles.map((file) => (
                             <Link
                                 key={file.id}
-                                href={`/${categorySlug}/${subcategorySlug}/${elementSlug}/${file.slug}`}
+                                href={`/files/${file.slug}`}
                                 className="group bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-4 flex gap-4 border border-gray-100"
                             >
                                 {/* Thumbnail */}
                                 <div className="w-40 h-28 bg-gradient-to-br from-gray-100 to-gray-50 rounded-lg flex-shrink-0 flex items-center justify-center relative overflow-hidden">
-                                    <CubeIcon className="w-12 h-12 text-gray-200" />
+                                    {file.thumbnail_path ? (
+                                        <img 
+                                            src={`/storage/${file.thumbnail_path}`} 
+                                            alt={file.title}
+                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                        />
+                                    ) : (
+                                        <CubeIcon className="w-12 h-12 text-gray-200" />
+                                    )}
                                     {file.isFeatured && (
                                         <span className="absolute top-2 left-2 px-1.5 py-0.5 bg-secondary-400 text-white text-xs font-bold rounded shadow-sm">
                                             Destacado
@@ -305,21 +267,21 @@ export default function FilesIndex({ categorySlug, subcategorySlug, elementSlug,
                                             <p className="text-sm text-gray-500 mt-1 line-clamp-2">{file.description}</p>
                                         </div>
                                         <span className="px-3 py-1 text-sm font-bold rounded-lg flex-shrink-0 bg-zinc-900 text-white uppercase">
-                                            {file.format}
+                                            {file.file_type || 'N/A'}
                                         </span>
                                     </div>
                                     <div className="flex items-center gap-6 mt-4 text-sm text-gray-500">
-                                        <span>por <strong className="text-gray-700">{file.author}</strong></span>
+                                        <span>por <strong className="text-gray-700">{file.user?.name || 'Usuario'}</strong></span>
                                         <span className="flex items-center gap-1">
                                             <DownloadIcon className="w-4 h-4" />
-                                            {file.downloads} descargas
+                                            {file.downloads || 0} descargas
                                         </span>
                                         <span className="flex items-center gap-1">
                                             <HeartIcon className="w-4 h-4" />
-                                            {file.likes}
+                                            {file.likes || 0}
                                         </span>
-                                        <span>{file.fileSize}</span>
-                                        <span className="text-gray-400">{file.date}</span>
+                                        <span>{(file.file_size / 1024 / 1024).toFixed(2)} MB</span>
+                                        <span className="text-gray-400">{new Date(file.created_at).toLocaleDateString()}</span>
                                     </div>
                                 </div>
                             </Link>
@@ -328,24 +290,23 @@ export default function FilesIndex({ categorySlug, subcategorySlug, elementSlug,
                 )}
 
                 {/* Pagination */}
-                {subcategory.count > 12 && (
+                {files?.links && files.links.length > 3 && (
                     <div className="mt-10 flex justify-center">
-                        <nav className="flex items-center gap-1">
-                            <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-lg hover:bg-gray-100">
-                                <ChevronLeftIcon className="w-5 h-5" />
-                            </button>
-                            <button className="w-10 h-10 rounded-lg font-semibold bg-secondary-500 text-white shadow-lg shadow-secondary-900/20">
-                                1
-                            </button>
-                            <button className="w-10 h-10 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">2</button>
-                            <button className="w-10 h-10 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">3</button>
-                            <span className="px-2 text-gray-400">...</span>
-                            <button className="w-10 h-10 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
-                                {Math.ceil(subcategory.count / 12)}
-                            </button>
-                            <button className="p-2 text-gray-600 hover:text-gray-900 transition-colors rounded-lg hover:bg-gray-100">
-                                <ChevronRightIcon className="w-5 h-5" />
-                            </button>
+                        <nav className="flex items-center gap-1 flex-wrap">
+                            {files.links.map((link, i) => (
+                                <Link
+                                    key={i}
+                                    href={link.url || '#'}
+                                    className={`px-4 py-2 flex items-center justify-center rounded-lg transition-colors ${
+                                        link.active
+                                            ? 'bg-secondary-500 text-white font-semibold shadow-lg shadow-secondary-900/20'
+                                            : link.url
+                                            ? 'text-gray-600 hover:bg-gray-100'
+                                            : 'text-gray-400 cursor-not-allowed'
+                                    }`}
+                                    dangerouslySetInnerHTML={{ __html: link.label }}
+                                />
+                            ))}
                         </nav>
                     </div>
                 )}
@@ -354,17 +315,17 @@ export default function FilesIndex({ categorySlug, subcategorySlug, elementSlug,
                 <div className="mt-12">
                     <h2 className="text-xl font-bold text-gray-900 mb-6">Otras subcategorías en {category.name}</h2>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        {Object.entries(category.subcategories)
-                            .filter(([slug]) => slug !== elementSlug)
+                        {(category.subcategories || [])
+                            .filter((subcat) => subcat.slug !== elementSlug)
                             .slice(0, 4)
-                            .map(([slug, subcat]) => (
+                            .map((subcat) => (
                                 <Link
-                                    key={slug}
-                                    href={`/${categorySlug}/${subcategorySlug}/${slug}`}
+                                    key={subcat.slug}
+                                    href={`/${categorySlug}/${subcategorySlug}/${subcat.slug}`}
                                     className="p-4 rounded-xl border-2 transition-colors border-gray-200 hover:border-secondary-400 hover:bg-secondary-50"
                                 >
                                     <h3 className="font-medium text-gray-900">{subcat.name}</h3>
-                                    <p className="text-sm text-gray-500 mt-1">{subcat.count} archivos</p>
+                                    <p className="text-sm text-gray-500 mt-1">{subcat.files_count || 0} archivos</p>
                                 </Link>
                             ))}
                     </div>

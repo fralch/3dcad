@@ -1,8 +1,7 @@
 import { Link, usePage } from '@inertiajs/react';
-import { typesData } from '@/data/categories';
 
 export default function Footer() {
-    const { stats = {} } = usePage().props;
+    const { stats = {}, sharedTypes = [] } = usePage().props;
     const totalFiles = stats.totalFiles ?? 0;
 
     return (
@@ -33,7 +32,7 @@ export default function Footer() {
                     </div>
 
                     {/* Types Links */}
-                    {typesData.types.map((type) => (
+                    {sharedTypes.map((type) => (
                         <div key={type.id}>
                             <h4 className="text-white font-semibold mb-4">{type.name}</h4>
                             <ul className="space-y-3">

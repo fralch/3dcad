@@ -1,28 +1,24 @@
 import { Head, Link } from '@inertiajs/react';
 import MainLayout from '@/Layouts/MainLayout';
-import { getCategoryBySlug, getSubcategoryBySlug } from '@/data/categories';
 
-export default function CategoriesSubcategory({ categorySlug, subcategorySlug }) {
-    const category = getCategoryBySlug(categorySlug);
-    const subcategory = getSubcategoryBySlug(categorySlug, subcategorySlug);
-
-    if (!category || !subcategory) {
+export default function CategoriesSubcategory({ type, category, categorySlug, subcategorySlug }) {
+    if (!type || !category) {
         return (
             <MainLayout>
-                <Head title="Subcategoría no encontrada" />
+                <Head title="Categoría no encontrada" />
                 <div className="container mx-auto px-4 py-20 text-center">
-                    <h1 className="text-2xl font-bold text-gray-900">Subcategoría no encontrada</h1>
+                    <h1 className="text-2xl font-bold text-gray-900">Categoría no encontrada</h1>
                 </div>
             </MainLayout>
         );
     }
 
-    const totalFiles = subcategory.elements.reduce((a, el) => a + el.count, 0);
-    const is3D = categorySlug === '3d';
+    const totalFiles = category.subcategories.reduce((a, sub) => a + (sub.files_count || 0), 0);
+    const is3D = type.slug === '3d';
 
     return (
         <MainLayout>
-            <Head title={`${subcategory.name} - ${category.name}`} />
+            <Head title={`${category.name} - ${type.name}`} />
 
             {/* Page Header */}
             <div className={`${is3D ? 'bg-zinc-900' : 'bg-blue-900'} text-white py-12`}>
@@ -31,11 +27,11 @@ export default function CategoriesSubcategory({ categorySlug, subcategorySlug })
                     <nav className="flex items-center gap-2 text-sm mb-6">
                         <Link href="/" className="text-gray-400 hover:text-white transition-colors">Inicio</Link>
                         <span className="text-gray-600">/</span>
-                        <Link href={`/${categorySlug}`} className="text-gray-400 hover:text-white transition-colors">
-                            {category.name}
+                        <Link href={`/${type.slug}`} className="text-gray-400 hover:text-white transition-colors">
+                            {type.name}
                         </Link>
                         <span className="text-gray-600">/</span>
-                        <span className={is3D ? 'text-secondary-400' : 'text-blue-300'}>{subcategory.name}</span>
+                        <span className={is3D ? 'text-secondary-400' : 'text-blue-300'}>{category.name}</span>
                     </nav>
 
                     <div className="flex items-center gap-6">
@@ -51,10 +47,10 @@ export default function CategoriesSubcategory({ categorySlug, subcategorySlug })
                                 <span className={`text-sm px-2 py-0.5 rounded ${
                                     is3D ? 'bg-yellow-400/20 text-yellow-400' : 'bg-blue-400/20 text-blue-300'
                                 }`}>
-                                    {category.name}
+                                    {type.name}
                                 </span>
                             </div>
-                            <h1 className="text-3xl md:text-4xl font-bold">{subcategory.name}</h1>
+                            <h1 className="text-3xl md:text-4xl font-bold">{category.name}</h1>
                         </div>
                     </div>
 
@@ -68,9 +64,9 @@ export default function CategoriesSubcategory({ categorySlug, subcategorySlug })
                         </div>
                         <div>
                             <div className={`text-2xl font-bold ${is3D ? 'text-yellow-400' : 'text-blue-300'}`}>
-                                {subcategory.elements.length}
+                                {category.subcategories.length}
                             </div>
-                            <div className="text-sm text-gray-400">Secciones</div>
+                            <div className="text-sm text-gray-400">Subcategorías</div>
                         </div>
                     </div>
                 </div>
@@ -79,10 +75,10 @@ export default function CategoriesSubcategory({ categorySlug, subcategorySlug })
             <div className="container mx-auto px-4 py-12">
                 {/* Elements Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {subcategory.elements.map((element) => (
+                    {category.subcategories.map((sub) => (
                         <Link
-                            key={element.id}
-                            href={`/${categorySlug}/${subcategorySlug}/${element.slug}`}
+                            key={sub.id}
+                            href={`/${type.slug}/${category.slug}/${sub.slug}`}
                             className="bg-white rounded-xl p-6 shadow-sm hover:shadow-xl transition-all group border border-gray-100"
                         >
                             <div className="flex items-start justify-between mb-4">
@@ -94,16 +90,16 @@ export default function CategoriesSubcategory({ categorySlug, subcategorySlug })
                                     </svg>
                                 </div>
                                 <span className={`text-2xl font-bold ${is3D ? 'text-yellow-500' : 'text-blue-500'}`}>
-                                    {element.count}
+                                    {sub.files_count || 0}
                                 </span>
                             </div>
 
                             <h3 className={`text-lg font-semibold text-gray-900 group-hover:${is3D ? 'text-yellow-600' : 'text-blue-600'} transition-colors mb-2`}>
-                                {element.name}
+                                {sub.name}
                             </h3>
 
                             <p className="text-sm text-gray-500">
-                                {element.count} archivos disponibles
+                                {sub.files_count || 0} archivos disponibles
                             </p>
 
                             <div className={`mt-4 flex items-center gap-2 text-sm font-medium ${
@@ -121,13 +117,13 @@ export default function CategoriesSubcategory({ categorySlug, subcategorySlug })
                 {/* Back Link */}
                 <div className="mt-12 text-center">
                     <Link
-                        href={`/${categorySlug}`}
+                        href={`/${type.slug}`}
                         className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 font-medium"
                     >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16l-4-4m0 0l4-4m-4 4h18" />
                         </svg>
-                        Volver a {category.name}
+                        Volver a {type.name}
                     </Link>
                 </div>
             </div>

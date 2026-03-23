@@ -38,6 +38,11 @@ class HandleInertiaRequests extends Middleware
             'stats' => [
                 'totalFiles' => File::active()->count(),
             ],
+            'sharedTypes' => \App\Models\Type::with(['categories' => function ($query) {
+                $query->active()->ordered()->with(['subcategories' => function ($query) {
+                    $query->active()->ordered()->withCount('files');
+                }]);
+            }])->active()->ordered()->get(),
         ];
     }
 }

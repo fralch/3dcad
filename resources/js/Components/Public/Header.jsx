@@ -1,8 +1,8 @@
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { useState, useRef, useEffect } from 'react';
-import { typesData } from '@/data/categories';
 
 export default function Header() {
+    const { sharedTypes } = usePage().props;
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [activeDropdown, setActiveDropdown] = useState(null);
@@ -47,7 +47,7 @@ export default function Header() {
                         </Link>
 
                         {/* Types Dropdowns */}
-                        {typesData.types.map((type) => (
+                        {sharedTypes.map((type) => (
                             <div
                                 key={type.id}
                                 className="relative"
@@ -80,7 +80,7 @@ export default function Header() {
                                                     >
                                                         <span>{subcategory.name}</span>
                                                         <span className="text-xs bg-primary-700 text-primary-300 px-2 py-0.5 rounded-full">
-                                                            {subcategory.count}
+                                                            {subcategory.files_count || 0}
                                                         </span>
                                                     </Link>
                                                 ))}
@@ -180,7 +180,7 @@ export default function Header() {
                                 Inicio
                             </Link>
 
-                            {typesData.types.map((type) => (
+                            {sharedTypes.map((type) => (
                                 <div key={type.id}>
                                     <Link
                                         href={`/${type.slug}`}
@@ -203,7 +203,7 @@ export default function Header() {
                                                     className="flex items-center justify-between px-6 py-2 text-primary-200 hover:text-white hover:bg-primary-800 rounded-lg transition-colors"
                                                 >
                                                     <span>{subcategory.name}</span>
-                                                    <span className="text-xs text-primary-500">{subcategory.count}</span>
+                                                    <span className="text-xs text-primary-500">{subcategory.files_count || 0}</span>
                                                 </Link>
                                             ))}
                                         </div>

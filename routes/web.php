@@ -110,7 +110,10 @@ Route::get('/{typeSlug}/{categorySlug}', function ($typeSlug, $categorySlug) {
 Route::get('/{typeSlug}/{categorySlug}/{subcategorySlug}', function ($typeSlug, $categorySlug, $subcategorySlug) {
     $type = Type::where('slug', $typeSlug)->firstOrFail();
 
-    $category = Category::where('type_id', $type->id)
+    $category = Category::with(['subcategories' => function ($query) {
+        $query->active()->ordered()->withCount('files');
+    }])
+        ->where('type_id', $type->id)
         ->where('slug', $categorySlug)
         ->firstOrFail();
 

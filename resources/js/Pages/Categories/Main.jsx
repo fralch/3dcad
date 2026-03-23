@@ -1,30 +1,27 @@
 import { Head, Link } from '@inertiajs/react';
 import MainLayout from '@/Layouts/MainLayout';
-import { typesData, getCategoryBySlug } from '@/data/categories';
 
-export default function CategoriesMain({ typeSlug, categorySlug }) {
-    const category = getCategoryBySlug(typeSlug, categorySlug);
-
-    if (!category) {
+export default function CategoriesMain({ type, categorySlug }) {
+    if (!type) {
         return (
             <MainLayout>
-                <Head title="Categoría no encontrada" />
+                <Head title="Tipo no encontrado" />
                 <div className="container mx-auto px-4 py-20 text-center">
-                    <h1 className="text-2xl font-bold text-gray-900">Categoría no encontrada</h1>
+                    <h1 className="text-2xl font-bold text-gray-900">Tipo no encontrado</h1>
                 </div>
             </MainLayout>
         );
     }
 
-    const totalFiles = category.subcategories.reduce((acc, sub) =>
-        acc + sub.count, 0
+    const totalFiles = type.categories.reduce((acc, cat) =>
+        acc + (cat.files_count || 0), 0
     );
 
-    const is3D = typeSlug === '3d';
+    const is3D = categorySlug === '3d';
 
     return (
         <MainLayout>
-            <Head title={category.name} />
+            <Head title={type.name} />
 
             {/* Page Header */}
             <div className="bg-primary-900 text-white py-16">
@@ -42,7 +39,7 @@ export default function CategoriesMain({ typeSlug, categorySlug }) {
                             )}
                         </div>
                         <div>
-                            <h1 className="text-4xl md:text-5xl font-bold">{category.name}</h1>
+                            <h1 className="text-4xl md:text-5xl font-bold">{type.name}</h1>
                             <p className="text-primary-200 mt-2">
                                 {is3D
                                     ? 'Modelos 3D CAD para tus proyectos de ingeniería y diseño'
@@ -62,34 +59,28 @@ export default function CategoriesMain({ typeSlug, categorySlug }) {
                         </div>
                         <div>
                             <div className="text-3xl font-bold text-secondary-400">
-                                {category.subcategories.length}
+                                {type.categories.length}
                             </div>
-                            <div className="text-sm text-primary-300">Subcategorías</div>
-                        </div>
-                        <div>
-                            <div className="text-3xl font-bold text-secondary-400">
-                                {category.subcategories.length}
-                            </div>
-                            <div className="text-sm text-primary-300">Secciones</div>
+                            <div className="text-sm text-primary-300">Categorías</div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div className="container mx-auto px-4 py-12">
-                {/* Subcategories */}
+                {/* Categories */}
                 <div className="space-y-12">
-                    {category.subcategories.map((subcategory) => (
-                        <div key={subcategory.id}>
+                    {type.categories.map((category) => (
+                        <div key={category.id}>
                             <div className="flex items-center justify-between mb-6">
                                 <div>
-                                    <h2 className="text-2xl font-bold text-gray-900">{subcategory.name}</h2>
+                                    <h2 className="text-2xl font-bold text-gray-900">{category.name}</h2>
                                     <p className="text-gray-500 mt-1">
-                                        {subcategory.count} archivos
+                                        {category.files_count || 0} archivos
                                     </p>
                                 </div>
                                 <Link
-                                    href={`/${typeSlug}/${subcategory.slug}`}
+                                    href={`/${categorySlug}/${category.slug}`}
                                     className="text-sm font-semibold text-primary-600 hover:text-primary-700"
                                 >
                                     Ver todo
@@ -99,7 +90,7 @@ export default function CategoriesMain({ typeSlug, categorySlug }) {
                             {/* Elements grid removed as they don't exist in current data structure */}
                             <div className="bg-gray-50 rounded-xl p-6 text-center border border-gray-100">
                                 <p className="text-gray-600">
-                                    {subcategory.count} archivos disponibles en esta subcategoría
+                                    {category.files_count || 0} archivos disponibles en esta categoría
                                 </p>
                             </div>
                         </div>

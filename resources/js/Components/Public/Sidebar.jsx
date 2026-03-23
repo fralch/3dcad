@@ -1,13 +1,38 @@
-import { Link } from '@inertiajs/react';
-import { typesData, getPopularSubcategories } from '@/data/categories';
+import { Link, usePage } from '@inertiajs/react';
 
 export default function Sidebar() {
+    const { sharedTypes } = usePage().props;
+
+    const getAllSubcategories = () => {
+        const subcategories = [];
+        sharedTypes.forEach(type => {
+            type.categories.forEach(cat => {
+                cat.subcategories.forEach(sub => {
+                    subcategories.push({
+                        ...sub,
+                        type: type.name,
+                        typeSlug: type.slug,
+                        category: cat.name,
+                        categorySlug: cat.slug,
+                    });
+                });
+            });
+        });
+        return subcategories;
+    };
+
+    const getPopularSubcategories = (limit = 5) => {
+        return getAllSubcategories()
+            .sort((a, b) => (b.files_count || 0) - (a.files_count || 0))
+            .slice(0, limit);
+    };
+
     const popularSubcategories = getPopularSubcategories(5);
 
     return (
         <aside className="space-y-6">
             {/* Types & Categories */}
-            {typesData.types.map((type) => (
+            {sharedTypes.map((type) => (
                 <div key={type.id} className="bg-white rounded-xl shadow-sm p-6">
                     <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
                         {type.slug === '3d' ? (
@@ -41,7 +66,7 @@ export default function Sidebar() {
                                                     {sub.name}
                                                 </span>
                                                 <span className="text-xs bg-gray-100 group-hover:bg-secondary-100 text-gray-500 group-hover:text-secondary-700 px-2 py-0.5 rounded-full transition-colors">
-                                                    {sub.count}
+                                                    {sub.files_count || 0}
                                                 </span>
                                             </Link>
                                         </li>
@@ -87,7 +112,7 @@ export default function Sidebar() {
                                         {sub.type} / {sub.category}
                                     </p>
                                     <p className="text-xs text-gray-500 mt-1">
-                                        {sub.count} archivos
+                                        {sub.files_count || 0} archivos 
                                     </p>
                                 </div>
                             </Link>
