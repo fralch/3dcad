@@ -17,12 +17,12 @@ class UploadRouteTest extends TestCase
         $response->assertRedirect('/login');
     }
 
-    public function test_authenticated_users_can_access_upload_route(): void
+    public function test_authenticated_users_are_redirected_to_dashboard_from_upload_route(): void
     {
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->get('/upload');
 
-        $response->assertStatus(200);
+        $response->assertRedirect(route('admin.dashboard'));
     }
 }

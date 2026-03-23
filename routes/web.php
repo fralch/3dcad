@@ -146,7 +146,9 @@ Route::get('/files/{slug}/download', [FileController::class, 'download'])->name(
 
 // Upload (requiere autenticación)
 Route::middleware(['auth'])->group(function () {
-    Route::get('/upload', [FileController::class, 'upload'])->name('upload');
+    Route::get('/upload', function () {
+        return redirect()->route('admin.dashboard');
+    })->name('upload');
     Route::post('/upload', [FileController::class, 'store'])->name('upload.store');
     Route::post('/files/{file}/like', [FileController::class, 'like'])->name('file.like');
 });

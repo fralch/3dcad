@@ -60,11 +60,11 @@ class FileUploadTest extends TestCase
         $response->assertRedirect('/login');
     }
 
-    public function test_authenticated_user_can_access_upload_page(): void
+    public function test_authenticated_user_is_redirected_to_dashboard_from_upload_page(): void
     {
         $response = $this->actingAs($this->user)->get('/upload');
 
-        $response->assertStatus(200);
+        $response->assertRedirect(route('admin.dashboard'));
     }
 
     public function test_file_upload_with_thumbnail(): void
