@@ -2,15 +2,16 @@ import { Head, Link } from '@inertiajs/react';
 import { useState } from 'react';
 import MainLayout from '@/Layouts/MainLayout';
 
-export default function FilesIndex({ type, category, subcategory, categorySlug, subcategorySlug, elementSlug, files = [] }) {
+export default function FilesIndex({ type, category, subcategory, categorySlug, subcategorySlug, elementSlug, files = [], filters = {} }) {
     const [viewMode, setViewMode] = useState('grid');
-    const [sortBy, setSortBy] = useState('recent');
+    const [sortBy, setSortBy] = useState(filters.sort || 'recent');
 
     const is3D = categorySlug === '3d';
+    const isSearch = !!filters.search || !type;
 
     const displayFiles = files?.data || files || [];
 
-    if (!type || !category || !subcategory) {
+    if (!isSearch && (!type || !category || !subcategory)) {
         return (
             <MainLayout>
                 <Head title="Archivos no encontrados" />
@@ -40,7 +41,7 @@ export default function FilesIndex({ type, category, subcategory, categorySlug, 
 
     return (
         <MainLayout>
-            <Head title={`${subcategory.name} - ${category.name} - ${type.name}`} />
+            <Head title={isSearch ? `Resultados de búsqueda: ${filters.search || ''}` : `${subcategory.name} - ${category.name} - ${type.name}`} />
 
             {/* Hero Header */}
             <div className="bg-primary-900 text-white py-12">
@@ -51,31 +52,47 @@ export default function FilesIndex({ type, category, subcategory, categorySlug, 
                             Inicio
                         </Link>
                         <ChevronIcon className="w-4 h-4 text-primary-400" />
-                        <Link href={`/${categorySlug}`} className="text-primary-200 hover:text-white transition-colors">
-                            {type.name}
-                        </Link>
-                        <ChevronIcon className="w-4 h-4 text-primary-400" />
-                        <Link href={`/${categorySlug}/${subcategorySlug}`} className="text-primary-200 hover:text-white transition-colors">
-                            {category.name}
-                        </Link>
-                        <ChevronIcon className="w-4 h-4 text-primary-400" />
-                        <span className="text-secondary-400">{subcategory.name}</span>
+                        {isSearch ? (
+                            <span className="text-secondary-400">Búsqueda</span>
+                        ) : (
+                            <>
+                                <Link href={`/${categorySlug}`} className="text-primary-200 hover:text-white transition-colors">
+                                    {type.name}
+                                </Link>
+                                <ChevronIcon className="w-4 h-4 text-primary-400" />
+                                <Link href={`/${categorySlug}/${subcategorySlug}`} className="text-primary-200 hover:text-white transition-colors">
+                                    {category.name}
+                                </Link>
+                                <ChevronIcon className="w-4 h-4 text-primary-400" />
+                                <span className="text-secondary-400">{subcategory.name}</span>
+                            </>
+                        )}
                     </nav>
 
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
                         <div className="flex items-center gap-4">
                             <div className="w-16 h-16 rounded-2xl flex items-center justify-center bg-secondary-500 shadow-lg shadow-secondary-900/20">
-                                <CubeIcon className="w-8 h-8 text-white" />
+                                {isSearch ? (
+                                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    </svg>
+                                ) : (
+                                    <CubeIcon className="w-8 h-8 text-white" />
+                                )}
                             </div>
                             <div>
-                                <div className="flex items-center gap-3 mb-1">
-                                    <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-primary-800 text-primary-200 border border-primary-700">
-                                        {type.name}
-                                    </span>
-                                    <span className="text-xs text-primary-500">•</span>
-                                    <span className="text-xs text-primary-300">{category.name}</span>
-                                </div>
-                                <h1 className="text-3xl md:text-4xl font-bold">{subcategory.name}</h1>
+                                {!isSearch && (
+                                    <div className="flex items-center gap-3 mb-1">
+                                        <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-primary-800 text-primary-200 border border-primary-700">
+                                            {type.name}
+                                        </span>
+                                        <span className="text-xs text-primary-500">•</span>
+                                        <span className="text-xs text-primary-300">{category.name}</span>
+                                    </div>
+                                )}
+                                <h1 className="text-3xl md:text-4xl font-bold">
+                                    {isSearch ? (filters.search ? `Resultados para "${filters.search}"` : 'Todos los archivos') : subcategory.name}
+                                </h1>
                             </div>
                         </div>
                         <div className="flex items-center gap-6 text-sm">
@@ -153,17 +170,23 @@ export default function FilesIndex({ type, category, subcategory, categorySlug, 
                         <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
                             <CubeIcon className="w-10 h-10 text-gray-400" />
                         </div>
-                        <h3 className="text-lg font-bold text-gray-900 mb-2">No hay archivos todavía</h3>
-                        <p className="text-gray-500 mb-6">Sé el primero en subir un archivo a esta subcategoría.</p>
-                        <Link
-                            href="/upload"
-                            className="inline-flex items-center gap-2 bg-secondary-500 hover:bg-secondary-400 text-white px-6 py-2.5 rounded-lg font-semibold transition-colors"
-                        >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                            </svg>
-                            Subir Archivo
-                        </Link>
+                        <h3 className="text-lg font-bold text-gray-900 mb-2">
+                            {isSearch ? 'No se encontraron resultados' : 'No hay archivos todavía'}
+                        </h3>
+                        <p className="text-gray-500 mb-6">
+                            {isSearch ? 'Intenta con otros términos de búsqueda.' : 'Sé el primero en subir un archivo a esta subcategoría.'}
+                        </p>
+                        {!isSearch && (
+                            <Link
+                                href="/upload"
+                                className="inline-flex items-center gap-2 bg-secondary-500 hover:bg-secondary-400 text-white px-6 py-2.5 rounded-lg font-semibold transition-colors"
+                            >
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                                </svg>
+                                Subir Archivo
+                            </Link>
+                        )}
                     </div>
                 ) : viewMode === 'grid' ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -314,24 +337,26 @@ export default function FilesIndex({ type, category, subcategory, categorySlug, 
                 )}
 
                 {/* Related Categories */}
-                <div className="mt-12">
-                    <h2 className="text-xl font-bold text-gray-900 mb-6">Otras subcategorías en {category.name}</h2>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        {(category.subcategories || [])
-                            .filter((subcat) => subcat.slug !== elementSlug)
-                            .slice(0, 4)
-                            .map((subcat) => (
-                                <Link
-                                    key={subcat.slug}
-                                    href={`/${categorySlug}/${subcategorySlug}/${subcat.slug}`}
+                {!isSearch && (
+                    <div className="mt-12">
+                        <h2 className="text-xl font-bold text-gray-900 mb-6">Otras subcategorías en {category?.name}</h2>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            {(category?.subcategories || [])
+                                .filter((subcat) => subcat.slug !== elementSlug)
+                                .slice(0, 4)
+                                .map((subcat) => (
+                                    <Link
+                                        key={subcat.slug}
+                                        href={`/${categorySlug}/${subcategorySlug}/${subcat.slug}`}
                                     className="p-4 rounded-xl border-2 transition-colors border-gray-200 hover:border-secondary-400 hover:bg-secondary-50"
                                 >
                                     <h3 className="font-medium text-gray-900">{subcat.name}</h3>
                                     <p className="text-sm text-gray-500 mt-1">{subcat.files_count || 0} archivos</p>
                                 </Link>
                             ))}
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
         </MainLayout>
     );

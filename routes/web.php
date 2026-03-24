@@ -63,6 +63,9 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
+// Buscar archivos
+Route::get('/search', [FileController::class, 'index'])->name('search');
+
 // Categoría principal: 3D
 Route::get('/3d', function () {
     $type = Type::with(['categories' => function ($query) {

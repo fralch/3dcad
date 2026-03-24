@@ -1,4 +1,4 @@
-import { Link, usePage } from '@inertiajs/react';
+import { Link, usePage, router } from '@inertiajs/react';
 import { useState, useRef, useEffect } from 'react';
 
 export default function Header() {
@@ -6,6 +6,7 @@ export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [activeDropdown, setActiveDropdown] = useState(null);
+    const [searchQuery, setSearchQuery] = useState('');
     const timeoutRef = useRef(null);
 
     useEffect(() => {
@@ -15,6 +16,14 @@ export default function Header() {
             }
         };
     }, []);
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        if (searchQuery.trim()) {
+            router.get(route('search'), { search: searchQuery });
+            setIsSearchOpen(false);
+        }
+    };
 
     const handleMouseEnter = (slug) => {
         if (timeoutRef.current) {
@@ -197,16 +206,20 @@ export default function Header() {
                 {/* Search Bar */}
                 {isSearchOpen && (
                     <div className="py-4 border-t border-primary-700">
-                        <div className="relative">
+                        <form onSubmit={handleSearch} className="relative">
                             <input
                                 type="text"
                                 placeholder="Buscar archivos 3D, planos..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
                                 className="w-full bg-primary-800 border border-primary-700 rounded-lg py-3 px-4 pl-12 text-white placeholder-primary-400 focus:outline-none focus:ring-2 focus:ring-secondary-400 focus:border-transparent"
                             />
-                            <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
-                        </div>
+                            <button type="submit" className="absolute left-4 top-1/2 -translate-y-1/2">
+                                <svg className="w-5 h-5 text-primary-400 hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                            </button>
+                        </form>
                     </div>
                 )}
 
