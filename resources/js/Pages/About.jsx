@@ -17,7 +17,7 @@ export default function About() {
             <div className="bg-zinc-900 text-white py-20">
                 <div className="container mx-auto px-4 text-center">
                     <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                        Acerca de <span className="text-yellow-400">3DCAD</span>
+                        Acerca de <span className="text-yellow-400">sketch3dlab</span>
                     </h1>
                     <p className="text-xl text-gray-300 max-w-2xl mx-auto">
                         La plataforma lider para compartir y descargar modelos 3D CAD de alta calidad.

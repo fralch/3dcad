@@ -101,18 +101,18 @@ Ve al directorio web (usualmente `/var/www`):
 ```bash
 cd /var/www
 # Opción A: Clonar con git (si lo tienes en GitHub/GitLab)
-# sudo git clone https://github.com/tu-usuario/tu-repo.git 3dcad
+# sudo git clone https://github.com/tu-usuario/tu-repo.git sketch3dlab
 
 # Opción B: Si subes los archivos manualmente, crea la carpeta y sube el contenido
-sudo mkdir -p 3dcad
+sudo mkdir -p sketch3dlab
 # (Sube tus archivos aquí)
 ```
 
 2. **Asignar permisos iniciales**:
 Asegúrate de que tu usuario pueda editar archivos por ahora (luego le daremos permisos a Nginx).
 ```bash
-sudo chown -R $USER:www-data /var/www/3dcad
-cd /var/www/3dcad
+sudo chown -R $USER:www-data /var/www/sketch3dlab
+cd /var/www/sketch3dlab
 ```
 
 3. **Instalar dependencias de PHP**:
@@ -197,7 +197,7 @@ sudo chmod -R 775 /var/www/3dcad/bootstrap/cache
 
 1. Crear un archivo de configuración para el sitio:
 ```bash
-sudo nano /etc/nginx/sites-available/3dcad
+sudo nano /etc/nginx/sites-available/sketch3dlab
 ```
 
 2. Pega el siguiente contenido (cambia `tu_dominio_o_ip` por tu dominio real o la IP del servidor):
@@ -206,7 +206,7 @@ sudo nano /etc/nginx/sites-available/3dcad
 server {
     listen 80;
     server_name tu_dominio_o_ip;
-    root /var/www/3dcad/public;
+    root /var/www/sketch3dlab/public;
 
     add_header X-Frame-Options "SAMEORIGIN";
     add_header X-Content-Type-Options "nosniff";
@@ -238,7 +238,7 @@ server {
 
 3. Activar el sitio y reiniciar Nginx:
 ```bash
-sudo ln -s /etc/nginx/sites-available/3dcad /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/sketch3dlab /etc/nginx/sites-enabled/
 sudo nginx -t
 sudo systemctl restart nginx
 ```
@@ -258,7 +258,7 @@ sudo certbot --nginx -d tu_dominio.com
 
 ## Solución de Problemas Comunes
 
-- **Error 500**: Verifica los permisos de la carpeta `storage` y `bootstrap/cache`. Revisa los logs en `/var/www/3dcad/storage/logs/laravel.log`.
+- **Error 500**: Verifica los permisos de la carpeta `storage` y `bootstrap/cache`. Revisa los logs en `/var/www/sketch3dlab/storage/logs/laravel.log`.
 - **Página en blanco**: Asegúrate de haber ejecutado `npm run build` y que los archivos en `public/build` existan.
 - **Error de conexión a BD**: Verifica las credenciales en el archivo `.env`.
 
