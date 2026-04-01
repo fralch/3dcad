@@ -3,7 +3,6 @@
 namespace Tests\Feature\Admin;
 
 use App\Models\Camion;
-use App\Models\User;
 use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -12,19 +11,31 @@ class CamionManagementTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_camiones_index_requires_authentication(): void
+    public function test_camiones_index_requires_pin_access(): void
     {
         $response = $this->get(route('admin.camiones.index'));
 
-        $response->assertRedirect('/login');
+        $response->assertRedirect(route('admin.camiones.access'));
     }
 
-    public function test_authenticated_user_can_create_camion(): void
+    public function test_can_unlock_camiones_access_with_valid_pin(): void
     {
         $this->withoutMiddleware(ValidateCsrfToken::class);
-        $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->post(route('admin.camiones.store'), [
+        $response = $this->post(route('admin.camiones.access.store'), [
+            'pin' => '1234',
+        ]);
+
+        $response->assertRedirect(route('admin.camiones.index'));
+        $response->assertSessionHas('camiones_access_granted', true);
+    }
+
+    public function test_pin_access_can_create_camion_without_authentication(): void
+    {
+        $this->withoutMiddleware(ValidateCsrfToken::class);
+        $this->withSession(['camiones_access_granted' => true]);
+
+        $response = $this->post(route('admin.camiones.store'), [
             'placa' => 'ABC-123',
             'marca' => 'Volvo',
             'modelo' => 'FH16',
@@ -44,10 +55,10 @@ class CamionManagementTest extends TestCase
         ]);
     }
 
-    public function test_authenticated_user_can_update_camion(): void
+    public function test_pin_access_can_update_camion_without_authentication(): void
     {
         $this->withoutMiddleware(ValidateCsrfToken::class);
-        $user = User::factory()->create();
+        $this->withSession(['camiones_access_granted' => true]);
         $camion = Camion::create([
             'placa' => 'DEF-456',
             'marca' => 'Scania',
@@ -56,7 +67,7 @@ class CamionManagementTest extends TestCase
             'estado' => 'activo',
         ]);
 
-        $response = $this->actingAs($user)->put(route('admin.camiones.update', $camion), [
+        $response = $this->put(route('admin.camiones.update', $camion), [
             'placa' => 'DEF-456',
             'marca' => 'Scania',
             'modelo' => 'R560',

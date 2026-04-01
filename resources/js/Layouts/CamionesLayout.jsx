@@ -17,7 +17,12 @@ export default function CamionesLayout({ children, title }) {
     };
 
     const handleLogout = () => {
-        router.post(route('logout'));
+        if (user) {
+            router.post(route('logout'));
+            return;
+        }
+
+        router.post(route('admin.camiones.access.logout'));
     };
 
     return (
@@ -98,10 +103,10 @@ export default function CamionesLayout({ children, title }) {
                     {/* User menu */}
                     <Menu as="div" className="relative">
                         <Menu.Button className="flex items-center gap-2 lg:gap-3 p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
-                            <span className="hidden sm:block text-sm text-gray-700">{user?.name || 'Usuario'}</span>
+                            <span className="hidden sm:block text-sm text-gray-700">{user?.name || 'Acceso camiones'}</span>
                             <div className="w-8 h-8 bg-primary-400 rounded-full flex items-center justify-center">
                                 <span className="text-zinc-900 font-bold text-xs">
-                                    {user?.name?.charAt(0).toUpperCase() || 'U'}
+                                    {user?.name?.charAt(0).toUpperCase() || 'C'}
                                 </span>
                             </div>
                             <ChevronDownIcon className="w-4 h-4 text-gray-500 hidden sm:block" />
@@ -118,21 +123,23 @@ export default function CamionesLayout({ children, title }) {
                         >
                             <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right bg-white rounded-xl shadow-lg ring-1 ring-black/5 focus:outline-none py-1">
                                 <div className="px-4 py-3 border-b border-gray-100">
-                                    <p className="text-sm font-medium text-gray-900">{user?.name}</p>
-                                    <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                                    <p className="text-sm font-medium text-gray-900">{user?.name || 'Acceso camiones'}</p>
+                                    <p className="text-xs text-gray-500 truncate">{user?.email || 'Sesión protegida por PIN'}</p>
                                 </div>
 
-                                <Menu.Item>
-                                    {({ active }) => (
-                                        <Link
-                                            href={route('admin.profile.edit')}
-                                            className={`${active ? 'bg-gray-50' : ''} flex items-center gap-2 px-4 py-2 text-sm text-gray-700`}
-                                        >
-                                            <UserIcon className="w-4 h-4" />
-                                            Mi Perfil
-                                        </Link>
-                                    )}
-                                </Menu.Item>
+                                {user && (
+                                    <Menu.Item>
+                                        {({ active }) => (
+                                            <Link
+                                                href={route('admin.profile.edit')}
+                                                className={`${active ? 'bg-gray-50' : ''} flex items-center gap-2 px-4 py-2 text-sm text-gray-700`}
+                                            >
+                                                <UserIcon className="w-4 h-4" />
+                                                Mi Perfil
+                                            </Link>
+                                        )}
+                                    </Menu.Item>
+                                )}
 
                                 <Menu.Item>
                                     {({ active }) => (
@@ -141,7 +148,7 @@ export default function CamionesLayout({ children, title }) {
                                             className={`${active ? 'bg-gray-50' : ''} flex items-center gap-2 px-4 py-2 text-sm text-red-600 w-full`}
                                         >
                                             <LogoutIcon className="w-4 h-4" />
-                                            Cerrar Sesión
+                                            {user ? 'Cerrar Sesión' : 'Cerrar acceso'}
                                         </button>
                                     )}
                                 </Menu.Item>

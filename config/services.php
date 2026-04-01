@@ -35,4 +35,6 @@ return [
         ],
     ],
 
+    'camiones_access_pin' => env('CAMIONES_ACCESS_PIN', '1234'),
+
 ];

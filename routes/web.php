@@ -1,8 +1,8 @@
 <?php
 
-use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
-// SUBSISTEMA_CAMIONES_START
 use App\Http\Controllers\Admin\CamionController as AdminCamionController;
+// SUBSISTEMA_CAMIONES_START
+use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 // SUBSISTEMA_CAMIONES_END
 use App\Http\Controllers\Admin\FileController as AdminFileController;
 use App\Http\Controllers\Admin\SubcategoryController as AdminSubcategoryController;
@@ -13,6 +13,7 @@ use App\Models\Category;
 use App\Models\File;
 use App\Models\Subcategory;
 use App\Models\Type;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -52,7 +53,7 @@ Route::get('/', function () {
     $homeStats = [
         'totalFiles' => File::active()->count(),
         'totalSubcategories' => Subcategory::active()
-            ->whereHas('category', fn($query) => $query->active()->whereHas('type', fn($typeQuery) => $typeQuery->active()))
+            ->whereHas('category', fn ($query) => $query->active()->whereHas('type', fn ($typeQuery) => $typeQuery->active()))
             ->count(),
         'totalTypes' => Type::active()->count(),
     ];
@@ -164,6 +165,46 @@ Route::get('/about', function () {
     return Inertia::render('About');
 })->name('about');
 
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/camiones/acceso', function (Request $request) {
+        if ($request->session()->get('camiones_access_granted')) {
+            return redirect()->route('admin.camiones.index');
+        }
+
+        return Inertia::render('Admin/Camiones/Access');
+    })->name('camiones.access');
+
+    Route::post('/camiones/acceso', function (Request $request) {
+        $validated = $request->validate([
+            'pin' => ['required', 'digits:4'],
+        ]);
+
+        $pinEsperado = (string) config('services.camiones_access_pin', '1234');
+
+        if (! hash_equals($pinEsperado, (string) $validated['pin'])) {
+            return back()->withErrors([
+                'pin' => 'Clave incorrecta',
+            ]);
+        }
+
+        $request->session()->put('camiones_access_granted', true);
+
+        return redirect()->route('admin.camiones.index');
+    })->name('camiones.access.store');
+
+    Route::post('/camiones/acceso/salir', function (Request $request) {
+        $request->session()->forget('camiones_access_granted');
+
+        return redirect()->route('admin.camiones.access');
+    })->name('camiones.access.logout');
+
+    Route::middleware(['camiones.pin'])->group(function () {
+        Route::resource('camiones', AdminCamionController::class)
+            ->parameters(['camiones' => 'camion'])
+            ->except(['show']);
+    });
+});
+
 /*
 |--------------------------------------------------------------------------
 | Admin Routes (Protected)
@@ -200,14 +241,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
 
     // Subcategories CRUD
     Route::resource('subcategories', AdminSubcategoryController::class)->except(['show']);
-
-    // SUBSISTEMA_CAMIONES_START
-    // Camiones CRUD
-    Route::resource('camiones', AdminCamionController::class)
-        ->parameters(['camiones' => 'camion'])
-        ->except(['show']);
-
-    // SUBSISTEMA_CAMIONES_END
 
     // Files CRUD
     Route::get('/files', [AdminFileController::class, 'index'])->name('files.index');
