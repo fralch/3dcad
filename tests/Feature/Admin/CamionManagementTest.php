@@ -99,4 +99,93 @@ class CamionManagementTest extends TestCase
         $response->assertJsonCount(1, 'data');
         $response->assertJsonPath('data.0.placa', 'PLA-001');
     }
+
+    public function test_public_api_can_list_camiones_without_authentication(): void
+    {
+        Camion::create([
+            'placa' => 'LST-001',
+            'marca' => 'Iveco',
+            'modelo' => 'T-Way',
+            'anio' => 2022,
+            'estado' => 'activo',
+        ]);
+
+        $response = $this->getJson('/api/camiones');
+
+        $response->assertOk();
+        $response->assertJsonPath('success', true);
+        $response->assertJsonCount(1, 'data');
+    }
+
+    public function test_public_api_can_create_camion_without_authentication(): void
+    {
+        $response = $this->postJson('/api/camiones', [
+            'placa' => 'API-900',
+            'marca' => 'Volvo',
+            'modelo' => 'FH',
+            'anio' => 2024,
+            'capacidad_carga' => 19.5,
+            'estado' => 'activo',
+            'conductor_asignado' => 'Libre',
+            'observaciones' => 'Alta pública',
+        ]);
+
+        $response->assertStatus(201);
+        $response->assertJsonPath('success', true);
+        $response->assertJsonPath('data.placa', 'API-900');
+        $this->assertDatabaseHas('camiones', [
+            'placa' => 'API-900',
+            'modelo' => 'FH',
+        ]);
+    }
+
+    public function test_public_api_can_update_camion_without_authentication(): void
+    {
+        $camion = Camion::create([
+            'placa' => 'API-901',
+            'marca' => 'Scania',
+            'modelo' => 'R450',
+            'anio' => 2021,
+            'estado' => 'activo',
+        ]);
+
+        $response = $this->putJson("/api/camiones/{$camion->id}", [
+            'placa' => 'API-901',
+            'marca' => 'Scania',
+            'modelo' => 'R560',
+            'anio' => 2023,
+            'capacidad_carga' => 20,
+            'estado' => 'mantenimiento',
+            'conductor_asignado' => 'API Driver',
+            'observaciones' => 'Cambio público',
+        ]);
+
+        $response->assertOk();
+        $response->assertJsonPath('success', true);
+        $response->assertJsonPath('data.modelo', 'R560');
+        $this->assertDatabaseHas('camiones', [
+            'id' => $camion->id,
+            'modelo' => 'R560',
+            'estado' => 'mantenimiento',
+        ]);
+    }
+
+    public function test_public_api_can_delete_camion_without_authentication(): void
+    {
+        $camion = Camion::create([
+            'placa' => 'API-902',
+            'marca' => 'MAN',
+            'modelo' => 'TGX',
+            'anio' => 2020,
+            'estado' => 'inactivo',
+        ]);
+
+        $response = $this->deleteJson("/api/camiones/{$camion->id}");
+
+        $response->assertOk();
+        $response->assertJsonPath('success', true);
+        $this->assertDatabaseMissing('camiones', [
+            'id' => $camion->id,
+        ]);
+    }
 }

@@ -3,7 +3,6 @@
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 // SUBSISTEMA_CAMIONES_START
 use App\Http\Controllers\Admin\CamionController as AdminCamionController;
-use App\Http\Controllers\Api\CamionApiController;
 // SUBSISTEMA_CAMIONES_END
 use App\Http\Controllers\Admin\FileController as AdminFileController;
 use App\Http\Controllers\Admin\SubcategoryController as AdminSubcategoryController;
@@ -227,10 +226,5 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-
-// API pública de camiones (aislada)
-// SUBSISTEMA_CAMIONES_START
-Route::get('/api/camiones/placas', [CamionApiController::class, 'getPlacas']);
-// SUBSISTEMA_CAMIONES_END
 
 require __DIR__.'/auth.php';
