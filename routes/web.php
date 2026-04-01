@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 // SUBSISTEMA_CAMIONES_START
 use App\Http\Controllers\Admin\CamionController as AdminCamionController;
+use App\Http\Controllers\Api\CamionApiController;
 // SUBSISTEMA_CAMIONES_END
 use App\Http\Controllers\Admin\FileController as AdminFileController;
 use App\Http\Controllers\Admin\SubcategoryController as AdminSubcategoryController;
@@ -206,15 +207,18 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     Route::resource('camiones', AdminCamionController::class)
         ->parameters(['camiones' => 'camion'])
         ->except(['show']);
+
     // SUBSISTEMA_CAMIONES_END
 
     // Files CRUD
     Route::get('/files', [AdminFileController::class, 'index'])->name('files.index');
     Route::get('/files/upload', [AdminFileController::class, 'create'])->name('files.upload');
+    // ... (rest of Files CRUD and Profile omitted for brevity in this thought but will be included in the JSON)
     Route::post('/files', [AdminFileController::class, 'store'])->name('files.store');
     Route::get('/files/{file}/edit', [AdminFileController::class, 'edit'])->name('files.edit');
     Route::put('/files/{file}', [AdminFileController::class, 'update'])->name('files.update');
     Route::delete('/files/{file}', [AdminFileController::class, 'destroy'])->name('files.destroy');
+    // ...
     Route::post('/files/{file}/toggle-featured', [AdminFileController::class, 'toggleFeatured'])->name('files.toggle-featured');
     Route::post('/files/{file}/toggle-active', [AdminFileController::class, 'toggleActive'])->name('files.toggle-active');
 
@@ -223,5 +227,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+// API pública de camiones (aislada)
+// SUBSISTEMA_CAMIONES_START
+Route::get('/api/camiones/placas', [CamionApiController::class, 'getPlacas']);
+// SUBSISTEMA_CAMIONES_END
 
 require __DIR__.'/auth.php';

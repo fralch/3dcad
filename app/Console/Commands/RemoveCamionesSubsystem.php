@@ -39,6 +39,7 @@ class RemoveCamionesSubsystem extends Command
         $filesToDelete = [
             app_path('Models/Camion.php'),
             app_path('Http/Controllers/Admin/CamionController.php'),
+            app_path('Http/Controllers/Api/CamionApiController.php'),
             base_path('tests/Feature/Admin/CamionManagementTest.php'),
         ];
 

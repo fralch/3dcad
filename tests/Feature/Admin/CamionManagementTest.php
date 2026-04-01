@@ -74,4 +74,29 @@ class CamionManagementTest extends TestCase
             'estado' => 'mantenimiento',
         ]);
     }
+
+    public function test_public_api_can_get_placas(): void
+    {
+        Camion::create([
+            'placa' => 'PLA-001',
+            'marca' => 'Test',
+            'modelo' => 'X1',
+            'anio' => 2020,
+            'estado' => 'activo',
+        ]);
+
+        Camion::create([
+            'placa' => 'PLA-002',
+            'marca' => 'Test',
+            'modelo' => 'X2',
+            'anio' => 2020,
+            'estado' => 'mantenimiento',
+        ]);
+
+        $response = $this->get('/api/camiones/placas');
+
+        $response->assertStatus(200);
+        $response->assertJsonCount(1, 'data');
+        $response->assertJsonPath('data.0.placa', 'PLA-001');
+    }
 }
