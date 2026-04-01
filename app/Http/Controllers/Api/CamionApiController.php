@@ -90,4 +90,41 @@ class CamionApiController extends Controller
             'data' => $placas,
         ]);
     }
+
+    public function getPlacasPaginadas(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'q' => 'nullable|string|max:20',
+            'per_page' => 'nullable|integer|min:1|max:50',
+        ]);
+
+        $perPage = (int) ($validated['per_page'] ?? 10);
+        $search = $validated['q'] ?? null;
+
+        $query = Camion::query()
+            ->select('id', 'placa')
+            ->orderBy('placa');
+
+        if ($search !== null && $search !== '') {
+            $query->where('placa', 'like', '%'.$search.'%');
+        }
+
+        $placas = $query
+            ->paginate($perPage)
+            ->appends($request->query());
+
+        return response()->json([
+            'success' => true,
+            'data' => $placas->items(),
+            'pagination' => [
+                'current_page' => $placas->currentPage(),
+                'last_page' => $placas->lastPage(),
+                'per_page' => $placas->perPage(),
+                'total' => $placas->total(),
+                'from' => $placas->firstItem(),
+                'to' => $placas->lastItem(),
+                'has_more_pages' => $placas->hasMorePages(),
+            ],
+        ]);
+    }
 }

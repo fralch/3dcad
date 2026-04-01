@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('camiones')->group(function () {
     Route::get('placas', [CamionApiController::class, 'getPlacas']);
+    Route::get('placas/paginado', [CamionApiController::class, 'getPlacasPaginadas']);
     Route::post('geolocalizaciones', [CamionGeolocalizacionApiController::class, 'store']);
 });
 

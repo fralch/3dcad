@@ -100,6 +100,77 @@ class CamionManagementTest extends TestCase
         $response->assertJsonPath('data.0.placa', 'PLA-001');
     }
 
+    public function test_public_api_can_get_paginated_placas_for_autocomplete(): void
+    {
+        Camion::create([
+            'placa' => 'AAA-001',
+            'marca' => 'Test',
+            'modelo' => 'A',
+            'anio' => 2020,
+            'estado' => 'activo',
+        ]);
+
+        Camion::create([
+            'placa' => 'AAA-002',
+            'marca' => 'Test',
+            'modelo' => 'B',
+            'anio' => 2020,
+            'estado' => 'mantenimiento',
+        ]);
+
+        Camion::create([
+            'placa' => 'BBB-001',
+            'marca' => 'Test',
+            'modelo' => 'C',
+            'anio' => 2020,
+            'estado' => 'inactivo',
+        ]);
+
+        $response = $this->getJson('/api/camiones/placas/paginado?per_page=2');
+
+        $response->assertOk();
+        $response->assertJsonPath('success', true);
+        $response->assertJsonCount(2, 'data');
+        $response->assertJsonPath('pagination.current_page', 1);
+        $response->assertJsonPath('pagination.per_page', 2);
+        $response->assertJsonPath('pagination.total', 3);
+        $response->assertJsonPath('pagination.has_more_pages', true);
+    }
+
+    public function test_public_api_can_filter_paginated_placas_for_autocomplete(): void
+    {
+        Camion::create([
+            'placa' => 'ABC-123',
+            'marca' => 'Test',
+            'modelo' => 'A',
+            'anio' => 2020,
+            'estado' => 'activo',
+        ]);
+
+        Camion::create([
+            'placa' => 'ABD-123',
+            'marca' => 'Test',
+            'modelo' => 'B',
+            'anio' => 2020,
+            'estado' => 'activo',
+        ]);
+
+        Camion::create([
+            'placa' => 'XYZ-999',
+            'marca' => 'Test',
+            'modelo' => 'C',
+            'anio' => 2020,
+            'estado' => 'activo',
+        ]);
+
+        $response = $this->getJson('/api/camiones/placas/paginado?q=AB&per_page=10');
+
+        $response->assertOk();
+        $response->assertJsonPath('success', true);
+        $response->assertJsonCount(2, 'data');
+        $response->assertJsonPath('pagination.total', 2);
+    }
+
     public function test_public_api_can_list_camiones_without_authentication(): void
     {
         Camion::create([
