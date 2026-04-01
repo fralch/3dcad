@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Camion;
+use App\Models\CamionGeolocalizacion;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -16,6 +17,31 @@ class CamionController extends Controller
 
         return Inertia::render('Admin/Camiones/Index', [
             'camiones' => $camiones,
+        ]);
+    }
+
+    public function ubicaciones()
+    {
+        $geolocalizaciones = CamionGeolocalizacion::query()
+            ->with('camion:id,placa,marca,modelo,estado')
+            ->orderByDesc('timestamp')
+            ->paginate(25)
+            ->through(function (CamionGeolocalizacion $geolocalizacion) {
+                return [
+                    'id' => $geolocalizacion->id,
+                    'placa' => $geolocalizacion->camion?->placa,
+                    'marca' => $geolocalizacion->camion?->marca,
+                    'modelo' => $geolocalizacion->camion?->modelo,
+                    'estado' => $geolocalizacion->camion?->estado,
+                    'latitud' => $geolocalizacion->latitud,
+                    'longitud' => $geolocalizacion->longitud,
+                    'timestamp' => $geolocalizacion->timestamp?->toIso8601String(),
+                    'maps_url' => "https://www.google.com/maps?q={$geolocalizacion->latitud},{$geolocalizacion->longitud}",
+                ];
+            });
+
+        return Inertia::render('Admin/Camiones/Ubicaciones', [
+            'geolocalizaciones' => $geolocalizaciones,
         ]);
     }
 

@@ -199,6 +199,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     })->name('camiones.access.logout');
 
     Route::middleware(['camiones.pin'])->group(function () {
+        Route::get('/camiones/ubicaciones', [AdminCamionController::class, 'ubicaciones'])->name('camiones.ubicaciones');
+
         Route::resource('camiones', AdminCamionController::class)
             ->parameters(['camiones' => 'camion'])
             ->except(['show']);

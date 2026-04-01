@@ -18,6 +18,13 @@ class CamionManagementTest extends TestCase
         $response->assertRedirect(route('admin.camiones.access'));
     }
 
+    public function test_camiones_ubicaciones_requires_pin_access(): void
+    {
+        $response = $this->get(route('admin.camiones.ubicaciones'));
+
+        $response->assertRedirect(route('admin.camiones.access'));
+    }
+
     public function test_can_unlock_camiones_access_with_valid_pin(): void
     {
         $this->withoutMiddleware(ValidateCsrfToken::class);
@@ -84,6 +91,30 @@ class CamionManagementTest extends TestCase
             'modelo' => 'R560',
             'estado' => 'mantenimiento',
         ]);
+    }
+
+    public function test_pin_access_can_view_camiones_ubicaciones(): void
+    {
+        $camion = Camion::create([
+            'placa' => 'UBI-123',
+            'marca' => 'Volvo',
+            'modelo' => 'FH16',
+            'anio' => 2024,
+            'estado' => 'activo',
+        ]);
+
+        $camion->geolocalizaciones()->create([
+            'latitud' => -12.0464,
+            'longitud' => -77.0428,
+            'timestamp' => now(),
+        ]);
+
+        $response = $this->withSession(['camiones_access_granted' => true])
+            ->get(route('admin.camiones.ubicaciones'));
+
+        $response->assertOk();
+        $response->assertSee('Admin/Camiones/Ubicaciones');
+        $response->assertSee('UBI-123');
     }
 
     public function test_public_api_can_get_placas(): void
