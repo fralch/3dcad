@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
+// SUBSISTEMA_CAMIONES_START
+use App\Http\Controllers\Admin\CamionController as AdminCamionController;
+// SUBSISTEMA_CAMIONES_END
 use App\Http\Controllers\Admin\FileController as AdminFileController;
 use App\Http\Controllers\Admin\SubcategoryController as AdminSubcategoryController;
 use App\Http\Controllers\Admin\TypeController as AdminTypeController;
@@ -197,6 +200,13 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
 
     // Subcategories CRUD
     Route::resource('subcategories', AdminSubcategoryController::class)->except(['show']);
+
+    // SUBSISTEMA_CAMIONES_START
+    // Camiones CRUD
+    Route::resource('camiones', AdminCamionController::class)
+        ->parameters(['camiones' => 'camion'])
+        ->except(['show']);
+    // SUBSISTEMA_CAMIONES_END
 
     // Files CRUD
     Route::get('/files', [AdminFileController::class, 'index'])->name('files.index');
