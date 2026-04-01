@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Camion extends Model
 {
@@ -28,5 +29,10 @@ class Camion extends Model
             'anio' => 'integer',
             'capacidad_carga' => 'decimal:2',
         ];
+    }
+
+    public function geolocalizaciones(): HasMany
+    {
+        return $this->hasMany(CamionGeolocalizacion::class);
     }
 }

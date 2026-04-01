@@ -188,4 +188,43 @@ class CamionManagementTest extends TestCase
             'id' => $camion->id,
         ]);
     }
+
+    public function test_public_api_can_register_camion_geolocalizacion_without_authentication(): void
+    {
+        Camion::create([
+            'placa' => 'ABC-123',
+            'marca' => 'Volvo',
+            'modelo' => 'FH16',
+            'anio' => 2024,
+            'estado' => 'activo',
+        ]);
+
+        $response = $this->postJson('/api/camiones/geolocalizaciones', [
+            'placa' => 'ABC-123',
+            'latitud' => -12.0464,
+            'longitud' => -77.0428,
+            'timestamp' => '2026-03-28T10:30:00',
+        ]);
+
+        $response->assertStatus(201);
+        $response->assertJsonPath('success', true);
+        $response->assertJsonPath('data.placa', 'ABC-123');
+        $this->assertDatabaseHas('camion_geolocalizaciones', [
+            'latitud' => -12.0464,
+            'longitud' => -77.0428,
+        ]);
+    }
+
+    public function test_public_api_geolocalizacion_requires_existing_placa(): void
+    {
+        $response = $this->postJson('/api/camiones/geolocalizaciones', [
+            'placa' => 'NO-EXISTE',
+            'latitud' => -12.0464,
+            'longitud' => -77.0428,
+            'timestamp' => '2026-03-28T10:30:00',
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['placa']);
+    }
 }

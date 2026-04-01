@@ -48,3 +48,15 @@ Content-Type: application/json
 ###
 DELETE {{baseUrl}}/api/camiones/{{camionId}}
 Accept: application/json
+
+###
+POST {{baseUrl}}/api/camiones/geolocalizaciones
+Accept: application/json
+Content-Type: application/json
+
+{
+  "placa": "API-123",
+  "latitud": -12.0464,
+  "longitud": -77.0428,
+  "timestamp": "2026-03-28T10:30:00"
+}
