@@ -11,6 +11,10 @@ export default defineConfig({
         }),
         react(),
     ],
+    optimizeDeps: {
+        include: ['leaflet', 'react-leaflet', '@react-leaflet/core'],
+        force: true,
+    },
     resolve: {
         alias: {
             '@': path.resolve(__dirname, './resources/js'),

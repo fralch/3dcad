@@ -1,8 +1,32 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
+import { useMemo, useState } from 'react';
 import CamionesLayout from '@/Layouts/CamionesLayout';
+import RutaMapa from '@/Components/Admin/RutaMapa';
 
-export default function CamionesUbicaciones({ geolocalizaciones }) {
+export default function CamionesUbicaciones({ geolocalizaciones, camiones, filters, ruta }) {
     const registros = geolocalizaciones?.data || [];
+    const [camionId, setCamionId] = useState(filters?.camion_id ? String(filters.camion_id) : '');
+    const [fecha, setFecha] = useState(filters?.fecha || '');
+    const camionSeleccionado = useMemo(
+        () => camiones?.find((camion) => String(camion.id) === camionId),
+        [camiones, camionId],
+    );
+
+    const generarRuta = (event) => {
+        event.preventDefault();
+
+        router.get(
+            route('admin.camiones.ubicaciones'),
+            {
+                camion_id: camionId || undefined,
+                fecha: fecha || undefined,
+            },
+            {
+                preserveScroll: true,
+                preserveState: true,
+            },
+        );
+    };
 
     return (
         <CamionesLayout title="Ubicaciones de Camiones">
@@ -16,6 +40,81 @@ export default function CamionesUbicaciones({ geolocalizaciones }) {
                 >
                     Ver Camiones
                 </Link>
+            </div>
+
+            <div className="bg-white rounded-xl shadow-sm p-5 mb-6">
+                <form onSubmit={generarRuta} className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div className="md:col-span-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Camión</label>
+                        <select
+                            value={camionId}
+                            onChange={(event) => setCamionId(event.target.value)}
+                            className="w-full rounded-lg border-gray-300 focus:border-primary-400 focus:ring-primary-400"
+                        >
+                            <option value="">Selecciona un camión</option>
+                            {(camiones || []).map((camion) => (
+                                <option key={camion.id} value={camion.id}>
+                                    {camion.placa} · {camion.marca} {camion.modelo}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Fecha</label>
+                        <input
+                            type="date"
+                            value={fecha}
+                            onChange={(event) => setFecha(event.target.value)}
+                            className="w-full rounded-lg border-gray-300 focus:border-primary-400 focus:ring-primary-400"
+                        />
+                    </div>
+
+                    <div className="flex items-end">
+                        <button
+                            type="submit"
+                            className="w-full inline-flex justify-center items-center px-4 py-2 bg-primary-400 text-zinc-900 rounded-lg font-semibold hover:bg-primary-300 transition-colors"
+                        >
+                            Generar ruta del día
+                        </button>
+                    </div>
+                </form>
+
+                {ruta && (
+                    <div className="mt-4 border-t border-gray-100 pt-4">
+                        <p className="text-sm text-gray-700">
+                            {camionSeleccionado
+                                ? `Camión: ${camionSeleccionado.placa} · ${camionSeleccionado.marca} ${camionSeleccionado.modelo}`
+                                : 'Camión seleccionado'}
+                        </p>
+                        <p className="text-sm text-gray-500 mt-1">
+                            Fecha: {fecha || '-'} · Puntos GPS: {ruta.point_count}
+                        </p>
+
+                        <div className="mt-4">
+                            <RutaMapa puntos={ruta.points} altura="500px" />
+                        </div>
+
+                        <div className="mt-4 flex flex-wrap gap-3">
+                            {ruta.google_maps_url && (
+                                <a
+                                    href={ruta.google_maps_url}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="inline-flex items-center gap-2 px-4 py-2 bg-zinc-900 text-white rounded-lg font-medium hover:bg-zinc-800 transition-colors"
+                                >
+                                    Abrir ruta en Google Maps
+                                    <ExternalLinkIcon className="w-4 h-4" />
+                                </a>
+                            )}
+                            {ruta.point_count < 2 && (
+                                <p className="text-amber-700 text-sm">
+                                    Se necesitan al menos 2 puntos en ese día para generar una ruta.
+                                </p>
+                            )}
+                        </div>
+                    </div>
+                )}
             </div>
 
             <div className="bg-white rounded-xl shadow-sm overflow-hidden">

@@ -20,15 +20,27 @@ class CamionController extends Controller
         ]);
     }
 
-    public function ubicaciones()
+    public function ubicaciones(Request $request)
     {
+        $validated = $request->validate([
+            'camion_id' => 'nullable|integer|exists:camiones,id',
+            'fecha' => 'nullable|date',
+        ]);
+
+        $camionId = $validated['camion_id'] ?? null;
+        $fecha = $validated['fecha'] ?? null;
+
         $geolocalizaciones = CamionGeolocalizacion::query()
             ->with('camion:id,placa,marca,modelo,estado')
+            ->when($camionId, fn ($query) => $query->where('camion_id', $camionId))
+            ->when($fecha, fn ($query) => $query->whereDate('timestamp', $fecha))
             ->orderByDesc('timestamp')
             ->paginate(25)
+            ->withQueryString()
             ->through(function (CamionGeolocalizacion $geolocalizacion) {
                 return [
                     'id' => $geolocalizacion->id,
+                    'camion_id' => $geolocalizacion->camion_id,
                     'placa' => $geolocalizacion->camion?->placa,
                     'marca' => $geolocalizacion->camion?->marca,
                     'modelo' => $geolocalizacion->camion?->modelo,
@@ -40,8 +52,56 @@ class CamionController extends Controller
                 ];
             });
 
+        $camiones = Camion::query()
+            ->orderBy('placa')
+            ->get(['id', 'placa', 'marca', 'modelo']);
+
+        $ruta = null;
+
+        if ($camionId && $fecha) {
+            $puntosRuta = CamionGeolocalizacion::query()
+                ->where('camion_id', $camionId)
+                ->whereDate('timestamp', $fecha)
+                ->orderBy('timestamp')
+                ->get(['id', 'latitud', 'longitud', 'timestamp']);
+
+            $googleMapsRouteUrl = null;
+
+            if ($puntosRuta->count() >= 2) {
+                $origen = "{$puntosRuta->first()->latitud},{$puntosRuta->first()->longitud}";
+                $destino = "{$puntosRuta->last()->latitud},{$puntosRuta->last()->longitud}";
+                $waypoints = $puntosRuta->slice(1, max(0, $puntosRuta->count() - 2))
+                    ->take(23)
+                    ->map(fn (CamionGeolocalizacion $point) => "{$point->latitud},{$point->longitud}")
+                    ->implode('|');
+
+                $googleMapsRouteUrl = 'https://www.google.com/maps/dir/?api=1'
+                    .'&origin='.urlencode($origen)
+                    .'&destination='.urlencode($destino)
+                    .'&travelmode=driving'
+                    .($waypoints ? '&waypoints='.urlencode($waypoints) : '');
+            }
+
+            $ruta = [
+                'point_count' => $puntosRuta->count(),
+                'google_maps_url' => $googleMapsRouteUrl,
+                'points' => $puntosRuta->map(fn (CamionGeolocalizacion $point) => [
+                    'id' => $point->id,
+                    'latitud' => $point->latitud,
+                    'longitud' => $point->longitud,
+                    'timestamp' => $point->timestamp?->toIso8601String(),
+                ]),
+            ];
+        }
+
         return Inertia::render('Admin/Camiones/Ubicaciones', [
             'geolocalizaciones' => $geolocalizaciones,
+            'camiones' => $camiones,
+            'filters' => [
+                'camion_id' => $camionId,
+                'fecha' => $fecha,
+            ],
+            'ruta' => $ruta,
         ]);
     }
 

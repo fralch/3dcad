@@ -64,3 +64,231 @@ Content-Type: application/json
   "longitud": -77.0428,
   "timestamp": "2026-03-28T10:30:00"
 }
+
+###
+POST {{baseUrl}}/api/camiones/geolocalizaciones
+Accept: application/json
+Content-Type: application/json
+
+{
+  "placa": "API-123",
+  "latitud": -12.0481,
+  "longitud": -77.0452,
+  "timestamp": "2026-03-28T10:35:00"
+}
+
+###
+POST {{baseUrl}}/api/camiones/geolocalizaciones
+Accept: application/json
+Content-Type: application/json
+
+{
+  "placa": "API-123",
+  "latitud": -12.0506,
+  "longitud": -77.0484,
+  "timestamp": "2026-03-28T10:40:00"
+}
+
+###
+POST {{baseUrl}}/api/camiones/geolocalizaciones
+Accept: application/json
+Content-Type: application/json
+
+{
+  "placa": "API-123",
+  "latitud": -12.0533,
+  "longitud": -77.0517,
+  "timestamp": "2026-03-28T10:45:00"
+}
+
+###
+POST {{baseUrl}}/api/camiones/geolocalizaciones
+Accept: application/json
+Content-Type: application/json
+
+{
+  "placa": "API-123",
+  "latitud": -12.0561,
+  "longitud": -77.0553,
+  "timestamp": "2026-03-28T10:50:00"
+}
+
+###
+POST {{baseUrl}}/api/camiones/geolocalizaciones
+Accept: application/json
+Content-Type: application/json
+
+{
+  "placa": "API-123",
+  "latitud": -12.0588,
+  "longitud": -77.0584,
+  "timestamp": "2026-03-28T10:55:00"
+}
+
+###
+POST {{baseUrl}}/api/camiones/geolocalizaciones
+Accept: application/json
+Content-Type: application/json
+
+{
+  "placa": "API-123",
+  "latitud": -12.0615,
+  "longitud": -77.0612,
+  "timestamp": "2026-03-28T11:00:00"
+}
+
+###
+POST {{baseUrl}}/api/camiones/geolocalizaciones
+Accept: application/json
+Content-Type: application/json
+
+{
+  "placa": "API-123",
+  "latitud": -12.0640,
+  "longitud": -77.0635,
+  "timestamp": "2026-03-28T11:05:00"
+}
+
+###
+POST {{baseUrl}}/api/camiones/geolocalizaciones
+Accept: application/json
+Content-Type: application/json
+
+{
+  "placa": "API-123",
+  "latitud": -12.0669,
+  "longitud": -77.0650,
+  "timestamp": "2026-03-28T11:10:00"
+}
+
+###
+POST {{baseUrl}}/api/camiones/geolocalizaciones
+Accept: application/json
+Content-Type: application/json
+
+{
+  "placa": "API-123",
+  "latitud": -12.0698,
+  "longitud": -77.0662,
+  "timestamp": "2026-03-28T11:15:00"
+}
+
+###
+POST {{baseUrl}}/api/camiones/geolocalizaciones
+Accept: application/json
+Content-Type: application/json
+
+{
+  "placa": "API-123",
+  "latitud": -12.0726,
+  "longitud": -77.0671,
+  "timestamp": "2026-03-28T11:20:00"
+}
+
+###
+POST {{baseUrl}}/api/camiones/geolocalizaciones
+Accept: application/json
+Content-Type: application/json
+
+{
+  "placa": "API-123",
+  "latitud": -12.0751,
+  "longitud": -77.0682,
+  "timestamp": "2026-03-28T11:25:00"
+}
+
+###
+POST {{baseUrl}}/api/camiones/geolocalizaciones
+Accept: application/json
+Content-Type: application/json
+
+{
+  "placa": "API-123",
+  "latitud": -12.0778,
+  "longitud": -77.0696,
+  "timestamp": "2026-03-28T11:30:00"
+}
+
+###
+POST {{baseUrl}}/api/camiones/geolocalizaciones
+Accept: application/json
+Content-Type: application/json
+
+{
+  "placa": "API-123",
+  "latitud": -12.0803,
+  "longitud": -77.0711,
+  "timestamp": "2026-03-28T11:35:00"
+}
+
+###
+POST {{baseUrl}}/api/camiones/geolocalizaciones
+Accept: application/json
+Content-Type: application/json
+
+{
+  "placa": "API-123",
+  "latitud": -12.0828,
+  "longitud": -77.0733,
+  "timestamp": "2026-03-28T11:40:00"
+}
+
+###
+POST {{baseUrl}}/api/camiones/geolocalizaciones
+Accept: application/json
+Content-Type: application/json
+
+{
+  "placa": "API-123",
+  "latitud": -12.0854,
+  "longitud": -77.0759,
+  "timestamp": "2026-03-28T11:45:00"
+}
+
+###
+POST {{baseUrl}}/api/camiones/geolocalizaciones
+Accept: application/json
+Content-Type: application/json
+
+{
+  "placa": "API-123",
+  "latitud": -12.0881,
+  "longitud": -77.0787,
+  "timestamp": "2026-03-28T11:50:00"
+}
+
+###
+POST {{baseUrl}}/api/camiones/geolocalizaciones
+Accept: application/json
+Content-Type: application/json
+
+{
+  "placa": "API-123",
+  "latitud": -12.0909,
+  "longitud": -77.0812,
+  "timestamp": "2026-03-28T11:55:00"
+}
+
+###
+POST {{baseUrl}}/api/camiones/geolocalizaciones
+Accept: application/json
+Content-Type: application/json
+
+{
+  "placa": "API-123",
+  "latitud": -12.0936,
+  "longitud": -77.0835,
+  "timestamp": "2026-03-28T12:00:00"
+}
+
+###
+POST {{baseUrl}}/api/camiones/geolocalizaciones
+Accept: application/json
+Content-Type: application/json
+
+{
+  "placa": "API-123",
+  "latitud": -12.0962,
+  "longitud": -77.0858,
+  "timestamp": "2026-03-28T12:05:00"
+}

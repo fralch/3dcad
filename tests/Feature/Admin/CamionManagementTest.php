@@ -117,6 +117,46 @@ class CamionManagementTest extends TestCase
         $response->assertSee('UBI-123');
     }
 
+    public function test_pin_access_can_generate_daily_route_for_a_camion(): void
+    {
+        $camion = Camion::create([
+            'placa' => 'RTA-456',
+            'marca' => 'Scania',
+            'modelo' => 'R560',
+            'anio' => 2025,
+            'estado' => 'activo',
+        ]);
+
+        $camion->geolocalizaciones()->createMany([
+            [
+                'latitud' => -12.0464,
+                'longitud' => -77.0428,
+                'timestamp' => '2026-03-28 08:00:00',
+            ],
+            [
+                'latitud' => -12.0564,
+                'longitud' => -77.0328,
+                'timestamp' => '2026-03-28 09:00:00',
+            ],
+            [
+                'latitud' => -12.0664,
+                'longitud' => -77.0228,
+                'timestamp' => '2026-03-28 10:00:00',
+            ],
+        ]);
+
+        $response = $this->withSession(['camiones_access_granted' => true])
+            ->get(route('admin.camiones.ubicaciones', [
+                'camion_id' => $camion->id,
+                'fecha' => '2026-03-28',
+            ]));
+
+        $response->assertOk();
+        $response->assertSee('RTA-456');
+        $response->assertSee('google_maps_url');
+        $response->assertSee('google.com\\/maps\\/dir');
+    }
+
     public function test_public_api_can_get_placas(): void
     {
         Camion::create([
